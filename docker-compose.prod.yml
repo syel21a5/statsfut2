@@ -20,8 +20,6 @@ services:
     environment:
       MYSQL_DATABASE: ${DB_NAME:-betstats}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
-      MYSQL_USER: ${DB_USER:-root}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-root}
     ports:
       - "3308:3306"
     restart: always
