@@ -58,6 +58,6 @@ echo "🔍 Verificando status..."
 docker compose -f $COMPOSE_FILE ps
 
 echo "=== Deploy Concluído! ==="
-echo "🌍 App rodando na porta 8081 (Mapeada para 8000 interna)"
-echo "⚠️  Não esqueça de configurar o Reverse Proxy no aaPanel para http://127.0.0.1:8081"
+echo "🌍 App rodando na porta 8082 (Mapeada para 8000 interna)"
+echo "⚠️  Não esqueça de configurar o Reverse Proxy no aaPanel para http://127.0.0.1:8082"
 echo "🔗 Domínio esperado: teste1.statsfut.com"
