@@ -32,7 +32,7 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', '*').split(',') if host.strip()]
 
-CSRF_TRUSTED_ORIGINS = [url.strip() for url in os.getenv('CSRF_TRUSTED_ORIGINS', 'https://statsfut.com,https://www.statsfut.com,https://teste1.statsfut.com').split(',') if url.strip()]
+CSRF_TRUSTED_ORIGINS = [url.strip() for url in os.getenv('CSRF_TRUSTED_ORIGINS', 'https://statsfut.com,https://www.statsfut.com,https://statsfut2.statsfut.com').split(',') if url.strip()]
 
 # Ensure proper host/SSL handling behind reverse proxies (e.g., Cloudflare, Nginx)
 USE_X_FORWARDED_HOST = True

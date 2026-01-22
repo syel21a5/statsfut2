@@ -27,7 +27,7 @@ DEBUG=False
 SECRET_KEY=django-insecure-nucle-$(date +%s)
 # Permitir tudo para evitar erro 400
 ALLOWED_HOSTS=*
-CSRF_TRUSTED_ORIGINS=https://teste1.statsfut.com,http://teste1.statsfut.com,http://localhost:8081
+CSRF_TRUSTED_ORIGINS=https://statsfut2.statsfut.com,http://statsfut2.statsfut.com,http://localhost:8081
 DB_NAME=betstats
 DB_USER=root
 DB_PASSWORD=root
@@ -49,7 +49,7 @@ sleep 20
 echo "🔍 Verificando status..."
 if docker compose -f docker-compose.prod.yml ps | grep "Up"; then
     echo "==============================================="
-    echo "   ✅ TUDO PRONTO! ACESSE: http://teste1.statsfut.com"
+    echo "   ✅ TUDO PRONTO! ACESSE: http://statsfut2.statsfut.com"
     echo "==============================================="
     echo "Logs do Web:"
     docker compose -f docker-compose.prod.yml logs --tail=10 web
