@@ -150,6 +150,22 @@ class Command(BaseCommand):
             if not home_name or not away_name:
                 continue
 
+            # Mapeamento de nomes para evitar duplicatas
+            mappings = {
+                "Wolves": "Wolverhampton",
+                "Man City": "Manchester City",
+                "Man United": "Manchester Utd",
+                "Newcastle": "Newcastle Utd",
+                "Nott'm Forest": "Nottm Forest",
+                "West Ham": "West Ham Utd",
+                "Leeds": "Leeds Utd",
+                "Sunderland AFC": "Sunderland",
+                "Nottingham Forest FC": "Nottm Forest",
+            }
+            
+            home_name = mappings.get(home_name, home_name)
+            away_name = mappings.get(away_name, away_name)
+
             home_team, _ = Team.objects.get_or_create(name=home_name, league=league)
             away_team, _ = Team.objects.get_or_create(name=away_name, league=league)
 
