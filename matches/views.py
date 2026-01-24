@@ -1450,7 +1450,10 @@ class TeamDetailView(DetailView):
             # Calculate final averages
             for c in cats:
                 for key in league_avg[c]:
-                    league_avg[c][key] = round(league_avg[c][key] / team_count, 2)
+                    if team_count > 0:
+                        league_avg[c][key] = round(league_avg[c][key] / team_count, 2)
+                    else:
+                        league_avg[c][key] = 0
         
         context['league_avg'] = league_avg
 
