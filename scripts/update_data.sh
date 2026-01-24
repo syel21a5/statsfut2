@@ -53,7 +53,11 @@ fi
 echo "Fixing match statuses..." >> "$LOG_FILE"
 python manage.py fix_match_status >> "$LOG_FILE" 2>&1
 
-# 4. Recalculate Standings (CRITICAL: Tables won't update without this)
+# 4. Normalize Teams (Merge duplicate teams like Wolves/Wolverhampton)
+echo "Normalizing teams..." >> "$LOG_FILE"
+python manage.py normalize_teams --league_name "Premier League" >> "$LOG_FILE" 2>&1
+
+# 5. Recalculate Standings (CRITICAL: Tables won't update without this)
 echo "Recalculating standings..." >> "$LOG_FILE"
 python manage.py recalculate_standings --league_name "Premier League" >> "$LOG_FILE" 2>&1
 

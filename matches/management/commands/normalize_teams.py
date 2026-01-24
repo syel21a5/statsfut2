@@ -24,9 +24,14 @@ class Command(BaseCommand):
             return
 
         mappings = {
-            "Sunderland AFC": "Sunderland",
+            "Wolves": "Wolverhampton",
+            "Man City": "Manchester City",
+            "Man United": "Manchester Utd",
+            "Newcastle": "Newcastle Utd",
+            "Nott'm Forest": "Nottm Forest",
             "West Ham": "West Ham Utd",
             "Leeds": "Leeds Utd",
+            "Sunderland AFC": "Sunderland",
             "Nottingham Forest FC": "Nottm Forest",
         }
 
