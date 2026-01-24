@@ -57,7 +57,11 @@ python manage.py fix_match_status >> "$LOG_FILE" 2>&1
 echo "Normalizing teams..." >> "$LOG_FILE"
 python manage.py normalize_teams --league_name "Premier League" >> "$LOG_FILE" 2>&1
 
-# 5. Recalculate Standings (CRITICAL: Tables won't update without this)
+# 5. Remove Match Duplicates (Safety net for duplicate games)
+echo "Removing duplicate matches..." >> "$LOG_FILE"
+python manage.py remove_match_duplicates >> "$LOG_FILE" 2>&1
+
+# 6. Recalculate Standings (CRITICAL: Tables won't update without this)
 echo "Recalculating standings..." >> "$LOG_FILE"
 python manage.py recalculate_standings --league_name "Premier League" >> "$LOG_FILE" 2>&1
 
