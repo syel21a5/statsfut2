@@ -38,4 +38,12 @@ class Command(BaseCommand):
         self.stdout.write(self.style.MIGRATE_HEADING("Recalculando tabela de classificação..."))
         call_command('recalculate_standings', league_name="Premier League")
         
+        # 6. Atualizar Próximos Jogos (Upcoming)
+        # Importante para preencher a tabela de Matches no frontend
+        self.stdout.write(self.style.MIGRATE_HEADING("Buscando próximos jogos na API..."))
+        try:
+            call_command('update_live_matches', mode='upcoming')
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(f"Aviso: Não foi possível buscar próximos jogos agora ({e}). O script automático tentará depois."))
+
         self.stdout.write(self.style.SUCCESS("RECONSTRUÇÃO CONCLUÍDA COM SUCESSO!"))
