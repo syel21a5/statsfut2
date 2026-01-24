@@ -22,13 +22,32 @@ echo "========================================" >> "$LOG_FILE"
 echo "Starting update at $(date)" >> "$LOG_FILE"
 
 # 1. Update historical data (CSV) - focused on current/recent seasons
-# This helps ensure finished matches have final scores from CSV
+# This is FREE (uses CSV downloads), so we can run it always.
 echo "Running import_football_data..." >> "$LOG_FILE"
 python manage.py import_football_data --min_year 2025 >> "$LOG_FILE" 2>&1
 
 # 2. Update live matches and upcoming fixtures (API)
-echo "Running update_live_matches..." >> "$LOG_FILE"
-python manage.py update_live_matches >> "$LOG_FILE" 2>&1
+# Only run this if explicitly requested with --api flag OR during live match hours (e.g., weekends)
+# to save API calls on free tier.
+RUN_API=false
+
+# Check for --api argument
+if [[ "$1" == "--api" ]]; then
+    RUN_API=true
+fi
+
+# OPTIONAL: Uncomment below to automatically run API only on weekends (Fri-Sun)
+# DOW=$(date +%u)
+# if [ "$DOW" -ge 5 ]; then
+#    RUN_API=true
+# fi
+
+if [ "$RUN_API" = true ]; then
+    echo "Running update_live_matches (API)..." >> "$LOG_FILE"
+    python manage.py update_live_matches >> "$LOG_FILE" 2>&1
+else
+    echo "Skipping update_live_matches (API) to save quota. Pass --api to force run." >> "$LOG_FILE"
+fi
 
 echo "Update finished at $(date)" >> "$LOG_FILE"
 echo "========================================" >> "$LOG_FILE"
