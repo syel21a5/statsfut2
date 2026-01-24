@@ -92,7 +92,15 @@ class Command(BaseCommand):
                             f.write(resp.text)
                     except Exception as e:
                         self.stdout.write(self.style.ERROR(f"Erro ao salvar {path}: {e}"))
-                reader = csv.DictReader(StringIO(resp.text))
+                
+                # Handle BOM correctly by forcing utf-8-sig
+                try:
+                    content = resp.content.decode('utf-8-sig')
+                except UnicodeDecodeError:
+                    # Fallback if it fails
+                    content = resp.text
+
+                reader = csv.DictReader(StringIO(content))
                 r, c, u = self._process_reader(reader, division, min_year, league)
                 total_rows += r
                 created_matches += c
