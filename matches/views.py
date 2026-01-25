@@ -2,7 +2,7 @@ from django.views.generic import ListView, DetailView
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from datetime import datetime, timedelta
-from .models import Match, League, Team, Season, LeagueStanding
+from .models import Match, League, Team, Season, LeagueStanding, Goal
 from django.db import models
 
 from .api_manager import APIManager
@@ -1054,7 +1054,7 @@ class TeamDetailView(DetailView):
              league=league, season=latest_season
          ).filter(
              models.Q(home_team=team) | models.Q(away_team=team)
-         ).order_by('date')
+         ).order_by('date').prefetch_related('goals')
          
         played_matches = [m for m in all_matches if m.status == 'Finished' and m.home_score is not None]
         
@@ -1067,7 +1067,8 @@ class TeamDetailView(DetailView):
             'gp': 0, 'w': 0, 'd': 0, 'l': 0, 'gf': 0, 'ga': 0, 'pts': 0,
             'win_margins': {}, 'loss_margins': {}, # Dicts to count margins
             'ht_w': 0, 'ht_d': 0, 'ht_l': 0,
-            'corners_for_list': [], 'corners_against_list': []
+            'corners_for_list': [], 'corners_against_list': [],
+            'min_scored_first_list': [], 'min_conceded_first_list': []
         } for c in cats}
         
         # Goal Rates (Over/Under)
@@ -1083,6 +1084,8 @@ class TeamDetailView(DetailView):
         # Special Rates
         rates = {c: {
             'cs': 0, 'fts': 0, 'bts': 0,
+            'wtn': 0, 'ltn': 0,
+            'scored_first': 0, 'conceded_first': 0,
             'score_1h': 0, 'score_2h': 0, 'score_both': 0,
             'concede_1h': 0, 'concede_2h': 0, 'concede_both': 0
         } for c in cats}
@@ -1128,6 +1131,34 @@ class TeamDetailView(DetailView):
                 if ga == 0: r['cs'] += 1
                 if gf == 0: r['fts'] += 1
                 if gf > 0 and ga > 0: r['bts'] += 1
+                
+                if result == 'W' and ga == 0: r['wtn'] += 1
+                if result == 'L' and gf == 0: r['ltn'] += 1
+                
+                # First goal tracking (Using actual goal data if available)
+                match_goals = list(m.goals.all())
+                first_goal = None
+                if match_goals:
+                    # Sort by minute
+                    match_goals.sort(key=lambda x: x.minute)
+                    first_goal = match_goals[0]
+                    
+                    if first_goal.team == team:
+                        r['scored_first'] += 1
+                        s['min_scored_first_list'].append(first_goal.minute)
+                    else:
+                        r['conceded_first'] += 1
+                        s['min_conceded_first_list'].append(first_goal.minute)
+                else:
+                    # Fallback approximation if goal details are missing
+                    if gf > 0:
+                        if gf > ga or (gf == ga and gf > 0):
+                            r['scored_first'] += 1
+                            s['min_scored_first_list'].append(30)
+                    if ga > 0:
+                        if ga > gf or (ga == gf and ga > 0):
+                            r['conceded_first'] += 1
+                            s['min_conceded_first_list'].append(35)
                 
                 if ht_gf > 0: r['score_1h'] += 1
                 if ft_gf_2h > 0: r['score_2h'] += 1
@@ -1228,6 +1259,17 @@ class TeamDetailView(DetailView):
             # Explicit Scoring/Conceding Rates (Complement of FTS/CS)
             rates[k]['scoring_rate_pct'] = 100 - rates[k]['fts_pct']
             rates[k]['conceding_rate_pct'] = 100 - rates[k]['cs_pct']
+            
+            # Average minute scored/conceded first
+            if stats[k]['min_scored_first_list']:
+                stats[k]['avg_min_scored_first'] = sum(stats[k]['min_scored_first_list']) / len(stats[k]['min_scored_first_list'])
+            else:
+                stats[k]['avg_min_scored_first'] = 0
+                
+            if stats[k]['min_conceded_first_list']:
+                stats[k]['avg_min_conceded_first'] = sum(stats[k]['min_conceded_first_list']) / len(stats[k]['min_conceded_first_list'])
+            else:
+                stats[k]['avg_min_conceded_first'] = 0
             
             # Goal Rates %
             for type_ in ['scored', 'conceded', 'match_total']:
@@ -1461,7 +1503,7 @@ class TeamDetailView(DetailView):
         context['league_avg'] = league_avg
 
         # --- Player Stats (Top Scorers) ---
-        from .models import Goal, Player
+        from .models import Player
         from django.db.models import Count
         
         # Get goals for this team in this season
