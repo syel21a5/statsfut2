@@ -4,7 +4,7 @@
 {% load matches_extras %}
 
 {% block content %}
-
+<link rel="stylesheet" href="{% static 'matches/css/team_detail.css' %}">
 
 <div class="main-container">
     <!-- Header Info -->
@@ -1182,21 +1182,31 @@
                         {% for match in run_in.matches|slice:":13" %}
                         <tr style="border-bottom: 1px solid #eee;">
                             <td style="color: #666; font-size: 0.75rem;">{{ match.match.date|date:"j M" }}</td>
-                            <td style="text-align: left;">{% if match.is_home %}<strong>{{ team.name }}</strong> <span
-                                    style="color:#999">vs</span> {{ match.opponent.name }}{% else %}{{
-                                match.opponent.name }} <span style="color:#999">vs</span> <strong>{{ team.name
-                                    }}</strong>{% endif %}</td>
-                            <td>{% if match.is_home %}<strong style="color: #333">{{ match.col_home_ppg }}</strong>{%
-                                else %}<span style="color:#aaa">{{ match.col_home_ppg }}</span>{% endif %}</td>
-                            <td>{% if not match.is_home %}<strong style="color: #333">{{ match.col_away_ppg
-                                    }}</strong>{% else %}<span style="color:#aaa">{{ match.col_away_ppg }}</span>{%
-                                endif %}</td>
+                            <td style="text-align: left;">
+                                {% if match.is_home %}
+                                    <strong>{{ team.name }}</strong> <span style="color:#999">vs</span> {{ match.opponent.name }}
+                                {% else %}
+                                    {{ match.opponent.name }} <span style="color:#999">vs</span> <strong>{{ team.name }}</strong>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if match.is_home %}
+                                    <strong style="color: #333">{{ match.col_home_ppg }}</strong>
+                                {% else %}
+                                    <span style="color:#aaa">{{ match.col_home_ppg }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if not match.is_home %}
+                                    <strong style="color: #333">{{ match.col_away_ppg }}</strong>
+                                {% else %}
+                                    <span style="color:#aaa">{{ match.col_away_ppg }}</span>
+                                {% endif %}
+                            </td>
                             <td style="vertical-align: middle;">
                                 <div style="display: flex; align-items: center; justify-content: start;">
-                                    <div
-                                        style="background: #e0e0e0; height: 6px; width: 60px; border-radius: 3px; overflow: hidden; margin-right: 5px;">
-                                        <div class="js-width" data-width="{{ match.opp_strength_pct }}"
-                                            style="height: 100%; background: #007bff;"></div>
+                                    <div style="background: #e0e0e0; height: 6px; width: 60px; border-radius: 3px; overflow: hidden; margin-right: 5px;">
+                                        <div class="js-width" data-width="{{ match.opp_strength_pct }}" style="height: 100%; background: #007bff;"></div>
                                     </div>
                                 </div>
                             </td>
@@ -1512,8 +1522,7 @@
                     <tbody>
                         {% for i in "01234"|make_list %}
                         <tr class="{% if forloop.counter|divisibleby:2 %}bg-row-even{% else %}bg-row-odd{% endif %}">
-                            <td style="text-align: left; padding-left: 10px;">Match total goals = {{ i }}{% if i == "4"
-                                %}+{% endif %}</td>
+                            <td style="text-align: left; padding-left: 10px;">Match total goals = {{ i }}{% if i == "4" %}+{% endif %}</td>
                             <td>{{ total_goals_dist.home|get_key_pct:i }}%</td>
                             <td>{{ total_goals_dist.away|get_key_pct:i }}%</td>
                             <td style="font-weight: bold;">{{ total_goals_dist.total|get_key_pct:i }}%</td>
@@ -1640,8 +1649,7 @@
                         </tr>
                     </tbody>
                 </table>
-                {% with one_goal=margin_stats.wins.total|get_item:1 two_goal=margin_stats.wins.total|get_item:2
-                three_goal=margin_stats.wins.total|get_item:3 four_plus=margin_stats.wins.total|get_item:4 %}
+                {% with one_goal=margin_stats.wins.total|get_item:1 two_goal=margin_stats.wins.total|get_item:2 three_goal=margin_stats.wins.total|get_item:3 four_plus=margin_stats.wins.total|get_item:4 %}
                 <div style="padding: 10px; font-size: 0.8rem; background: #eee; line-height: 1.4; color: #333;">
                     A majority of {{ team.name }}'s wins have been obtained with a one-goal margin ({{ one_goal }}
                     wins), while {{ two_goal|add:three_goal|add:four_plus }} of their wins had a margin of 2 goals or
@@ -1930,4 +1938,5 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'matches/js/team_detail.js' %}"></script>
 {% endblock %}
