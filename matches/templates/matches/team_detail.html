@@ -1186,8 +1186,7 @@
                                     style="color:#999">vs</span> {{ match.opponent.name }}{% else %}{{
                                 match.opponent.name }} <span style="color:#999">vs</span> <strong>{{ team.name
                                     }}</strong>{% endif %}</td>
-                            <td>{% if match.is_home %}<strong style="color: #333">{{ match.col_home_ppg }}</strong>{%
-                                else %}<span style="color:#aaa">{{ match.col_home_ppg }}</span>{% endif %}</td>
+                            <td>{% if match.is_home %}<strong style="color: #333">{{ match.col_home_ppg }}</strong>{% else %}<span style="color:#aaa">{{ match.col_home_ppg }}</span>{% endif %}</td>
                             <td>{% if not match.is_home %}<strong style="color: #333">{{ match.col_away_ppg
                                     }}</strong>{% else %}<span style="color:#aaa">{{ match.col_away_ppg }}</span>{%
                                 endif %}</td>
