@@ -1578,12 +1578,6 @@ class TeamDetailView(DetailView):
         # --- NEW: Current Streaks ---
         context['streaks'] = self.calculate_streaks(all_matches, team)
 
-        # --- NEW: Historical Statistics (Current vs Prev Season) ---
-        # We need the previous season object. We already fetched past_seasons.
-        prev_season_data = None
-        if past_seasons:
-            prev_season = past_seasons[0] # Assuming ordered by -year
-            
             # Helper to calculate stats for a given season and matches
             def calc_historical(matches_qs, t):
                 stats = {'pld': 0, 'pts': 0, 'gf': 0, 'ga': 0, 'w': 0, 'd': 0, 'l': 0, 'cs': 0, 'fts': 0}
@@ -1623,30 +1617,39 @@ class TeamDetailView(DetailView):
                     stats['fts_pct'] = int((stats['fts'] / stats['pld']) * 100)
                 return stats
 
-            # Current Season Stats
+            # Current Season Stats (ALWAYS CALCULATED)
             current_stats = {
                 'overall': calc_historical(all_matches, team),
                 'home': calc_historical([m for m in all_matches if m.home_team == team], team),
                 'away': calc_historical([m for m in all_matches if m.away_team == team], team)
             }
             
-            # Previous Season Stats
-            prev_matches = Match.objects.filter(
-                models.Q(home_team=team) | models.Q(away_team=team),
-                season=prev_season,
-                status='Finished'
-            )
-            previous_stats = {
-                'overall': calc_historical(prev_matches, team),
-                'home': calc_historical([m for m in prev_matches if m.home_team == team], team),
-                'away': calc_historical([m for m in prev_matches if m.away_team == team], team)
-            }
+            # Historical Statistics (Current vs Prev Season)
+            previous_stats = None
+            season_name = f"{latest_season.year-1}/{latest_season.year}" if latest_season else "-"
+            prev_season_name = "-"
+
+            if past_seasons:
+                prev_season = past_seasons[0] # Assuming ordered by -year
+                
+                # Previous Season Stats
+                prev_matches = Match.objects.filter(
+                    models.Q(home_team=team) | models.Q(away_team=team),
+                    season=prev_season,
+                    status='Finished'
+                )
+                previous_stats = {
+                    'overall': calc_historical(prev_matches, team),
+                    'home': calc_historical([m for m in prev_matches if m.home_team == team], team),
+                    'away': calc_historical([m for m in prev_matches if m.away_team == team], team)
+                }
+                prev_season_name = f"{prev_season.year-1}/{prev_season.year}"
             
             context['historical_stats'] = {
                 'current': current_stats,
                 'previous': previous_stats,
-                'season_name': f"{latest_season.year-1}/{latest_season.year}",
-                'prev_season_name': f"{prev_season.year-1}/{prev_season.year}"
+                'season_name': season_name,
+                'prev_season_name': prev_season_name
             }
 
         # --- Upcoming Matches & Run-in Analysis ---
