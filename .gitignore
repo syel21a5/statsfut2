@@ -14,7 +14,11 @@ staticfiles
 .env
 venv/
 env/
+ee94edb946d605220632a76ad9780a65_venv/
+logs/
 .user.ini
+*.sql
+*.pid
 
 # IDEs
 .vscode/
