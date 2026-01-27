@@ -64,11 +64,21 @@ class Command(BaseCommand):
             pass
 
         # 3. Se ainda não tem time, cria um novo
-        return Team.objects.create(
-            name=name,
-            league=league,
-            api_id=str(api_id) if api_id else None
-        )
+        try:
+            return Team.objects.create(
+                name=name,
+                league=league,
+                api_id=str(api_id) if api_id else None
+            )
+        except Exception as e:
+            # Se der erro de duplicata, tenta buscar de novo pelo api_id (pode ter sido criado em paralelo ou inconsistência)
+            if 'Duplicate entry' in str(e) and api_id:
+                try:
+                    return Team.objects.get(api_id=str(api_id))
+                except Team.DoesNotExist:
+                    pass
+            raise e
+
 
     def process_fixtures(self, fixtures, is_live=False):
         """Processa fixtures e salva/atualiza no banco"""
@@ -203,6 +213,7 @@ class Command(BaseCommand):
                 
                 # Lógica segura para Match: Prioriza busca por api_id
                 match_obj = None
+                created = False
                 if match_api_id:
                     try:
                         match_obj = Match.objects.get(api_id=match_api_id)
