@@ -11,35 +11,55 @@ django.setup()
 
 from matches.models import Match
 
-# Configuração de Intervalos
-LIVE_UPDATE_INTERVAL = 15  # Segundos entre checagens de jogos ao vivo
-FULL_SYNC_INTERVAL = 3600  # Segundos (1 hora) entre sincronizações completas (Resultados + Próximos)
+# ==========================================
+# CONFIGURAÇÃO DE INTERVALOS INTELIGENTES
+# ==========================================
+
+# Quando NÃO há jogos ao vivo ou próximos (modo econômico)
+IDLE_CHECK_INTERVAL = 300  # 5 minutos (economiza ~80% de chamadas)
+
+# Quando HÁ jogos ao vivo ou começando em breve (modo ativo)
+ACTIVE_UPDATE_INTERVAL = 60  # 1 minuto (atualização rápida)
+
+# Sincronização completa (resultados + próximos 14 dias)
+FULL_SYNC_INTERVAL = 3600  # 1 hora
+
+# Buffer de tempo para considerar jogo "próximo"
+UPCOMING_BUFFER_MINUTES = 30
 
 last_full_sync = None
+last_mode = "IDLE"  # Rastreia modo atual para logging
+
+def check_active_matches():
+    """
+    Verifica se há jogos ao vivo ou próximos no banco de dados.
+    Retorna True se houver atividade, False caso contrário.
+    """
+    now = timezone.now()
+    buffer_time = now + timedelta(minutes=UPCOMING_BUFFER_MINUTES)
+    
+    # Busca jogos que estão ao vivo ou começam em breve
+    active_matches = Match.objects.filter(
+        date__lte=buffer_time,
+        status__in=['Scheduled', 'Live', '1H', 'HT', '2H', 'ET', 'PEN', 'IN_PLAY']
+    ).exclude(status__in=['Finished', 'Postponed', 'Cancelled'])
+    
+    return active_matches.exists()
 
 def run_live_update():
     """
     Atualiza apenas jogos que estão acontecendo AGORA ou começando em breve.
-    É leve e rápido.
+    Só chama a API se realmente houver jogos ativos.
     """
-    print(f"[{datetime.now().strftime('%H:%M:%S')}] 🔴 Buscando jogos ao vivo...")
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] 🔴 Verificando jogos ao vivo...")
     try:
-        # Verifica se há necessidade de rodar (jogos ao vivo ou próximos 30min)
-        now = timezone.now()
-        buffer_time = now + timedelta(minutes=30)
+        has_active = check_active_matches()
         
-        # Otimização: Só chama o script pesado se tiver jogo no banco marcado como Live ou Scheduled para agora
-        # Mas atenção: se o banco estiver desatualizado, ele pode não saber que tem jogo.
-        # Por isso o Full Sync é importante.
-        live_or_soon = Match.objects.filter(
-            date__lte=buffer_time,
-            status__in=['Scheduled', 'Live', '1H', 'HT', '2H', 'ET', 'PEN', 'IN_PLAY']
-        ).exclude(status__in=['Finished', 'Postponed', 'Cancelled'])
-
-        if live_or_soon.exists():
-            subprocess.run(["python", "manage.py", "update_live_matches", "--mode", "live"], check=True)
+        if has_active:
+            print(f"[{datetime.now().strftime('%H:%M:%S')}] ⚽ Jogos ativos detectados! Atualizando via API...")
+            subprocess.run(["python3", "manage.py", "update_live_matches", "--mode", "live"], check=True)
         else:
-            print(f"[{datetime.now().strftime('%H:%M:%S')}] 💤 Nenhum jogo ao vivo no momento.")
+            print(f"[{datetime.now().strftime('%H:%M:%S')}] 💤 Nenhum jogo ao vivo no momento (economizando API).")
             
     except Exception as e:
         print(f"❌ Erro na atualização ao vivo: {e}")
@@ -47,25 +67,48 @@ def run_live_update():
 def run_full_sync():
     """
     Atualiza TUDO: Resultados de hoje, jogos de ontem (se tiver), e calendário dos próximos 14 dias.
-    Garante que jogos finalizados vão para a tabela de Resultados.
+    Garante que o banco tenha dados frescos para a checagem inteligente funcionar.
     """
     global last_full_sync
     print(f"[{datetime.now().strftime('%H:%M:%S')}] 🔄 Iniciando Sincronização Completa (Resultados + Calendário)...")
     try:
-        # mode='upcoming' na verdade busca de HOJE até +14 dias, então pega resultados do dia também
-        subprocess.run(["python", "manage.py", "update_live_matches", "--mode", "upcoming"], check=True)
+        subprocess.run(["python3", "manage.py", "update_live_matches", "--mode", "upcoming"], check=True)
         last_full_sync = datetime.now()
         print(f"[{datetime.now().strftime('%H:%M:%S')}] ✅ Sincronização Completa finalizada.")
     except Exception as e:
         print(f"❌ Erro na sincronização completa: {e}")
 
+def get_smart_interval():
+    """
+    Retorna o intervalo apropriado baseado na atividade de jogos.
+    IDLE (5min) quando não há jogos, ACTIVE (1min) quando há.
+    """
+    global last_mode
+    
+    has_active = check_active_matches()
+    
+    if has_active:
+        if last_mode != "ACTIVE":
+            print(f"[{datetime.now().strftime('%H:%M:%S')}] 🟢 Modo ATIVO: Atualizações a cada {ACTIVE_UPDATE_INTERVAL}s")
+            last_mode = "ACTIVE"
+        return ACTIVE_UPDATE_INTERVAL
+    else:
+        if last_mode != "IDLE":
+            print(f"[{datetime.now().strftime('%H:%M:%S')}] 🟡 Modo ECONÔMICO: Checagens a cada {IDLE_CHECK_INTERVAL}s")
+            last_mode = "IDLE"
+        return IDLE_CHECK_INTERVAL
+
 if __name__ == "__main__":
-    print("="*50)
-    print("🚀 StatsFut Auto-Updater Iniciado")
-    print("="*50)
-    print(f"Intervalo Live: {LIVE_UPDATE_INTERVAL}s")
-    print(f"Intervalo Full Sync: {FULL_SYNC_INTERVAL}s")
-    print("="*50)
+    print("="*60)
+    print("🚀 StatsFut Smart Auto-Updater v2.0")
+    print("="*60)
+    print("📊 Configurações:")
+    print(f"   • Modo ECONÔMICO: {IDLE_CHECK_INTERVAL}s (sem jogos)")
+    print(f"   • Modo ATIVO: {ACTIVE_UPDATE_INTERVAL}s (com jogos)")
+    print(f"   • Sync Completo: {FULL_SYNC_INTERVAL}s (1 hora)")
+    print("="*60)
+    print("💡 Sistema inteligente: economiza ~80% de chamadas API!")
+    print("="*60)
 
     # Força um sync completo ao iniciar para garantir dados frescos
     run_full_sync()
@@ -76,11 +119,12 @@ if __name__ == "__main__":
             if not last_full_sync or (datetime.now() - last_full_sync).total_seconds() > FULL_SYNC_INTERVAL:
                 run_full_sync()
             
-            # Roda atualização Live
+            # Roda atualização Live (só chama API se houver jogos)
             run_live_update()
             
-            # Aguarda próximo ciclo
-            time.sleep(LIVE_UPDATE_INTERVAL)
+            # Aguarda próximo ciclo com intervalo inteligente
+            smart_interval = get_smart_interval()
+            time.sleep(smart_interval)
             
         except KeyboardInterrupt:
             print("\n🛑 Monitoramento paralisado pelo usuário.")
