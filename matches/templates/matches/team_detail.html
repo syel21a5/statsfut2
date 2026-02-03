@@ -1230,8 +1230,15 @@
                                 </div>
                             </td>
                             <td style="text-align: center;">
+<<<<<<< HEAD
                                 {% if h.standing.team != team %}
                                 <a href="{% url 'matches:h2h_detail' league_name=league.name|slugify team1_name=team.name|slugify team2_name=h.standing.team.name|slugify %}" class="btn-h2h">h2h</a>
+=======
+                                {% if h.match_link %}
+                                <a href="{% url 'matches:match_detail' h.match_link.id h.match_link.slug %}" class="btn-h2h">h2h</a>
+                                {% else %}
+                                <span class="btn-h2h" style="opacity: 0.5; cursor: default;">h2h</span>
+>>>>>>> origin/main
                                 {% endif %}
                             </td>
                         </tr>

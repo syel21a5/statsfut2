@@ -1206,6 +1206,8 @@ class TeamDetailView(DetailView):
 
             # --- Match List Item ---
             matches_data.append({
+                'id': m.id,
+                'slug': m.slug,
                 'date': m.date,
                 'opponent': opponent,
                 'is_home': is_home,
@@ -1607,10 +1609,16 @@ class TeamDetailView(DetailView):
                 bg = 'row-win' if won else ('row-loss' if lost else 'row-draw')
                 return {'score': f"{m.home_score}:{m.away_score}", 'bg': bg}
 
+            # Determine best match for H2H link (most recent)
+            matches_pair = [m for m in [m_h, m_a] if m]
+            matches_pair.sort(key=lambda x: x.date, reverse=True)
+            last_match = matches_pair[0] if matches_pair else None
+
             league_h2h.append({
                 'standing': st,
                 'home': format_h2h(m_h, True),
-                'away': format_h2h(m_a, False)
+                'away': format_h2h(m_a, False),
+                'match_link': {'id': last_match.id, 'slug': last_match.slug} if last_match else None
             })
 
         context['league_h2h'] = league_h2h
