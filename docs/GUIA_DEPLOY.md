@@ -67,3 +67,52 @@ Se ao tentar fazer o `git pull` você receber um erro dizendo que há alteraçõ
     source venv/bin/activate
     # ou o caminho específico do seu ambiente, caso seja diferente
     ```
+
+---
+
+## 4. Recuperação de Emergência (Caso apague arquivos ou restaure backup)
+
+Se você apagou a pasta do servidor e restaurou um backup (zip), o site pode parar de funcionar pelos seguintes motivos:
+
+1.  **Permissões incorretas:** O usuário do servidor (`www`) perdeu acesso aos arquivos.
+2.  **Arquivos Ocultos:** O arquivo `.env` (configurações) geralmente não vai no zip.
+3.  **Pasta de Logs:** O Gunicorn precisa da pasta `logs` para iniciar.
+4.  **Ambiente Virtual:** As bibliotecas (Django, etc.) sumiram.
+
+### Passo a Passo para Corrigir:
+
+No terminal do servidor, execute:
+
+1.  **Acesse a pasta:**
+    ```bash
+    cd /www/wwwroot/statsfut2.statsfut.com
+    ```
+
+2.  **Recrie a pasta de logs (essencial para o Gunicorn):**
+    ```bash
+    mkdir -p logs
+    ```
+
+3.  **Corrija as permissões (para usuário www):**
+    ```bash
+    chown -R www:www .
+    chmod -R 755 .
+    ```
+
+4.  **Verifique se o arquivo .env existe:**
+    ```bash
+    ls -la .env
+    ```
+    *Se der erro dizendo que não existe, você precisará recriá-lo com suas senhas do banco de dados.*
+
+5.  **Reinstale as dependências (se necessário):**
+    Se usar o gerenciador de Python do painel, tente ir na aba "Module" e instalar o `requirements.txt` novamente.
+    Ou via terminal:
+    ```bash
+    # Ative o ambiente virtual (ajuste o caminho se necessário)
+    source venv/bin/activate  # ou source ../nome_do_venv/bin/activate
+    pip install -r requirements.txt
+    ```
+
+6.  **Reinicie o Projeto no Painel.**
+

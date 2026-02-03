@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load matches_extras %}
+
+{% block content %}
+<div class="main-container">
+    <div class="ss-card" style="padding: 15px;">
+        <h2 style="text-align: center; margin-bottom: 20px;">Head to Head</h2>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <div style="text-align: center; flex: 1;">
+                <h3>{{ team1.name }}</h3>
+            </div>
+            <div style="font-weight: bold; font-size: 1.2rem;">VS</div>
+            <div style="text-align: center; flex: 1;">
+                <h3>{{ team2.name }}</h3>
+            </div>
+        </div>
+
+        <h4 style="margin-bottom: 10px;">Past Matches</h4>
+        <table class="ss-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Home</th>
+                    <th>Score</th>
+                    <th>Away</th>
+                    <th>Competition</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in matches %}
+                <tr>
+                    <td>{{ m.date|date:"d M Y" }}</td>
+                    <td style="text-align: right; {% if m.home_team == team1 %}font-weight: bold;{% endif %}">{{ m.home_team.name }}</td>
+                    <td style="text-align: center; font-weight: bold;">{{ m.home_score }} - {{ m.away_score }}</td>
+                    <td style="text-align: left; {% if m.away_team == team1 %}font-weight: bold;{% endif %}">{{ m.away_team.name }}</td>
+                    <td>{{ m.league.name }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center;">No recorded matches between these teams.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div style="margin-top: 20px; text-align: center;">
+            <a href="{% url 'matches:team_stats' league_name=league.name|slugify team_name=team1.name|slugify %}" class="btn btn-secondary">Back to {{ team1.name }}</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

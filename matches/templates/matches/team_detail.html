@@ -55,7 +55,7 @@
                                         {% if m.is_home %}{{ m.opponent.name }}{% else %}{{ team.name }}{% endif %}
                                     </td>
                                     <td style="text-align: center;">
-                                        <a href="{% url 'matches:match_detail' m.id m.slug %}" class="btn-h2h">h2h</a>
+                                        <a href="{% url 'matches:h2h_detail' league_name=league.name|slugify team1_name=team.name|slugify team2_name=m.opponent.name|slugify %}" class="btn-h2h">h2h</a>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -1198,10 +1198,10 @@
                         <tr>
                             <th style="width: 25px; background: #666; color: #fff;"></th>
                             <th style="text-align: left; background: #666; color: #fff;">Team</th>
-                            <th style="width: 25px; background: #666; color: #fff;">GP</th>
-                            <th style="width: 25px; background: #666; color: #fff;">Pts</th>
-                            <th style="width: 35px; background: #f0f0f0; color: #333; font-weight: normal;">Home</th>
-                            <th style="width: 35px; background: #f0f0f0; color: #333; font-weight: normal;">Away</th>
+                            <th style="width: 20px; background: #666; color: #fff;">GP</th>
+                            <th style="width: 20px; background: #666; color: #fff;">Pts</th>
+                            <th style="width: 45px; background: #f0f0f0; color: #333; font-weight: normal;">Home</th>
+                            <th style="width: 45px; background: #f0f0f0; color: #333; font-weight: normal;">Away</th>
                             <th style="width: 30px; background: #fff;"></th>
                         </tr>
                     </thead>
@@ -1230,10 +1230,15 @@
                                 </div>
                             </td>
                             <td style="text-align: center;">
+<<<<<<< HEAD
+                                {% if h.standing.team != team %}
+                                <a href="{% url 'matches:h2h_detail' league_name=league.name|slugify team1_name=team.name|slugify team2_name=h.standing.team.name|slugify %}" class="btn-h2h">h2h</a>
+=======
                                 {% if h.match_link %}
                                 <a href="{% url 'matches:match_detail' h.match_link.id h.match_link.slug %}" class="btn-h2h">h2h</a>
                                 {% else %}
                                 <span class="btn-h2h" style="opacity: 0.5; cursor: default;">h2h</span>
+>>>>>>> origin/main
                                 {% endif %}
                             </td>
                         </tr>
@@ -1317,7 +1322,7 @@
                             matches that the <u>over under stats</u> indicate had a total number of goals over 2.5 this
                             season in <span>{{ league.name }}</span>.
                             <div style="text-align: center; margin-top: 10px;">
-                                <a href="#"
+                                <a href="{% url 'matches:league_goals' league_name=league.name|slugify %}"
                                     style="display: inline-block; padding: 4px 12px; border: 1px solid #ccc; border-radius: 4px; background: #fff; color: #333; text-decoration: none; font-size: 0.75rem;">League
                                     goals statistics</a>
                             </div>

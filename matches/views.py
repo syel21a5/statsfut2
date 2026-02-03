@@ -1,4 +1,4 @@
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, TemplateView
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from datetime import datetime, timedelta
@@ -1878,3 +1878,694 @@ class TeamDetailView(DetailView):
             }
             
         return result
+
+
+
+
+class LeagueGoalsView(TemplateView):
+    template_name = 'matches/league_goals.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        league_slug = self.kwargs.get('league_name')
+        stats_type = self.request.GET.get('type', 'total')
+        ht_stats_type = self.request.GET.get('ht_type', 'total')
+        bts_type = self.request.GET.get('bts_type', 'total')
+        cs_type = self.request.GET.get('cs_type', 'total')
+        fts_type = self.request.GET.get('fts_type', 'total')
+        wtn_type = self.request.GET.get('wtn_type', 'total')
+        
+        context['stats_type'] = stats_type
+        context['ht_stats_type'] = ht_stats_type
+        context['bts_type'] = bts_type
+        context['cs_type'] = cs_type
+        context['fts_type'] = fts_type
+        context['wtn_type'] = wtn_type
+        
+        # Get League
+        name_query = league_slug.replace('-', ' ')
+        league = League.objects.filter(name__iexact=name_query).first()
+        if not league:
+            league = League.objects.filter(name__icontains=name_query).first()
+        
+        context['league'] = league
+        if not league:
+            return context
+
+        # Get Latest Season
+        latest_season = Season.objects.filter(standings__league=league).order_by('-year').first()
+        context['season'] = latest_season
+
+        # Get Standings
+        standings = LeagueStanding.objects.filter(
+            league=league,
+            season=latest_season
+        ).select_related('team').order_by('position')
+        context['standings'] = standings
+        
+        # Get all finished matches ordered by date
+        matches = Match.objects.filter(
+            league=league, 
+            season=latest_season, 
+            status='Finished'
+        ).select_related('home_team', 'away_team').order_by('date')
+
+        # Helper to init stats
+        def init_stats():
+            return {
+                'gp': 0, 'gf': 0, 'ga': 0, 'total_goals': 0,
+                'over05': 0, 'over15': 0, 'over25': 0, 'over35': 0, 'over45': 0, 'over55': 0,
+                'bts': 0, 'cs': 0, 'fts': 0, 'wtn': 0, 'ltn': 0
+            }
+
+        # Organize matches by team
+        # Store as list of (match, side) tuples
+        # side is 'home' or 'away'
+        team_matches = {}
+        
+        for m in matches:
+            h_id = m.home_team.id
+            a_id = m.away_team.id
+            
+            if h_id not in team_matches:
+                team_matches[h_id] = {'team': m.home_team, 'matches': []}
+            if a_id not in team_matches:
+                team_matches[a_id] = {'team': m.away_team, 'matches': []}
+                
+            team_matches[h_id]['matches'].append((m, 'home'))
+            team_matches[a_id]['matches'].append((m, 'away'))
+
+        # --- New Tables Overview Calculation ---
+        
+        # 1. Define ranking containers
+        # We need 12 lists
+        rank_points = []
+        rank_form8 = []
+        rank_home = []
+        rank_away = []
+        
+        rank_offence = []
+        rank_defence = []
+        rank_offence8 = []
+        rank_defence8 = []
+        
+        rank_offence_home = []
+        rank_defence_home = []
+        rank_offence_away = []
+        rank_defence_away = []
+        
+        # Helper to calc simple stats for a list of matches
+        def calc_mini_stats(match_list, side_filter=None):
+            # side_filter: 'home', 'away', or None (all)
+            stats = {'gp': 0, 'pts': 0, 'gf': 0, 'ga': 0}
+            for m, side in match_list:
+                if side_filter and side != side_filter:
+                    continue
+                
+                is_home = (side == 'home')
+                my_score = m.home_score if is_home else m.away_score
+                opp_score = m.away_score if is_home else m.home_score
+                
+                if my_score is None: my_score = 0
+                if opp_score is None: opp_score = 0
+                
+                stats['gp'] += 1
+                stats['gf'] += my_score
+                stats['ga'] += opp_score
+                
+                if my_score > opp_score:
+                    stats['pts'] += 3
+                elif my_score == opp_score:
+                    stats['pts'] += 1
+            return stats
+
+        for t_id, data in team_matches.items():
+            team = data['team']
+            matches = data['matches'] # Sorted by date ascending
+            
+            # Re-sort matches by date descending for "last 8" slicing
+            matches_desc = sorted(matches, key=lambda x: x[0].date if x[0].date else datetime.min, reverse=True)
+            
+            # 1. Points (All matches)
+            s = calc_mini_stats(matches)
+            if s['gp'] > 0:
+                rank_points.append({'team': team, 'gp': s['gp'], 'val': s['pts']})
+            
+            # 2. Form (Last 8)
+            s = calc_mini_stats(matches_desc[:8])
+            if s['gp'] > 0:
+                rank_form8.append({'team': team, 'gp': s['gp'], 'val': s['pts']})
+                
+            # 3. Home
+            s = calc_mini_stats(matches, 'home')
+            if s['gp'] > 0:
+                rank_home.append({'team': team, 'gp': s['gp'], 'val': s['pts']})
+                
+            # 4. Away
+            s = calc_mini_stats(matches, 'away')
+            if s['gp'] > 0:
+                rank_away.append({'team': team, 'gp': s['gp'], 'val': s['pts']})
+            
+            # 5. Offence (All)
+            s = calc_mini_stats(matches)
+            if s['gp'] > 0:
+                rank_offence.append({'team': team, 'gp': s['gp'], 'val': s['gf']})
+                
+            # 6. Defence (All)
+            if s['gp'] > 0:
+                rank_defence.append({'team': team, 'gp': s['gp'], 'val': s['ga']})
+                
+            # 7. Offence (Last 8)
+            s = calc_mini_stats(matches_desc[:8])
+            if s['gp'] > 0:
+                rank_offence8.append({'team': team, 'gp': s['gp'], 'val': s['gf']})
+                
+            # 8. Defence (Last 8)
+            if s['gp'] > 0:
+                rank_defence8.append({'team': team, 'gp': s['gp'], 'val': s['ga']})
+                
+            # 9. Offence (Home)
+            s = calc_mini_stats(matches, 'home')
+            if s['gp'] > 0:
+                rank_offence_home.append({'team': team, 'gp': s['gp'], 'val': s['gf']})
+            
+            # 10. Defence (Home)
+            if s['gp'] > 0:
+                rank_defence_home.append({'team': team, 'gp': s['gp'], 'val': s['ga']})
+                
+            # 11. Offence (Away)
+            s = calc_mini_stats(matches, 'away')
+            if s['gp'] > 0:
+                rank_offence_away.append({'team': team, 'gp': s['gp'], 'val': s['gf']})
+                
+            # 12. Defence (Away)
+            if s['gp'] > 0:
+                rank_defence_away.append({'team': team, 'gp': s['gp'], 'val': s['ga']})
+
+        # Sorting
+        # Descending for Points, GF
+        # Ascending for GA (Defence)
+        
+        rank_points.sort(key=lambda x: x['val'], reverse=True)
+        rank_form8.sort(key=lambda x: x['val'], reverse=True)
+        rank_home.sort(key=lambda x: x['val'], reverse=True)
+        rank_away.sort(key=lambda x: x['val'], reverse=True)
+        
+        rank_offence.sort(key=lambda x: x['val'], reverse=True)
+        rank_defence.sort(key=lambda x: x['val']) # Low is good
+        
+        rank_offence8.sort(key=lambda x: x['val'], reverse=True)
+        rank_defence8.sort(key=lambda x: x['val'])
+        
+        rank_offence_home.sort(key=lambda x: x['val'], reverse=True)
+        rank_defence_home.sort(key=lambda x: x['val'])
+        
+        rank_offence_away.sort(key=lambda x: x['val'], reverse=True)
+        rank_defence_away.sort(key=lambda x: x['val'])
+        
+        # Group into overview tables for template iteration
+        overview_tables = [
+            {'title': 'Points', 'rows': rank_points, 'col_label': 'pts', 'col_key': 'val', 'header_color': '#333'},
+            {'title': 'Form (last 8)', 'rows': rank_form8, 'col_label': 'pts', 'col_key': 'val', 'header_color': '#333'},
+            {'title': 'Home', 'rows': rank_home, 'col_label': 'pts', 'col_key': 'val', 'header_color': '#333'},
+            {'title': 'Away', 'rows': rank_away, 'col_label': 'pts', 'col_key': 'val', 'header_color': '#333'},
+            {'title': 'Offence', 'rows': rank_offence, 'col_label': 'GF', 'col_key': 'val', 'header_color': '#1e40af'},
+            {'title': 'Defence', 'rows': rank_defence, 'col_label': 'GA', 'col_key': 'val', 'header_color': '#dc2626'},
+            
+            {'title': 'Offence (last 8)', 'rows': rank_offence8, 'col_label': 'GF', 'col_key': 'val', 'header_color': '#1e40af'},
+            {'title': 'Defence (last 8)', 'rows': rank_defence8, 'col_label': 'GA', 'col_key': 'val', 'header_color': '#dc2626'},
+            {'title': 'Offence (home)', 'rows': rank_offence_home, 'col_label': 'GF', 'col_key': 'val', 'header_color': '#1e40af'},
+            {'title': 'Defence (home)', 'rows': rank_defence_home, 'col_label': 'GA', 'col_key': 'val', 'header_color': '#dc2626'},
+            {'title': 'Offence (away)', 'rows': rank_offence_away, 'col_label': 'GF', 'col_key': 'val', 'header_color': '#1e40af'},
+            {'title': 'Defence (away)', 'rows': rank_defence_away, 'col_label': 'GA', 'col_key': 'val', 'header_color': '#dc2626'},
+        ]
+        context['overview_tables'] = overview_tables
+
+        # Aggregate Stats per Team
+        rows = []
+        ht_rows = []
+        bts_rows = []
+        cs_rows = []
+        fts_rows = []
+        wtn_rows = []
+        league_totals = init_stats()
+        ht_league_totals = init_stats()
+
+        for t_id, data in team_matches.items():
+            team = data['team']
+            all_matches = data['matches']
+            
+            # --- Full Time Stats Calculation ---
+            ft_matches = all_matches[:]
+            if stats_type == 'last8':
+                ft_matches = ft_matches[-8:]
+            
+            s = init_stats()
+            for m, side in ft_matches:
+                if stats_type == 'home' and side != 'home': continue
+                if stats_type == 'away' and side != 'away': continue
+                
+                is_home = (side == 'home')
+                my_score = m.home_score if is_home else m.away_score
+                opp_score = m.away_score if is_home else m.home_score
+                
+                if my_score is None: my_score = 0
+                if opp_score is None: opp_score = 0
+                
+                total_g = my_score + opp_score
+                bts_val = (my_score > 0 and opp_score > 0)
+                
+                s['gp'] += 1
+                s['gf'] += my_score
+                s['ga'] += opp_score
+                s['total_goals'] += total_g
+                
+                if total_g > 0.5: s['over05'] += 1
+                if total_g > 1.5: s['over15'] += 1
+                if total_g > 2.5: s['over25'] += 1
+                if total_g > 3.5: s['over35'] += 1
+                if total_g > 4.5: s['over45'] += 1
+                if total_g > 5.5: s['over55'] += 1
+                
+                if bts_val: s['bts'] += 1
+                if opp_score == 0: s['cs'] += 1
+                if my_score == 0: s['fts'] += 1
+                
+                if my_score > opp_score and opp_score == 0: s['wtn'] += 1
+                if my_score < opp_score and my_score == 0: s['ltn'] += 1
+
+            # --- Half Time Stats Calculation ---
+            ht_matches = all_matches[:]
+            if ht_stats_type == 'last8':
+                ht_matches = ht_matches[-8:]
+
+            ht_s = init_stats()
+            for m, side in ht_matches:
+                if ht_stats_type == 'home' and side != 'home': continue
+                if ht_stats_type == 'away' and side != 'away': continue
+
+                is_home = (side == 'home')
+                ht_my = m.ht_home_score if is_home else m.ht_away_score
+                ht_opp = m.ht_away_score if is_home else m.ht_home_score
+
+                if ht_my is None: ht_my = 0
+                if ht_opp is None: ht_opp = 0
+
+                ht_total = ht_my + ht_opp
+                ht_bts = (ht_my > 0 and ht_opp > 0)
+
+                ht_s['gp'] += 1
+                ht_s['gf'] += ht_my
+                ht_s['ga'] += ht_opp
+                ht_s['total_goals'] += ht_total
+
+                if ht_total > 0.5: ht_s['over05'] += 1
+                if ht_total > 1.5: ht_s['over15'] += 1
+                if ht_total > 2.5: ht_s['over25'] += 1
+                if ht_total > 3.5: ht_s['over35'] += 1
+                if ht_total > 4.5: ht_s['over45'] += 1
+                if ht_total > 5.5: ht_s['over55'] += 1
+
+                if ht_bts: ht_s['bts'] += 1
+                if ht_opp == 0: ht_s['cs'] += 1
+                if ht_my == 0: ht_s['fts'] += 1
+                
+                if ht_my > ht_opp and ht_opp == 0: ht_s['wtn'] += 1
+                if ht_my < ht_opp and ht_my == 0: ht_s['ltn'] += 1
+
+            # --- BTS Stats Calculation (New) ---
+            bts_s = init_stats()
+            for m, side in all_matches:
+                 if bts_type == 'home' and side != 'home': continue
+                 if bts_type == 'away' and side != 'away': continue
+                 
+                 is_home = (side == 'home')
+                 my_score = m.home_score if is_home else m.away_score
+                 opp_score = m.away_score if is_home else m.home_score
+                 if my_score is None: my_score = 0
+                 if opp_score is None: opp_score = 0
+                 
+                 if my_score > 0 and opp_score > 0:
+                     bts_s['bts'] += 1
+                 bts_s['gp'] += 1
+
+            # --- CS Stats Calculation (New) ---
+            cs_s = init_stats()
+            for m, side in all_matches:
+                 if cs_type == 'home' and side != 'home': continue
+                 if cs_type == 'away' and side != 'away': continue
+                 
+                 is_home = (side == 'home')
+                 opp_score = m.away_score if is_home else m.home_score
+                 if opp_score is None: opp_score = 0
+                 
+                 if opp_score == 0:
+                     cs_s['cs'] += 1
+                 cs_s['gp'] += 1
+
+            # --- FTS Stats Calculation (New) ---
+            fts_s = init_stats()
+            for m, side in all_matches:
+                 if fts_type == 'home' and side != 'home': continue
+                 if fts_type == 'away' and side != 'away': continue
+                 
+                 is_home = (side == 'home')
+                 my_score = m.home_score if is_home else m.away_score
+                 if my_score is None: my_score = 0
+                 
+                 if my_score == 0:
+                     fts_s['fts'] += 1
+                 fts_s['gp'] += 1
+
+            # --- WTN Stats Calculation (Now: Scored in Both Halves - SBH) ---
+            # Keeping variable name 'wtn' to avoid massive refactor, but logic is SBH
+            wtn_s = init_stats()
+            for m, side in all_matches:
+                 if wtn_type == 'home' and side != 'home': continue
+                 if wtn_type == 'away' and side != 'away': continue
+                 
+                 is_home = (side == 'home')
+                 
+                 # Full Time Score
+                 my_score = m.home_score if is_home else m.away_score
+                 if my_score is None: my_score = 0
+                 
+                 # Half Time Score
+                 my_ht_score = m.ht_home_score if is_home else m.ht_away_score
+                 if my_ht_score is None: my_ht_score = 0
+                 
+                 # 2nd Half Score
+                 my_2h_score = my_score - my_ht_score
+                 
+                 # Scored in Both Halves Logic: >0 in 1st AND >0 in 2nd
+                 if my_ht_score > 0 and my_2h_score > 0:
+                     wtn_s['wtn'] += 1
+                 wtn_s['gp'] += 1
+
+            gp = s['gp']
+            if gp == 0: continue
+            
+            # Helper to create row dict
+            def make_row(team_obj, stats_dict):
+                g_played = stats_dict['gp']
+                if g_played == 0: return None
+                return {
+                    'team': team_obj,
+                    'gp': g_played,
+                    'avg_total': stats_dict['total_goals'] / g_played,
+                    'over05_pct': (stats_dict['over05'] / g_played) * 100,
+                    'over15_pct': (stats_dict['over15'] / g_played) * 100,
+                    'over25_pct': (stats_dict['over25'] / g_played) * 100,
+                    'over35_pct': (stats_dict['over35'] / g_played) * 100,
+                    'over45_pct': (stats_dict['over45'] / g_played) * 100,
+                    'over55_pct': (stats_dict['over55'] / g_played) * 100,
+                    'bts_pct': (stats_dict['bts'] / g_played) * 100,
+                    'cs_pct': (stats_dict['cs'] / g_played) * 100,
+                    'fts_pct': (stats_dict['fts'] / g_played) * 100,
+                    'wtn_pct': (stats_dict['wtn'] / g_played) * 100,
+                    'ltn_pct': (stats_dict['ltn'] / g_played) * 100,
+                }
+
+            row = make_row(team, s)
+            if row: rows.append(row)
+
+            ht_row = make_row(team, ht_s)
+            if ht_row: ht_rows.append(ht_row)
+
+            # BTS Row
+            if bts_s['gp'] > 0:
+                bts_rows.append({
+                    'team': team,
+                    'gp': bts_s['gp'],
+                    'bts': bts_s['bts'],
+                    'bts_pct': (bts_s['bts'] / bts_s['gp']) * 100
+                })
+
+            # CS Row
+            if cs_s['gp'] > 0:
+                cs_rows.append({
+                    'team': team,
+                    'gp': cs_s['gp'],
+                    'cs': cs_s['cs'],
+                    'cs_pct': (cs_s['cs'] / cs_s['gp']) * 100
+                })
+            
+            # FTS Row
+            if fts_s['gp'] > 0:
+                fts_rows.append({
+                    'team': team,
+                    'gp': fts_s['gp'],
+                    'fts': fts_s['fts'],
+                    'fts_pct': (fts_s['fts'] / fts_s['gp']) * 100
+                })
+
+            # WTN Row
+            if wtn_s['gp'] > 0:
+                wtn_rows.append({
+                    'team': team,
+                    'gp': wtn_s['gp'],
+                    'wtn': wtn_s['wtn'],
+                    'wtn_pct': (wtn_s['wtn'] / wtn_s['gp']) * 100
+                })
+
+            # League Totals Accumulation
+            for k in league_totals:
+                league_totals[k] += s[k]
+                ht_league_totals[k] += ht_s[k]
+
+        # Sort by Avg Total Goals Descending
+        rows.sort(key=lambda x: x['avg_total'], reverse=True)
+        ht_rows.sort(key=lambda x: x['avg_total'], reverse=True)
+        
+        # Sort BTS and CS
+        bts_rows.sort(key=lambda x: x['bts'], reverse=True)
+        cs_rows.sort(key=lambda x: x['cs'], reverse=True)
+        fts_rows.sort(key=lambda x: x['fts'], reverse=True)
+        wtn_rows.sort(key=lambda x: x['wtn'], reverse=True)
+        
+        # Calculate League Average Row
+        def make_league_avg(totals_dict):
+            lg_gp = totals_dict['gp']
+            if lg_gp > 0:
+                return {
+                    'team_name': 'League average',
+                    'gp': lg_gp, 
+                    'avg_total': totals_dict['total_goals'] / lg_gp,
+                    'over05_pct': (totals_dict['over05'] / lg_gp) * 100,
+                    'over15_pct': (totals_dict['over15'] / lg_gp) * 100,
+                    'over25_pct': (totals_dict['over25'] / lg_gp) * 100,
+                    'over35_pct': (totals_dict['over35'] / lg_gp) * 100,
+                    'over45_pct': (totals_dict['over45'] / lg_gp) * 100,
+                    'over55_pct': (totals_dict['over55'] / lg_gp) * 100,
+                    'bts_pct': (totals_dict['bts'] / lg_gp) * 100,
+                    'cs_pct': (totals_dict['cs'] / lg_gp) * 100,
+                    'fts_pct': (totals_dict['fts'] / lg_gp) * 100,
+                    'wtn_pct': (totals_dict['wtn'] / lg_gp) * 100,
+                    'ltn_pct': (totals_dict['ltn'] / lg_gp) * 100,
+                }
+            return {}
+
+        context['goal_stats_rows'] = rows
+        context['league_avg_row'] = make_league_avg(league_totals)
+        
+        context['ht_goal_stats_rows'] = ht_rows
+        context['ht_league_avg_row'] = make_league_avg(ht_league_totals)
+        
+        context['bts_rows'] = bts_rows
+        context['cs_rows'] = cs_rows
+        context['fts_rows'] = fts_rows
+        context['wtn_rows'] = wtn_rows
+        
+        # --- General League Stats (for the new container) ---
+        # Re-fetch all_matches as a queryset to ensure it's not a list of tuples
+        all_matches_qs = Match.objects.filter(
+            league=league,
+            season=latest_season,
+            status='Finished'
+        ).prefetch_related('goals', 'home_team', 'away_team')
+        total_matches_played = all_matches_qs.count()
+        total_season_matches = 380 # Assuming a standard 20-team league
+        
+        home_wins = 0
+        away_wins = 0
+        draws = 0
+        total_goals = 0
+        over_1_5 = 0
+        over_2_5 = 0
+        over_3_5 = 0
+        btts_yes = 0
+        home_goals_total = 0
+        away_goals_total = 0
+        no_goal_scored = 0
+
+        # First Goal Stats
+        home_scored_first = 0
+        away_scored_first = 0
+        home_first_goal_mins = []
+        away_first_goal_mins = []
+
+        for m in all_matches_qs:
+            if m.home_score is not None and m.away_score is not None:
+                total_goals += m.home_score + m.away_score
+                home_goals_total += m.home_score
+                away_goals_total += m.away_score
+
+                if m.home_score == 0 and m.away_score == 0:
+                    no_goal_scored += 1
+
+                # Determine who scored first
+                match_goals = list(m.goals.all())
+                # Sort by minute just in case, though usually insertion order or Meta ordering handles it
+                # Assuming Meta ordering might not be set for minute, let's sort
+                match_goals.sort(key=lambda g: g.minute)
+                
+                if match_goals:
+                    first_goal = match_goals[0]
+                    # Check if home or away team scored first
+                    if first_goal.team_id == m.home_team_id:
+                        home_scored_first += 1
+                        home_first_goal_mins.append(first_goal.minute)
+                    elif first_goal.team_id == m.away_team_id:
+                        away_scored_first += 1
+                        away_first_goal_mins.append(first_goal.minute)
+
+                if m.home_score > m.away_score:
+                    home_wins += 1
+                elif m.away_score > m.home_score:
+                    away_wins += 1
+                else:
+                    draws += 1
+
+                if (m.home_score + m.away_score) > 1.5:
+                    over_1_5 += 1
+                if (m.home_score + m.away_score) > 2.5:
+                    over_2_5 += 1
+                if (m.home_score + m.away_score) > 3.5:
+                    over_3_5 += 1
+                
+                if m.home_score > 0 and m.away_score > 0:
+                    btts_yes += 1
+
+        # Calculate Averages for First Goal Minutes
+        avg_home_first_min = sum(home_first_goal_mins) / len(home_first_goal_mins) if home_first_goal_mins else 0
+        avg_away_first_min = sum(away_first_goal_mins) / len(away_first_goal_mins) if away_first_goal_mins else 0
+
+        # Prepare context data
+        if total_matches_played > 0:
+            context['league_stats'] = {
+                'matches_played': total_matches_played,
+                'total_season_matches': total_season_matches,
+                'matches_played_pct': (total_matches_played / total_season_matches) * 100 if total_season_matches > 0 else 0,
+                'home_wins_pct': (home_wins / total_matches_played) * 100,
+                'draws_pct': (draws / total_matches_played) * 100,
+                'away_wins_pct': (away_wins / total_matches_played) * 100,
+                'total_goals': total_goals,
+                'goals_per_match': total_goals / total_matches_played,
+                'over_1_5_pct': (over_1_5 / total_matches_played) * 100,
+                'over_2_5_pct': (over_2_5 / total_matches_played) * 100,
+                'over_3_5_pct': (over_3_5 / total_matches_played) * 100,
+                'btts_pct': (btts_yes / total_matches_played) * 100,
+                'no_goal_scored_pct': (no_goal_scored / total_matches_played) * 100,
+                'home_goals_per_match': home_goals_total / total_matches_played,
+                'away_goals_per_match': away_goals_total / total_matches_played,
+                
+                # First Goal Stats
+                'home_scored_first_pct': (home_scored_first / total_matches_played) * 100,
+                'away_scored_first_pct': (away_scored_first / total_matches_played) * 100,
+                'avg_home_first_min': avg_home_first_min,
+                'avg_away_first_min': avg_away_first_min,
+            }
+        else:
+            # Default empty state
+            context['league_stats'] = {
+                'matches_played': 0, 'total_season_matches': total_season_matches, 'matches_played_pct': 0,
+                'home_wins_pct': 0, 'draws_pct': 0, 'away_wins_pct': 0, 'total_goals': 0,
+                'goals_per_match': 0, 'over_1_5_pct': 0, 'over_2_5_pct': 0, 'over_3_5_pct': 0,
+                'btts_pct': 0, 'no_goal_scored_pct': 0, 'home_goals_per_match': 0, 'away_goals_per_match': 0,
+                'home_scored_first_pct': 0, 'away_scored_first_pct': 0, 'avg_home_first_min': 0, 'avg_away_first_min': 0,
+            }
+
+        # --- Segments Table Logic ---
+        segments_data = []
+        if standings.exists():
+            max_pts = standings[0].points
+            if max_pts > 0:
+                step = max_pts / 5.0
+                # Initialize 5 segments (0: Lowest/5th, 4: Highest/1st)
+                # Display order will be 5th -> 1st (Low -> High)
+                segments = [{'teams': [], 'min': i*step, 'max': (i+1)*step, 'rank': 5-i} for i in range(5)]
+                
+                for standing in standings:
+                    p = standing.points
+                    idx = int(p / step)
+                    if idx >= 5: idx = 4 # Cap at max
+                    # If points exactly 0? int(0) = 0. Correct.
+                    # If points close to boundary? 9.99 / 10 = 0. 10.0 / 10 = 1.
+                    # Boundary check: strict inequality?
+                    # The standard: [0, step), [step, 2step)... [4step, 5step]
+                    # int() behaves like floor.
+                    # 50/10 = 5. -> index 4.
+                    # 49/10 = 4.9 -> index 4.
+                    # 40/10 = 4. -> index 4.
+                    # 39/10 = 3.9 -> index 3.
+                    # So range is [40, 50]. [30, 40).
+                    # Actually typically segments are inclusive of upper bound if it's the max.
+                    # But int() logic puts 40 into index 4 (1st segment).
+                    # 39 into index 3 (2nd segment).
+                    # So 1st Segment is [40, 50].
+                    # 2nd Segment is [30, 40).
+                    # This seems correct.
+                    
+                    segments[idx]['teams'].append(standing)
+                
+                context['segments_table'] = segments
+                context['max_pts'] = max_pts
+        
+        return context
+
+
+class HeadToHeadView(TemplateView):
+    template_name = 'matches/h2h_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        league_slug = self.kwargs.get('league_name')
+        team1_slug = self.kwargs.get('team1_name')
+        team2_slug = self.kwargs.get('team2_name')
+
+        # Helper to find team by slug/name
+        def get_team(slug):
+            if not slug: return None
+            name = slug.replace('-', ' ')
+            t = Team.objects.filter(name__iexact=name).first()
+            if not t:
+                t = Team.objects.filter(name__icontains=name).first()
+            return t
+
+        def get_league(slug):
+            if not slug: return None
+            name = slug.replace('-', ' ')
+            l = League.objects.filter(name__iexact=name).first()
+            if not l:
+                l = League.objects.filter(name__icontains=name).first()
+            return l
+
+        league = get_league(league_slug)
+        team1 = get_team(team1_slug)
+        team2 = get_team(team2_slug)
+
+        context['league'] = league
+        context['team1'] = team1
+        context['team2'] = team2
+
+        if team1 and team2:
+            matches = Match.objects.filter(
+                (models.Q(home_team=team1) & models.Q(away_team=team2)) |
+                (models.Q(home_team=team2) & models.Q(away_team=team1))
+            ).filter(status='Finished').order_by('-date')
+            context['matches'] = matches
+        else:
+            context['matches'] = []
+
+        return context
+
