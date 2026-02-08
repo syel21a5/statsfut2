@@ -1526,6 +1526,73 @@
                 </div>
             </div>
 
+            <!-- Timing of goals -->
+            <div style="font-weight: bold; margin-bottom: 5px; color: #fff; font-size: 0.85rem;">
+                Timing of goals
+            </div>
+            <div class="ss-card" style="margin-bottom: 20px;">
+                <table class="ss-table" style="font-size: 0.8rem; border-collapse: collapse; text-align: center;">
+                    <thead>
+                        <tr style="background: #666; color: #fff;">
+                            <th style="text-align: left; padding-left: 10px;">Time Period</th>
+                            <th>0-15</th>
+                            <th>16-30</th>
+                            <th>31-45</th>
+                            <th>46-60</th>
+                            <th>61-75</th>
+                            <th>76-90+</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background: #d4edda;">
+                            <td style="text-align: left; padding-left: 10px;">Scored</td>
+                            {% for c in timing_stats.scored.total %}
+                            <td>{{ c }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr style="background: #f8d7da;">
+                            <td style="text-align: left; padding-left: 10px;">Conceded</td>
+                            {% for c in timing_stats.conceded.total %}
+                            <td>{{ c }}</td>
+                            {% endfor %}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Goal types -->
+            <div style="font-weight: bold; margin-bottom: 5px; color: #fff; font-size: 0.85rem;">
+                Goal types
+            </div>
+            <div class="ss-card" style="margin-bottom: 20px;">
+                <table class="ss-table" style="font-size: 0.8rem; border-collapse: collapse; text-align: center;">
+                    <thead>
+                        <tr style="background: #666; color: #fff;">
+                            <th style="text-align: left; padding-left: 10px;">Type</th>
+                            <th>Scored</th>
+                            <th>Conceded</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background: #eee;">
+                            <td style="text-align: left; padding-left: 10px;">Regular Play</td>
+                            <td style="color: green; font-weight: bold;">{{ goal_types.scored.total.regular }}</td>
+                            <td style="color: red; font-weight: bold;">{{ goal_types.conceded.total.regular }}</td>
+                        </tr>
+                        <tr style="background: #eee;">
+                            <td style="text-align: left; padding-left: 10px;">Penalty</td>
+                            <td style="color: green; font-weight: bold;">{{ goal_types.scored.total.penalty }}</td>
+                            <td style="color: red; font-weight: bold;">{{ goal_types.conceded.total.penalty }}</td>
+                        </tr>
+                        <tr style="background: #eee;">
+                            <td style="text-align: left; padding-left: 10px;">Own Goal</td>
+                            <td style="color: green; font-weight: bold;">{{ goal_types.scored.total.own_goal }}</td>
+                            <td style="color: red; font-weight: bold;">{{ goal_types.conceded.total.own_goal }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
             <!-- 2. Goal Margins -->
             <div style="font-weight: bold; margin-bottom: 5px; color: #fff; font-size: 0.85rem;">
                 Goal margins
@@ -1714,6 +1781,83 @@
                         style="background: #fff; border: 1px solid #ccc; padding: 3px 10px; border-radius: 4px; text-decoration: none; color: #333; font-size: 0.75rem;">League
                         Half-time stats</a>
                 </div>
+            </div>
+
+            <!-- HT/FT Matrix -->
+            <div style="font-weight: bold; margin-bottom: 5px; color: #fff; font-size: 0.85rem;">
+                Half-time / Full-time
+            </div>
+            <div class="ss-card" style="margin-bottom: 20px;">
+                <table class="ss-table" style="font-size: 0.8rem; border-collapse: collapse; text-align: center;">
+                    <thead>
+                        <tr style="background: #666; color: #fff;">
+                            <th style="text-align: left; padding-left: 10px;">HT \ FT</th>
+                            <th>Win</th>
+                            <th>Draw</th>
+                            <th>Loss</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- HT Win -->
+                        <tr style="background: #d4edda;">
+                            <td style="text-align: left; padding-left: 10px;">HT Win</td>
+                            <td>{{ ht_ft_matrix.total.0.0 }}</td> <!-- HT Win / FT Win -->
+                            <td>{{ ht_ft_matrix.total.0.1 }}</td> <!-- HT Win / FT Draw -->
+                            <td>{{ ht_ft_matrix.total.0.2 }}</td> <!-- HT Win / FT Loss -->
+                        </tr>
+                        <!-- HT Draw -->
+                        <tr style="background: #fff3cd;">
+                            <td style="text-align: left; padding-left: 10px;">HT Draw</td>
+                            <td>{{ ht_ft_matrix.total.1.0 }}</td> <!-- HT Draw / FT Win -->
+                            <td>{{ ht_ft_matrix.total.1.1 }}</td> <!-- HT Draw / FT Draw -->
+                            <td>{{ ht_ft_matrix.total.1.2 }}</td> <!-- HT Draw / FT Loss -->
+                        </tr>
+                        <!-- HT Loss -->
+                        <tr style="background: #f8d7da;">
+                            <td style="text-align: left; padding-left: 10px;">HT Loss</td>
+                            <td>{{ ht_ft_matrix.total.2.0 }}</td> <!-- HT Loss / FT Win -->
+                            <td>{{ ht_ft_matrix.total.2.1 }}</td> <!-- HT Loss / FT Draw -->
+                            <td>{{ ht_ft_matrix.total.2.2 }}</td> <!-- HT Loss / FT Loss -->
+                        </tr>
+                    </tbody>
+                </table>
+                 <div style="padding: 5px; font-size: 0.75rem; color: #555; text-align: center;">
+                    (Total matches)
+                </div>
+            </div>
+
+            <!-- Cards -->
+            <div style="font-weight: bold; margin-bottom: 5px; color: #fff; font-size: 0.85rem;">
+                Cards
+            </div>
+            <div class="ss-card" style="margin-bottom: 20px;">
+                <table class="ss-table" style="font-size: 0.8rem; border-collapse: collapse; text-align: center;">
+                    <thead>
+                        <tr style="background: #666; color: #fff;">
+                            <th style="text-align: left; padding-left: 10px;">Type</th>
+                            <th>Home</th>
+                            <th>Away</th>
+                            <th>Total</th>
+                            <th>Avg</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                         <tr style="background: #fff3cd;">
+                            <td style="text-align: left; padding-left: 10px;">Yellow Cards</td>
+                            <td>{{ card_stats.yellow.home }}</td>
+                            <td>{{ card_stats.yellow.away }}</td>
+                            <td style="font-weight: bold;">{{ card_stats.yellow.total }}</td>
+                            <td style="color: blue;">{{ card_avgs.yellow.total }}</td>
+                        </tr>
+                        <tr style="background: #f8d7da;">
+                            <td style="text-align: left; padding-left: 10px;">Red Cards</td>
+                            <td>{{ card_stats.red.home }}</td>
+                            <td>{{ card_stats.red.away }}</td>
+                            <td style="font-weight: bold;">{{ card_stats.red.total }}</td>
+                            <td style="color: blue;">{{ card_avgs.red.total }}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
             <!-- 5. Corners -->
