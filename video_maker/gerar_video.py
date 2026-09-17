@@ -8,9 +8,9 @@ import argparse
 import requests
 from playwright.sync_api import sync_playwright
 try:
-    from moviepy.editor import VideoFileClip, AudioFileClip
+    from moviepy.editor import VideoFileClip, AudioFileClip, ImageClip, concatenate_videoclips
 except ImportError:
-    from moviepy import VideoFileClip, AudioFileClip
+    from moviepy import VideoFileClip, AudioFileClip, ImageClip, concatenate_videoclips
 import unicodedata
 import difflib
 
@@ -820,6 +820,9 @@ def capture_video_recording(match_url, temp_dir, duration, timeline=None):
                     }
                 }
             });
+            // Forçar remoção direta do banner de cookies pelo ID
+            var cb = document.getElementById('cookieConsentBanner');
+            if (cb) cb.remove();
             // Remover modais normais
             document.querySelectorAll('.video-script-modal, .modal-backdrop, .modal').forEach(e => e.remove());
             
@@ -836,14 +839,17 @@ def capture_video_recording(match_url, temp_dir, duration, timeline=None):
                 else btn.style.display = 'none';
             });
             
-            // Ocultar a barra lateral e o cabeçalho do site para focar 100% no jogo
+            // Ocultar a barra lateral, cabeçalho e bandeiras do site para focar 100% no jogo
             document.querySelectorAll('aside, .sidebar, .left-sidebar, #sidebar, nav, header, .col-lg-3, .col-md-3').forEach(e => {
                 if(e) e.style.display = 'none';
             });
             
-            // Ajustar layout para ocupar bem a tela da gravacao (com pequenas bordas)
+            // Ajustar layout para ocupar bem a tela da gravacao (com pequenas bordas) e garantir ocultação de distrações
             const style = document.createElement('style');
             style.innerHTML = `
+                main.main-content > header, main.main-content > div.d-flex.flex-wrap, footer, .footer {
+                    display: none !important;
+                }
                 body {
                     zoom: 1.25 !important;
                 }

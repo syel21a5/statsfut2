@@ -359,7 +359,7 @@ def run_choreography(page, total_duration, timeline=None):
             }
             
             /* Ocultar cabeçalhos desnecessários e focar estritamente nas probabilidades */
-            header, nav, .navbar, .country-flags-bar, .flags-container, footer, .footer,
+            main.main-content > header, main.main-content > div.d-flex.flex-wrap, aside, .sidebar, header, nav, .navbar, .country-flags-bar, .flags-container, footer, .footer,
             .match-header-top, .breadcrumb, .match-info-banner, .league-banner {
                 display: none !important;
             }
@@ -374,7 +374,7 @@ def run_choreography(page, total_duration, timeline=None):
                 padding: 0 !important;
             }
             body {
-                zoom: 1.35 !important;
+                zoom: 1.2 !important;
                 filter: contrast(1.12) brightness(1.05) !important;
             }
             .container, .container-fluid, .premium-dashboard, main, .main-content {
@@ -734,6 +734,9 @@ def capture_video_recording(match_url, temp_dir, duration, timeline=None):
                     }
                 }
             });
+            // Forçar remoção direta do banner de cookies pelo ID
+            var cb = document.getElementById('cookieConsentBanner');
+            if (cb) cb.remove();
             // Remover modais normais
             document.querySelectorAll('.video-script-modal, .modal-backdrop, .modal').forEach(e => e.remove());
             
@@ -755,15 +758,14 @@ def capture_video_recording(match_url, temp_dir, duration, timeline=None):
                 if(e) e.style.display = 'none';
             });
 
-            // Ocultar cabeçalhos desnecessários da página (topo, bandeiras, hero e seo)
+            // Ocultar cabeçalhos desnecessários da página (topo, bandeiras e título)
             document.querySelectorAll('main.main-content > header').forEach(e => e.style.display = 'none');
             document.querySelectorAll('main.main-content > div.d-flex.flex-wrap').forEach(e => e.style.display = 'none'); // Barra de bandeiras
-            document.querySelectorAll('main.main-content > div.row.align-items-center.mb-4').forEach(e => e.style.display = 'none'); // Topo da partida
-            document.querySelectorAll('.match-hero-premium, .seo-match-text').forEach(e => e.style.display = 'none');
-            document.querySelectorAll('.market-tabs').forEach(e => e.style.display = 'none');
+            document.querySelectorAll('main.main-content > div.row.align-items-center.mb-4').forEach(e => e.style.display = 'none'); // Título "Real Betis vs Getafe"
+            // match-hero-premium mantido visível para preencher a altura do Shorts
             document.querySelectorAll('.glass-panel.mt-4.mb-4, .ad-slot-inline, footer').forEach(e => e.style.display = 'none');
             
-            // Ajustar layout para Shorts/Reels/TikTok: 100% preenchimento, sem margens pretas
+            // Ajustar layout para Shorts/Reels/TikTok: centralizado e sem vazio
             const style = document.createElement('style');
             style.innerHTML = `
                 html, body {
@@ -778,27 +780,26 @@ def capture_video_recording(match_url, temp_dir, duration, timeline=None):
                     padding: 0 !important;
                     width: 100% !important;
                     max-width: 100% !important;
+                    display: flex !important;
+                    flex-direction: column !important;
+                    justify-content: center !important;
+                    min-height: 100vh !important;
                 }
                 .container, main, .container-fluid, .col-lg-9, .col-md-9 {
                     max-width: 100% !important;
                     width: 100% !important;
-                    margin: 0 !important;
-                    padding: 10px !important;
+                    margin: 0 auto !important;
+                    padding: 80px 40px 40px 80px !important;
                     flex: 0 0 100% !important;
                 }
                 /* Ocultar elementos desnecessários no vídeo */
+                main.main-content > header, main.main-content > div.d-flex.flex-wrap,
+                main.main-content > div.row.align-items-center.mb-4,
                 footer, .useful-links-box, .bottom-match-ad, .breadcrumb, #sidebar, aside,
                 header, nav, .navbar, .country-flags-bar, .flags-container, .top-header-statsfut,
-                .match-hero-premium, .match-header-card, .match-info-banner, .league-banner, .seo-match-text, .market-tabs,
+                .match-header-card, .match-info-banner, .league-banner, .page-title,
                 .h2h-section, .lineups-section, .standings-section, .comments-section, .news-section {
                     display: none !important;
-                }
-                /* Zoom focado exclusivamente nas estatísticas essenciais */
-                #tab-gols {
-                    zoom: 1.28 !important;
-                }
-                .row.g-2.mb-4 {
-                    zoom: 1.28 !important;
                 }
                 /* Aumentar contraste e brilho das fontes pequenas */
                 td, th, span, p, .text-muted {
