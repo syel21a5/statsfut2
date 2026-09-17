@@ -7,7 +7,10 @@ import urllib.error
 import argparse
 import requests
 from playwright.sync_api import sync_playwright
-from moviepy import VideoFileClip, AudioFileClip
+try:
+    from moviepy.editor import VideoFileClip, AudioFileClip, ImageClip, concatenate_videoclips
+except ImportError:
+    from moviepy import VideoFileClip, AudioFileClip, ImageClip, concatenate_videoclips
 
 def clear_screen():
     os.system("cls" if os.name == "nt" else "clear")
@@ -331,14 +334,15 @@ def run_choreography(page, total_duration, timeline=None):
         const style = document.createElement('style');
         style.innerHTML = `
             @keyframes sf-pulse-border {
-                0%, 100% { box-shadow: 0 0 8px rgba(249, 115, 22, 0.3); }
-                50% { box-shadow: 0 0 25px rgba(249, 115, 22, 0.9), 0 0 50px rgba(249, 115, 22, 0.4); }
+                0%, 100% { box-shadow: 0 0 15px rgba(249, 115, 22, 0.6); transform: scale(1.02); }
+                50% { box-shadow: 0 0 35px rgba(249, 115, 22, 1), 0 0 60px rgba(249, 115, 22, 0.6); transform: scale(1.05); }
             }
             .sf-highlight {
-                animation: sf-pulse-border 1.5s ease-in-out infinite !important;
-                border: 3px solid #f97316 !important;
-                border-radius: 10px !important;
-                z-index: 9999 !important;
+                animation: sf-pulse-border 1.2s ease-in-out infinite !important;
+                border: 4px solid #f97316 !important;
+                background: rgba(249, 115, 22, 0.25) !important;
+                border-radius: 12px !important;
+                z-index: 99999 !important;
                 position: relative !important;
             }
             .sf-highlight::after {
@@ -354,20 +358,40 @@ def run_choreography(page, total_duration, timeline=None):
                 z-index: 9999 !important;
             }
             
-            /* Ajustes de Enquadramento Mobile */
+            /* Ocultar cabeçalhos desnecessários e focar estritamente nas probabilidades */
+            header, nav, .navbar, .country-flags-bar, .flags-container, footer, .footer,
+            .match-header-top, .breadcrumb, .match-info-banner, .league-banner {
+                display: none !important;
+            }
+            
+            /* Ajustes de Enquadramento Mobile & Nitidez de Contraste */
             html, body {
+                width: 1080px !important;
+                max-width: 1080px !important;
                 overflow-x: hidden !important;
+                background-color: #0b111e !important;
+                margin: 0 !important;
+                padding: 0 !important;
             }
             body {
-                zoom: 1.05 !important;
+                zoom: 1.35 !important;
+                filter: contrast(1.12) brightness(1.05) !important;
             }
             .container, .container-fluid, .premium-dashboard, main, .main-content {
-                max-width: 98% !important;
-                width: 98% !important;
-                margin-left: auto !important;
-                margin-right: auto !important;
-                padding-left: 0 !important;
-                padding-right: 0 !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 10px !important;
+            }
+            /* Esconder elementos abaixo de Margins e Halves */
+            .h2h-section, .lineups-section, .standings-section, .comments-section, .news-section {
+                display: none !important;
+            }
+            /* Aumentar contraste das fontes pequenas do tema dark */
+            td, th, span, p, .text-muted {
+                font-weight: 600 !important;
+                color: #f8fafc !important;
+                text-shadow: 0 1px 2px rgba(0,0,0,0.8) !important;
             }
         `;
         document.head.appendChild(style);
@@ -503,7 +527,7 @@ def run_choreography(page, total_duration, timeline=None):
                     }
                 }
                 
-                const specificWidgets = document.querySelectorAll('.hbar-row, .mini-widget, .combo-pill, .lay-row, .tug-row, .mg-row, .card-pill');
+                const specificWidgets = document.querySelectorAll('.hbar-row, .mini-widget, .combo-pill, .lay-row, .tug-row, .mg-row, .card-pill, .stat-card-premium, .insight-chip, .prob-box');
                 
                 // PASSE 1: Texto exato (mais confiável)
                 let matches = [];
@@ -571,12 +595,14 @@ def run_choreography(page, total_duration, timeline=None):
 
             // 5. Destaca e rola até o elemento
             if (el) {
+                console.log("[SF-FOCUS] Elemento focado com sucesso:", hasText, el);
                 el.classList.add('sf-highlight');
                 const rect = el.getBoundingClientRect();
                 const targetY = window.scrollY + rect.top - (window.innerHeight - rect.height) / 2;
                 await window.sf_smooth_scroll_to(Math.max(0, targetY), 1500); // 1.5s rolagem suave
                 return true;
             } else {
+                console.warn("[SF-FOCUS] Elemento NÃO encontrado para o termo:", hasText);
                 // Fallback: se o elemento não for achado, rola até o painel ativo correspondente
                 const activeTab = document.querySelector('.market-tab-content.active');
                 if (activeTab) {
@@ -654,18 +680,20 @@ def capture_video_recording(match_url, temp_dir, duration, timeline=None):
         print("  - Lançando navegador (chromium)...")
         browser = p.chromium.launch(headless=True)
         
+        # Viewport perfeito 1080x1920 nativo sem espaço vazio lateral
         context = browser.new_context(
             viewport={"width": 1080, "height": 1920},
             record_video_dir=temp_dir,
             record_video_size={"width": 1080, "height": 1920},
             is_mobile=True,
-            user_agent="Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1",
+            has_touch=True,
+            user_agent="Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1",
             locale="pt-BR"
         )
         
         page = context.new_page()
         
-        # Super AdBlocker Nativo do Playwright para limpar a tela
+        page.on("console", lambda msg: print(f"  [BROWSER] {msg.text}"))
         def block_ads(route):
             url = route.request.url.lower()
             if any(ad_domain in url for ad_domain in ['googleads', 'doubleclick', 'googlesyndication', 'adsystem', 'adsbygoogle']):
@@ -722,22 +750,61 @@ def capture_video_recording(match_url, temp_dir, duration, timeline=None):
                 else btn.style.display = 'none';
             });
             
-            // Ocultar a barra lateral e o cabeçalho do site para focar 100% no jogo
+            // Ocultar a barra lateral, cabeçalhos gerais e barra de bandeiras
             document.querySelectorAll('aside, .sidebar, .left-sidebar, #sidebar, nav, header, .col-lg-3, .col-md-3').forEach(e => {
                 if(e) e.style.display = 'none';
             });
+
+            // Ocultar cabeçalhos desnecessários da página (topo, bandeiras, hero e seo)
+            document.querySelectorAll('main.main-content > header').forEach(e => e.style.display = 'none');
+            document.querySelectorAll('main.main-content > div.d-flex.flex-wrap').forEach(e => e.style.display = 'none'); // Barra de bandeiras
+            document.querySelectorAll('main.main-content > div.row.align-items-center.mb-4').forEach(e => e.style.display = 'none'); // Topo da partida
+            document.querySelectorAll('.match-hero-premium, .seo-match-text').forEach(e => e.style.display = 'none');
+            document.querySelectorAll('.market-tabs').forEach(e => e.style.display = 'none');
+            document.querySelectorAll('.glass-panel.mt-4.mb-4, .ad-slot-inline, footer').forEach(e => e.style.display = 'none');
             
-            // Ajustar layout para ocupar bem a tela da gravacao (Mobile/Vertical)
+            // Ajustar layout para Shorts/Reels/TikTok: 100% preenchimento, sem margens pretas
             const style = document.createElement('style');
             style.innerHTML = `
-                body {
-                    zoom: 1.05 !important;
+                html, body {
+                    background-color: #0b1120 !important;
+                    overflow-x: hidden !important;
+                    width: 100% !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                }
+                .main-content {
+                    margin-left: 0 !important;
+                    padding: 0 !important;
+                    width: 100% !important;
+                    max-width: 100% !important;
                 }
                 .container, main, .container-fluid, .col-lg-9, .col-md-9 {
-                    max-width: 98% !important;
-                    width: 98% !important;
-                    margin: 0 auto !important;
+                    max-width: 100% !important;
+                    width: 100% !important;
+                    margin: 0 !important;
+                    padding: 10px !important;
                     flex: 0 0 100% !important;
+                }
+                /* Ocultar elementos desnecessários no vídeo */
+                footer, .useful-links-box, .bottom-match-ad, .breadcrumb, #sidebar, aside,
+                header, nav, .navbar, .country-flags-bar, .flags-container, .top-header-statsfut,
+                .match-hero-premium, .match-header-card, .match-info-banner, .league-banner, .seo-match-text, .market-tabs,
+                .h2h-section, .lineups-section, .standings-section, .comments-section, .news-section {
+                    display: none !important;
+                }
+                /* Zoom focado exclusivamente nas estatísticas essenciais */
+                #tab-gols {
+                    zoom: 1.28 !important;
+                }
+                .row.g-2.mb-4 {
+                    zoom: 1.28 !important;
+                }
+                /* Aumentar contraste e brilho das fontes pequenas */
+                td, th, span, p, .text-muted {
+                    font-weight: 600 !important;
+                    color: #f8fafc !important;
+                    text-shadow: 0 1px 2px rgba(0,0,0,0.8) !important;
                 }
             `;
             document.head.appendChild(style);
@@ -755,8 +822,8 @@ def capture_video_recording(match_url, temp_dir, duration, timeline=None):
         
     return video_temp_path, loading_duration
 
-def merge_video_audio(video_path, audio_path, output_path, loading_duration):
-    print("\n[3/4] Mesclando gravação de tela e áudio da narração...")
+def merge_video_audio(video_path, audio_path, output_path, loading_duration, thumb_path=None, outro_path=None):
+    print("\n[3/4] Mesclando gravação de tela e áudio da narração (com Capa e Outro)...")
     
     video_clip = VideoFileClip(video_path)
     audio_clip = AudioFileClip(audio_path)
@@ -765,18 +832,48 @@ def merge_video_audio(video_path, audio_path, output_path, loading_duration):
     print(f"  - Cortando {loading_duration:.2f}s iniciais de tela branca...")
     
     # Corta o início em branco
-    video_clip = video_clip.subclipped(loading_duration, loading_duration + audio_clip.duration)
+    if hasattr(video_clip, 'subclipped'):
+        video_clip = video_clip.subclipped(loading_duration, loading_duration + audio_clip.duration)
+    else:
+        video_clip = video_clip.subclip(loading_duration, loading_duration + audio_clip.duration)
     
-    final_clip = video_clip.with_audio(audio_clip)
+    if hasattr(video_clip, 'with_audio'):
+        video_clip = video_clip.with_audio(audio_clip)
+    else:
+        video_clip = video_clip.set_audio(audio_clip)
+        
+    clips_sequence = []
     
-    print("\n[4/4] Renderizando arquivo MP4 final para o YouTube...")
+    # 1. Capa / Thumbnail nos primeiros 1.2 segundos (Permite ao YouTube Shorts pegar a capa pronta!)
+    if thumb_path and os.path.exists(thumb_path):
+        print(f"  - Inserindo Capa/Thumbnail profissional no Frame 0: {thumb_path}")
+        thumb_clip = ImageClip(thumb_path).set_duration(1.2)
+        clips_sequence.append(thumb_clip)
+        
+    # 2. Conteúdo Dinâmico (Coreografia gravada no StatsFut)
+    clips_sequence.append(video_clip)
+    
+    # 3. Card Final de Conversão (Outro / Telegram & Site) nos últimos 4 segundos
+    if outro_path and os.path.exists(outro_path):
+        print(f"  - Inserindo Card Final de Conversão (Outro): {outro_path}")
+        outro_clip = ImageClip(outro_path).set_duration(4.0)
+        clips_sequence.append(outro_clip)
+        
+    if len(clips_sequence) > 1:
+        final_clip = concatenate_videoclips(clips_sequence, method="compose")
+    else:
+        final_clip = video_clip
+    
+    print("\n[4/4] Renderizando arquivo MP4 final para o YouTube Shorts / TikTok (2K Quad-HD Ultra Bitrate)...")
     final_clip.write_videofile(
         output_path,
-        fps=25,
+        fps=30,
         codec="libx264",
         audio_codec="aac",
-        preset="ultrafast",
-        threads=8,
+        bitrate="12000k",
+        preset="medium",
+        ffmpeg_params=["-crf", "16", "-pix_fmt", "yuv420p"],
+        threads=4,
         logger="bar"
     )
     
@@ -790,6 +887,8 @@ def main():
     parser.add_argument("--audio", type=str, help="Caminho para o arquivo de áudio (.mp3)")
     parser.add_argument("--roteiro", type=str, help="Caminho para o arquivo de texto com o roteiro")
     parser.add_argument("--json", type=str, help="Caminho para o cronograma JSON processado pelo Kaggle", default=None)
+    parser.add_argument("--thumb", type=str, help="Caminho para a Capa/Thumbnail", default=None)
+    parser.add_argument("--outro", type=str, help="Caminho para o Card de Encerramento", default=None)
     
     args = parser.parse_args()
 
@@ -877,8 +976,8 @@ def main():
         if not video_temp_path or not os.path.exists(video_temp_path):
             raise Exception("Não foi possível gerar a gravação de tela temporária do Playwright.")
 
-        # 2. Mescla gravação + áudio narração
-        merge_video_audio(video_temp_path, audio_path, output_path, loading_duration)
+        # 2. Mescla gravação + áudio narração + Capa e Outro
+        merge_video_audio(video_temp_path, audio_path, output_path, loading_duration, thumb_path=args.thumb, outro_path=args.outro)
 
         print("\n" + "=" * 60)
         print("🎉 VÍDEO CINEMATOGRÁFICO GERADO COM SUCESSO!")

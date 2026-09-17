@@ -7,7 +7,10 @@ import urllib.error
 import argparse
 import requests
 from playwright.sync_api import sync_playwright
-from moviepy import VideoFileClip, AudioFileClip
+try:
+    from moviepy.editor import VideoFileClip, AudioFileClip
+except ImportError:
+    from moviepy import VideoFileClip, AudioFileClip
 import unicodedata
 import difflib
 
@@ -876,9 +879,15 @@ def merge_video_audio(video_path, audio_path, output_path, loading_duration):
     print(f"  - Cortando {loading_duration:.2f}s iniciais de tela branca...")
     
     # Corta o início em branco
-    video_clip = video_clip.subclipped(loading_duration, loading_duration + audio_clip.duration)
+    if hasattr(video_clip, 'subclipped'):
+        video_clip = video_clip.subclipped(loading_duration, loading_duration + audio_clip.duration)
+    else:
+        video_clip = video_clip.subclip(loading_duration, loading_duration + audio_clip.duration)
     
-    final_clip = video_clip.with_audio(audio_clip)
+    if hasattr(video_clip, 'with_audio'):
+        final_clip = video_clip.with_audio(audio_clip)
+    else:
+        final_clip = video_clip.set_audio(audio_clip)
     
     print("\n[4/4] Renderizando arquivo MP4 final para o YouTube...")
     final_clip.write_videofile(
