@@ -64,6 +64,7 @@ def build_script(match: Match, report: dict) -> tuple[str, str]:
         f"Para o Ambas as Equipes Marcam, o índice projetado é de {btts} por cento de probabilidade.",
         f"Já a tendência de gol sair ainda no primeiro tempo tem taxa de {ht_goal} por cento.",
         f"E para quem opera resultado, a Dupla Chance mais segura indicada pelo sistema é {best_bet}, com {best_prob} por cento de confiança matemática.",
+        f"Lembrando que estes dados são puramente matemáticos e informativos, não são promessa de lucro nem recomendação de aposta.",
         f"Acesse o StatsFut agora mesmo para ver todos os detalhes e o Radar de Pressão ao vivo!"
     ]
     
@@ -79,7 +80,8 @@ def build_script(match: Match, report: dict) -> tuple[str, str]:
         f"[FOCO: Ambas Equipes Marcam] {narration_parts[3]} "
         f"[FOCO: Gol no 1º Tempo] {narration_parts[4]} "
         f"[FOCO: Chance Dupla] {narration_parts[5]} "
-        f"[FOCO: {home}] {narration_parts[6]}"
+        f"[FOCO: {home}] {narration_parts[6]} "
+        f"{narration_parts[7]}"
     )
     
     return narration, tags_script

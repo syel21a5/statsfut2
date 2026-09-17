@@ -132,12 +132,19 @@ def create_outro_card(output_path: str):
     draw_centered_text(draw, 1355, "ACESSE GRÁTIS: statsfut.com", font=font_badge, fill=(255, 255, 255))
 
     # Rodapé final e Aviso Legal (Disclaimer Anti-Processo)
-    draw_centered_text(draw, 1550, "Inscreva-se no canal para não perder os jogos!", font_desc, fill=(203, 213, 225))
+    draw_centered_text(draw, 1490, "Inscreva-se no canal para não perder os jogos!", font_desc, fill=(203, 213, 225))
 
-    # Disclaimer Legal
-    font_disc = get_font(20, bold=False)
-    draw_centered_text(draw, 1680, "⚠️ AVISO LEGAL: Conteúdo estritamente informativo e analítico baseado em estatísticas.", font_disc, fill=(148, 163, 184))
-    draw_centered_text(draw, 1715, "Não garantimos lucros nem incentivamos apostas. Aposte com responsabilidade (+18).", font_disc, fill=(148, 163, 184))
+    # Card Destacado de Aviso Legal / Disclaimer (Blindagem Jurídica)
+    disc_box = [60, 1550, W - 60, 1780]
+    draw.rounded_rectangle(disc_box, radius=18, fill=(24, 18, 12), outline=(245, 158, 11), width=2)
+
+    font_disc_title = get_font(26, bold=True)
+    font_disc = get_font(22, bold=False)
+
+    draw_centered_text(draw, 1575, "⚠️ AVISO IMPORTANTE / INFORMAÇÃO", font_disc_title, fill=(251, 191, 36))
+    draw_centered_text(draw, 1625, "Conteúdo estritamente informativo e de análise estatística.", font_disc, fill=(254, 243, 199))
+    draw_centered_text(draw, 1665, "Não realizamos apostas e não incentivamos jogos de azar.", font_disc, fill=(254, 243, 199))
+    draw_centered_text(draw, 1705, "Sem promessa de lucro. Resultados passados não garantem ganhos (+18).", font_disc, fill=(217, 119, 6))
 
     img.save(output_path, "PNG")
     return output_path
