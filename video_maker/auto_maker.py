@@ -5,6 +5,7 @@ Gera Roteiro -> Voz Neural Edge-TTS -> Animações Playwright -> Renderização 
 """
 import os
 import sys
+import re
 import time
 import json
 import asyncio
@@ -26,18 +27,43 @@ import edge_tts
 from moviepy.editor import AudioFileClip
 
 async def generate_voice(text: str, audio_path: str, json_path: str, voice: str = "pt-BR-AntonioNeural"):
-    """Gera o áudio MP3 completo e o cronograma de sincronização."""
+    """Gera o áudio MP3 e o cronograma JSON com timestamps precisos das palavras."""
     communicate = edge_tts.Communicate(text, voice=voice, rate="+4%")
-    await communicate.save(audio_path)
+    words_data = []
     
+    with open(audio_path, "wb") as file:
+        async for chunk in communicate.stream():
+            if chunk["type"] == "audio":
+                file.write(chunk["data"])
+            elif chunk["type"] in ("SentenceBoundary", "WordBoundary"):
+                s_text = chunk.get("text", "")
+                s_offset = chunk.get("offset", 0) / 10_000_000
+                s_dur = chunk.get("duration", 0) / 10_000_000
+                
+                if chunk["type"] == "WordBoundary":
+                    words_data.append({
+                        "text": s_text.lower().strip(),
+                        "start": round(s_offset, 2),
+                        "end": round(s_offset + s_dur, 2)
+                    })
+                else:
+                    words = [w for w in re.findall(r'\b\w+\b', s_text)]
+                    if words:
+                        per_word = s_dur / len(words)
+                        for idx, w in enumerate(words):
+                            words_data.append({
+                                "text": w.lower().strip(),
+                                "start": round(s_offset + (idx * per_word), 2),
+                                "end": round(s_offset + ((idx + 1) * per_word), 2)
+                            })
+                
     audio_clip = AudioFileClip(audio_path)
     total_dur = audio_clip.duration
     audio_clip.close()
     
-    # Gera marcações proporcionais por frase se necessário
     payload = {
         "duration": round(total_dur, 2),
-        "words": []
+        "words": words_data
     }
     with open(json_path, "w", encoding="utf-8") as jf:
         json.dump(payload, jf, ensure_ascii=False, indent=2)
@@ -56,11 +82,11 @@ def build_script(match: Match, report: dict) -> tuple[str, str]:
     best_bet = odds.get("double_bet", "X2")
     best_prob = odds.get("double_bet_prob", 86)
     
-    # Pronúncia esportiva correta para a Dupla Chance (evita falar "doze")
+    # Pronúncia esportiva natural para a Dupla Chance (evita "doze" ou frases longas)
     dc_map = {
-        "12": "um ou dois, vitória de qualquer um dos times sem empate",
-        "1X": "um x, vitória do mandante ou empate",
-        "X2": "x dois, empate ou visitante"
+        "12": "casa ou visitante, sem empate",
+        "1X": "casa ou empate",
+        "X2": "empate ou visitante"
     }
     best_bet_spoken = dc_map.get(str(best_bet).strip().upper(), str(best_bet))
     
