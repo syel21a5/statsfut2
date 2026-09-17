@@ -374,7 +374,7 @@ def run_choreography(page, total_duration, timeline=None):
                 padding: 0 !important;
             }
             body {
-                zoom: 1.2 !important;
+                zoom: 1.0 !important;
                 filter: contrast(1.12) brightness(1.05) !important;
             }
             .container, .container-fluid, .premium-dashboard, main, .main-content {
@@ -782,15 +782,16 @@ def capture_video_recording(match_url, temp_dir, duration, timeline=None):
                     max-width: 100% !important;
                     display: flex !important;
                     flex-direction: column !important;
-                    justify-content: center !important;
+                    justify-content: flex-start !important;
                     min-height: 100vh !important;
                 }
                 .container, main, .container-fluid, .col-lg-9, .col-md-9 {
                     max-width: 100% !important;
                     width: 100% !important;
                     margin: 0 auto !important;
-                    padding: 80px 40px 40px 80px !important;
+                    padding: 30px 18px 30px 18px !important;
                     flex: 0 0 100% !important;
+                    box-sizing: border-box !important;
                 }
                 /* Ocultar elementos desnecessários no vídeo */
                 main.main-content > header, main.main-content > div.d-flex.flex-wrap,

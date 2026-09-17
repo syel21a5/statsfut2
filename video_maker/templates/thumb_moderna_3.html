@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,900;1,900&family=Outfit:wght@800;900&family=Teko:wght@700&display=swap');
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    width: 1080px;
+    height: 1920px;
+    background: radial-gradient(circle at 50% 50%, #0f172a 0%, #020617 100%);
+    font-family: 'Outfit', sans-serif;
+    color: #fff;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Efeitos de Estádio / Holofotes Dourados */
+  .gold-spotlight {
+    position: absolute;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1000px;
+    height: 900px;
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, transparent 70%);
+    filter: blur(90px);
+  }
+
+  .container {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 80px 45px 70px 45px;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Tag Exclusiva VIP / Ouro */
+  .vip-tag {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    border: 3px solid #fef08a;
+    box-shadow: 0 0 50px rgba(245, 158, 11, 0.8);
+    padding: 18px 55px;
+    border-radius: 50px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 34px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: #000;
+    text-transform: uppercase;
+  }
+
+  /* Manchete de Curiosidade Máxima */
+  .headline-container {
+    text-align: center;
+  }
+  .headline-top {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 95px;
+    font-weight: 900;
+    line-height: 0.95;
+    text-transform: uppercase;
+    color: #fff;
+  }
+  .headline-gold {
+    color: #f59e0b;
+    text-shadow: 0 0 45px rgba(245, 158, 11, 0.8);
+  }
+
+  /* Confronto Duelo de Titãs */
+  .clash-card {
+    width: 100%;
+    background: linear-gradient(180deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+    border: 4px solid #f59e0b;
+    box-shadow: 0 0 60px rgba(245, 158, 11, 0.35);
+    border-radius: 40px;
+    padding: 45px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    position: relative;
+  }
+  .team-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    text-align: center;
+    width: 40%;
+  }
+  .team-emblem {
+    width: 220px;
+    height: 220px;
+    background: rgba(15, 23, 42, 0.8);
+    border: 3px solid rgba(245, 158, 11, 0.4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+  }
+  .team-emblem img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+  .team-name-clash {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 38px;
+    font-weight: 900;
+    line-height: 1.1;
+    color: #fff;
+  }
+
+  .clash-fire {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    border: 4px solid #fff;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 44px;
+    font-weight: 900;
+    color: #fff;
+    box-shadow: 0 0 45px rgba(239, 68, 68, 0.9);
+  }
+
+  /* O Segredo Estatístico */
+  .secret-box {
+    width: 100%;
+    background: rgba(15, 23, 42, 0.85);
+    border: 3px dashed #10b981;
+    border-radius: 35px;
+    padding: 30px;
+    text-align: center;
+  }
+  .secret-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    color: #10b981;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+  }
+  .secret-number {
+    font-family: 'Teko', sans-serif;
+    font-size: 190px;
+    line-height: 0.85;
+    font-weight: 700;
+    color: #10b981;
+    text-shadow: 0 0 60px rgba(16, 185, 129, 0.8);
+  }
+  .secret-sub {
+    font-size: 36px;
+    font-weight: 800;
+    color: #cbd5e1;
+    text-transform: uppercase;
+  }
+
+  /* Botão Vermelho YouTube */
+  .yt-button {
+    width: 100%;
+    background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+    border-radius: 30px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 15px 40px rgba(239, 68, 68, 0.5);
+    border: 3px solid #fecaca;
+  }
+  .yt-button-text {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 44px;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+
+<div class="gold-spotlight"></div>
+
+<div class="container">
+  
+  <!-- 1. VIP Tag -->
+  <div class="vip-tag">
+    👑 ANÁLISE EXCLUSIVA
+  </div>
+
+  <!-- 2. Headline Curiosidade -->
+  <div class="headline-container">
+    <div class="headline-top">O QUE A BANCA <span class="headline-gold">NÃO QUER</span> QUE VOCÊ SAIBA?</div>
+  </div>
+
+  <!-- 3. Confronto com Escudos -->
+  <div class="clash-card">
+    <div class="clash-fire">X</div>
+
+    <div class="team-item">
+      <div class="team-emblem">
+        <img src="file:///www/wwwroot/statsfut.com/static/teams/estados-unidos/310968.png" alt="Hartford">
+      </div>
+      <div class="team-name-clash">HARTFORD</div>
+    </div>
+
+    <div class="team-item">
+      <div class="team-emblem">
+        <img src="file:///www/wwwroot/statsfut.com/static/teams/estados-unidos/1077312.png" alt="Jacksonville">
+      </div>
+      <div class="team-name-clash">JACKSONVILLE</div>
+    </div>
+  </div>
+
+  <!-- 4. Segredo Estatístico -->
+  <div class="secret-box">
+    <div class="secret-title">🎯 TENDÊNCIA DE ALTA CONFIANÇA</div>
+    <div class="secret-number">77%</div>
+    <div class="secret-sub">OVER 1.5 GOLS NO JOGO</div>
+  </div>
+
+  <!-- 5. Botão de Chamada -->
+  <div class="yt-button">
+    <div class="yt-button-text">▶ CLIQUE E VEJA OS DADOS</div>
+  </div>
+
+</div>
+
+</body>
+</html>

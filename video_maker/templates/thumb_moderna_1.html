@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;0,900;1,900&family=Outfit:wght@700;900&family=Teko:wght@700&display=swap');
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    width: 1080px;
+    height: 1920px;
+    background: #060913;
+    font-family: 'Outfit', sans-serif;
+    color: #fff;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  /* Background Estádio & Luzes Neon */
+  .bg-glow-top {
+    position: absolute;
+    top: -200px;
+    left: -100px;
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.35) 0%, transparent 70%);
+    filter: blur(80px);
+  }
+  
+  .bg-glow-bottom {
+    position: absolute;
+    bottom: -150px;
+    right: -100px;
+    width: 900px;
+    height: 900px;
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.4) 0%, transparent 70%);
+    filter: blur(100px);
+  }
+  
+  .stadium-lines {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(6,9,19,0.2), rgba(6,9,19,0.95));
+    background-size: 32px 32px, 100% 100%;
+  }
+
+  .container {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 80px 50px 70px 50px;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Badge do Topo */
+  .top-badge {
+    background: rgba(15, 23, 42, 0.85);
+    border: 2px solid #10b981;
+    box-shadow: 0 0 35px rgba(16, 185, 129, 0.5);
+    padding: 18px 45px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  .top-badge span {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: #10b981;
+    text-transform: uppercase;
+  }
+
+  /* Hook / Manchete Explosiva */
+  .headline-box {
+    text-align: center;
+    margin-top: 20px;
+  }
+  .headline-sub {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #94a3b8;
+    text-transform: uppercase;
+  }
+  .headline-main {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 92px;
+    font-weight: 900;
+    line-height: 1.0;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    margin-top: 10px;
+  }
+  .headline-main .highlight-yellow {
+    color: #fbbf24;
+    text-shadow: 0 0 40px rgba(251, 191, 36, 0.6);
+  }
+
+  /* Confronto dos Times com Escudos Gigantes */
+  .matchup-arena {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(15, 23, 42, 0.7);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border-radius: 40px;
+    padding: 40px 30px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+    position: relative;
+  }
+
+  .team-block {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+  }
+  .team-logo-wrap {
+    width: 200px;
+    height: 200px;
+    background: rgba(30, 41, 59, 0.6);
+    border: 3px solid rgba(255,255,255,0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+  }
+  .team-logo-wrap img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+  }
+  .team-name {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 38px;
+    font-weight: 900;
+    line-height: 1.1;
+    color: #fff;
+    max-width: 280px;
+  }
+
+  .vs-badge {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    border: 4px solid #fff;
+    box-shadow: 0 0 35px rgba(239, 68, 68, 0.8);
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 40px;
+    font-weight: 900;
+    font-style: italic;
+    color: #fff;
+    z-index: 5;
+  }
+
+  /* Card da Projeção de Valor (O Clickbait Ético de Alta Conversão) */
+  .value-card {
+    width: 100%;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(6, 95, 70, 0.3) 100%);
+    border: 3px solid #10b981;
+    border-radius: 35px;
+    padding: 35px 40px;
+    text-align: center;
+    box-shadow: 0 0 50px rgba(16, 185, 129, 0.35);
+    position: relative;
+    overflow: hidden;
+  }
+  .value-tag {
+    display: inline-block;
+    background: #10b981;
+    color: #064e3b;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 26px;
+    font-weight: 900;
+    padding: 8px 30px;
+    border-radius: 20px;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+  }
+  .value-market {
+    font-size: 48px;
+    font-weight: 900;
+    color: #f8fafc;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .value-prob {
+    font-family: 'Teko', sans-serif;
+    font-size: 190px;
+    line-height: 0.9;
+    color: #34d399;
+    font-weight: 700;
+    text-shadow: 0 0 60px rgba(52, 211, 153, 0.7);
+    margin: 5px 0;
+  }
+  .value-footer {
+    font-size: 30px;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  /* Botão de Chamada para Ação (CTA) */
+  .cta-banner {
+    width: 100%;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    border-radius: 30px;
+    padding: 30px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    box-shadow: 0 20px 40px rgba(245, 158, 11, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+  }
+  .cta-text {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 42px;
+    font-weight: 900;
+    color: #000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-glow-top"></div>
+<div class="bg-glow-bottom"></div>
+<div class="stadium-lines"></div>
+
+<div class="container">
+  
+  <!-- 1. Topo -->
+  <div class="top-badge">
+    <span>⚡ STATSFUT PROJEÇÕES</span>
+  </div>
+
+  <!-- 2. Headline Impactante -->
+  <div class="headline-box">
+    <div class="headline-sub">USL CHAMPIONSHIP</div>
+    <div class="headline-main">VALOR <span class="highlight-yellow">CONFIRMADO?</span></div>
+  </div>
+
+  <!-- 3. Confronto com Escudos Oficiais -->
+  <div class="matchup-arena">
+    <div class="vs-badge">VS</div>
+
+    <div class="team-block">
+      <div class="team-logo-wrap">
+        <img src="file:///www/wwwroot/statsfut.com/static/teams/estados-unidos/310968.png" alt="Hartford">
+      </div>
+      <div class="team-name">HARTFORD ATHLETIC</div>
+    </div>
+
+    <div class="team-block">
+      <div class="team-logo-wrap">
+        <img src="file:///www/wwwroot/statsfut.com/static/teams/estados-unidos/1077312.png" alt="Jacksonville">
+      </div>
+      <div class="team-name">SC JACKSONVILLE</div>
+    </div>
+  </div>
+
+  <!-- 4. Card da Projeção de Valor -->
+  <div class="value-card">
+    <div class="value-tag">OPORTUNIDADE DETECTADA</div>
+    <div class="value-market">OVER 1.5 GOLS</div>
+    <div class="value-prob">77%</div>
+    <div class="value-footer">PROBABILIDADE MATEMÁTICA</div>
+  </div>
+
+  <!-- 5. Chamada de Ação -->
+  <div class="cta-banner">
+    <div class="cta-text">🔥 VEJA A ANÁLISE COMPLETA</div>
+  </div>
+
+</div>
+
+</body>
+</html>
