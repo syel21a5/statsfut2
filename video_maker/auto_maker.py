@@ -56,6 +56,14 @@ def build_script(match: Match, report: dict) -> tuple[str, str]:
     best_bet = odds.get("double_bet", "X2")
     best_prob = odds.get("double_bet_prob", 86)
     
+    # Pronúncia esportiva correta para a Dupla Chance (evita falar "doze")
+    dc_map = {
+        "12": "um ou dois, vitória de qualquer um dos times sem empate",
+        "1X": "um x, vitória do mandante ou empate",
+        "X2": "x dois, empate ou visitante"
+    }
+    best_bet_spoken = dc_map.get(str(best_bet).strip().upper(), str(best_bet))
+    
     # Roteiro narrativo e tags sincronizadas
     narration_parts = [
         f"Fala apostador! Bem-vindo ao StatsFut. Hoje temos a análise completa de {home} e {away} pela {league}.",
@@ -63,7 +71,7 @@ def build_script(match: Match, report: dict) -> tuple[str, str]:
         f"No mercado de gols, a probabilidade para Over 1.5 bate {over_15} por cento.",
         f"Para o Ambas as Equipes Marcam, o índice projetado é de {btts} por cento de probabilidade.",
         f"Já a tendência de gol sair ainda no primeiro tempo tem taxa de {ht_goal} por cento.",
-        f"E para quem opera resultado, a Dupla Chance mais segura indicada pelo sistema é {best_bet}, com {best_prob} por cento de confiança matemática.",
+        f"E para quem opera resultado, a Dupla Chance mais segura indicada pelo sistema é {best_bet_spoken}, com {best_prob} por cento de confiança matemática.",
         f"Lembrando que estes dados são puramente matemáticos e informativos, não são promessa de lucro nem recomendação de aposta.",
         f"Acesse o StatsFut agora mesmo para ver todos os detalhes e o Radar de Pressão ao vivo!"
     ]
