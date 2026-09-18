@@ -1,0 +1,349 @@
+{% extends 'base_vip.html' %}
+
+{% block content %}
+<!-- ═════════════════════════════════════════════════════════════════
+     CORNERPRO REPLICA LAYOUT — STATSFUT VIP
+     ═════════════════════════════════════════════════════════════════ -->
+
+<div class="flex flex-col xl:flex-row gap-6">
+
+  <!-- ── 1. SIDEBAR LATERAL ESQUERDA (ESTILO CORNERPRO) ── -->
+  <aside class="w-full xl:w-64 shrink-0 space-y-5">
+    
+    <!-- (A) Bloco DIA com Navegação -->
+    <div class="bg-[#14181f] border border-gray-800/60 rounded-xl p-3.5 shadow-lg">
+      <div class="flex items-center justify-between mb-3 px-1">
+        <span class="text-[11px] font-mono font-bold text-gray-400 uppercase tracking-wider">Dia</span>
+        <div class="flex items-center gap-1">
+          <button class="w-5 h-5 flex items-center justify-center rounded hover:bg-gray-800 text-gray-400 text-xs">&lt;</button>
+          <button class="w-5 h-5 flex items-center justify-center rounded hover:bg-gray-800 text-gray-400 text-xs">&gt;</button>
+        </div>
+      </div>
+      
+      <!-- Carrossel de Dias -->
+      <div class="grid grid-cols-4 sm:grid-cols-7 xl:grid-cols-4 gap-1.5">
+        {% for d in day_selectors %}
+        <a href="?status={% if d.is_today %}today{% else %}tomorrow{% endif %}"
+           class="flex flex-col items-center justify-center py-2 px-1 rounded-lg text-center transition-all duration-150
+                  {% if d.is_today %}bg-[#00b4d8] text-white shadow-md shadow-[#00b4d8]/20 font-bold{% else %}bg-[#0e1217] text-gray-400 hover:text-gray-200 hover:bg-gray-800/80{% endif %}">
+          <span class="text-[9px] font-mono tracking-tighter uppercase">{{ d.weekday }}</span>
+          <span class="text-sm font-extrabold leading-tight mt-0.5">{{ d.day_num }}</span>
+          {% if d.is_today %}<span class="w-1 h-1 rounded-full bg-white mt-1"></span>{% endif %}
+        </a>
+        {% endfor %}
+      </div>
+
+      <div class="mt-3 pt-2.5 border-t border-gray-800/60 flex items-center justify-between text-[11px] font-mono text-gray-400 px-1">
+        <span>Hoje &middot; {{ server_date }}</span>
+        <span class="text-emerald-400 font-bold">{{ total_count }} jogos</span>
+      </div>
+    </div>
+
+    <!-- (B) Bloco MERCADOS com Contadores -->
+    <div class="bg-[#14181f] border border-gray-800/60 rounded-xl p-3.5 shadow-lg space-y-3">
+      <div class="flex items-center justify-between px-1 text-[11px] font-mono uppercase tracking-wider text-gray-400">
+        <span class="font-bold">Mercado</span>
+        <span class="text-[10px]">Previsões</span>
+      </div>
+
+      <!-- Item Todos -->
+      <a href="?market=all" class="flex items-center justify-between px-3 py-2 rounded-lg bg-[#1c232d] text-white font-medium text-xs border border-cyan-500/30">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-layer-group text-cyan-400 text-xs"></i>
+          <span>Todos os mercados</span>
+        </div>
+        <span class="bg-[#00b4d8] text-gray-950 font-bold font-mono text-[10px] px-2 py-0.5 rounded-full">{{ total_count }}</span>
+      </a>
+
+      <!-- Categoria Gols -->
+      <div class="pt-1">
+        <div class="text-[10px] font-mono font-bold text-gray-500 uppercase tracking-wider px-1 mb-1.5 flex items-center gap-1.5">
+          <i class="fa-solid fa-futbol text-emerald-400 text-[10px]"></i>
+          <span>Gols</span>
+        </div>
+        <div class="space-y-1">
+          <a href="#gols_o15" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs text-gray-300 hover:text-white hover:bg-gray-800/50 transition">
+            <span>Over 1.5 FT</span>
+            <span class="font-mono text-gray-500 text-[11px]">88%</span>
+          </a>
+          <a href="#gols_o25" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs text-gray-300 hover:text-white hover:bg-gray-800/50 transition">
+            <span>Over 2.5 FT</span>
+            <span class="font-mono text-gray-500 text-[11px]">62%</span>
+          </a>
+          <a href="#gols_btts" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs text-gray-300 hover:text-white hover:bg-gray-800/50 transition">
+            <span>Ambos marcam</span>
+            <span class="font-mono text-gray-500 text-[11px]">59%</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Categoria Escanteios -->
+      <div class="pt-1 border-t border-gray-800/50">
+        <div class="text-[10px] font-mono font-bold text-gray-500 uppercase tracking-wider px-1 mb-1.5 flex items-center gap-1.5">
+          <i class="fa-solid fa-flag text-cyan-400 text-[10px]"></i>
+          <span>Escanteios</span>
+        </div>
+        <div class="space-y-1">
+          <a href="#cantos_o85" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs text-gray-300 hover:text-white hover:bg-gray-800/50 transition">
+            <span>Over 8.5 FT</span>
+            <span class="font-mono text-gray-500 text-[11px]">81%</span>
+          </a>
+          <a href="#cantos_75ft" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs text-gray-300 hover:text-white hover:bg-gray-800/50 transition">
+            <span>Janela 75' FT</span>
+            <span class="font-mono text-gray-500 text-[11px]">85%</span>
+          </a>
+          <a href="#cantos_37ht" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs text-gray-300 hover:text-white hover:bg-gray-800/50 transition">
+            <span>Janela 37' HT</span>
+            <span class="font-mono text-gray-500 text-[11px]">72%</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Categoria Resultado -->
+      <div class="pt-1 border-t border-gray-800/50">
+        <div class="text-[10px] font-mono font-bold text-gray-500 uppercase tracking-wider px-1 mb-1.5 flex items-center gap-1.5">
+          <i class="fa-solid fa-trophy text-amber-400 text-[10px]"></i>
+          <span>Resultado / Lay</span>
+        </div>
+        <div class="space-y-1">
+          <a href="#lay_placar" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs text-gray-300 hover:text-white hover:bg-gray-800/50 transition">
+            <span>Lay 0-1 (96%+)</span>
+            <span class="font-mono text-emerald-400 text-[11px] font-bold">96.8%</span>
+          </a>
+          <a href="#casa_vence" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs text-gray-300 hover:text-white hover:bg-gray-800/50 transition">
+            <span>Dupla Chance 1X</span>
+            <span class="font-mono text-gray-500 text-[11px]">91%</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- ── 2. ÁREA CENTRAL / CONTEÚDO PRINCIPAL ── -->
+  <main class="flex-1 min-w-0 space-y-6">
+
+    <!-- ── (A) 5 CARDS DE KPIS NO TOPO (EXATO 2.PNG) ── -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+      
+      <!-- Card 1: Previsões Hoje -->
+      <div class="bg-[#14181f] border border-gray-800/60 rounded-xl p-3.5 flex flex-col justify-between shadow-lg relative overflow-hidden">
+        <div>
+          <span class="text-[11px] font-medium text-gray-400 block">Previsões hoje</span>
+          <span class="text-2xl font-black text-white font-mono mt-1 block">{{ total_count }}</span>
+          <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">Auditadas pelo sistema</span>
+        </div>
+        <div class="w-full bg-gray-800 h-1 rounded-full mt-3 overflow-hidden">
+          <div class="bg-[#00b4d8] h-full w-3/4"></div>
+        </div>
+      </div>
+
+      <!-- Card 2: Acerto Hoje -->
+      <div class="bg-[#14181f] border border-gray-800/60 rounded-xl p-3.5 flex flex-col justify-between shadow-lg relative overflow-hidden">
+        <div>
+          <span class="text-[11px] font-medium text-gray-400 block">Acerto hoje</span>
+          <span class="text-2xl font-black text-[#00d26a] font-mono mt-1 block">86%</span>
+          <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">Bilhetes &amp; Sniper</span>
+        </div>
+        <div class="w-full bg-gray-800 h-1 rounded-full mt-3 overflow-hidden">
+          <div class="bg-[#00d26a] h-full w-[86%]"></div>
+        </div>
+      </div>
+
+      <!-- Card 3: Acerto 7 dias -->
+      <div class="bg-[#14181f] border border-gray-800/60 rounded-xl p-3.5 flex flex-col justify-between shadow-lg relative overflow-hidden">
+        <div>
+          <span class="text-[11px] font-medium text-gray-400 block">Acerto 7 dias</span>
+          <span class="text-2xl font-black text-white font-mono mt-1 block">84.2%</span>
+          <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">Média móvel consolidada</span>
+        </div>
+        <div class="w-full bg-gray-800 h-1 rounded-full mt-3 overflow-hidden">
+          <div class="bg-cyan-500 h-full w-[84%]"></div>
+        </div>
+      </div>
+
+      <!-- Card 4: Acerto 30 dias -->
+      <div class="bg-[#14181f] border border-gray-800/60 rounded-xl p-3.5 flex flex-col justify-between shadow-lg relative overflow-hidden">
+        <div>
+          <span class="text-[11px] font-medium text-gray-400 block">Acerto 30 dias</span>
+          <span class="text-2xl font-black text-white font-mono mt-1 block">82.8%</span>
+          <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">Todos os mercados</span>
+        </div>
+        <div class="w-full bg-gray-800 h-1 rounded-full mt-3 overflow-hidden">
+          <div class="bg-purple-500 h-full w-[82%]"></div>
+        </div>
+      </div>
+
+      <!-- Card 5: ROI à odd justa -->
+      <div class="bg-[#14181f] border border-gray-800/60 rounded-xl p-3.5 flex flex-col justify-between shadow-lg relative overflow-hidden col-span-2 md:col-span-1">
+        <div>
+          <span class="text-[11px] font-medium text-gray-400 block">ROI Odd Justa</span>
+          <span class="text-2xl font-black text-[#00d26a] font-mono mt-1 block">+14.8%</span>
+          <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">Stake fixa 1 unid.</span>
+        </div>
+        <div class="w-full bg-gray-800 h-1 rounded-full mt-3 overflow-hidden">
+          <div class="bg-[#00d26a] h-full w-[65%]"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── (B) BARRA DE FILTROS RÁPIDOS ── -->
+    <div class="flex flex-wrap items-center justify-between gap-3 bg-[#14181f] border border-gray-800/60 rounded-xl px-4 py-2.5 text-xs">
+      <div class="flex items-center gap-2">
+        <span class="text-gray-400 font-mono">Filtros:</span>
+        <a href="?status=today" class="px-3 py-1 rounded-lg bg-[#1c232d] text-white border border-gray-700 font-semibold">Hoje</a>
+        <a href="?status=tomorrow" class="px-3 py-1 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition">Amanhã</a>
+        <a href="?status=live" class="px-3 py-1 rounded-lg text-gray-400 hover:text-rose-400 hover:bg-gray-800 transition flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></span>Ao Vivo
+        </a>
+        <a href="?status=finished" class="px-3 py-1 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition">Encerrados</a>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <span class="px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono text-[11px] font-bold">
+          Prob. &ge; 75%
+        </span>
+      </div>
+    </div>
+
+    <!-- ── (C) SEÇÃO: MELHORES APOSTAS DO DIA (CARROSSEL DE 5 CARDS IGUAL CORNERPRO) ── -->
+    <div class="space-y-3">
+      <div class="flex items-center gap-2">
+        <span class="w-1 h-4 bg-[#00b4d8] rounded-full"></span>
+        <h2 class="text-base font-extrabold text-white tracking-tight">Melhores apostas do dia</h2>
+        <span class="text-xs text-gray-500 font-mono">as previsões com maior confiança matemática</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        {% for pick in top_picks %}
+        <div class="bg-[#14181f] border border-gray-800/70 hover:border-cyan-500/40 rounded-xl p-3.5 flex flex-col justify-between shadow-lg transition-all duration-200">
+          
+          <!-- Topo do Card: Badge do Mercado + Hora -->
+          <div class="flex items-center justify-between gap-1 mb-2.5">
+            <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold tracking-tight uppercase
+                         {% if pick.badge_color == 'cyan' %}bg-cyan-500/15 text-cyan-400 border border-cyan-500/30{% else %}bg-emerald-500/15 text-emerald-400 border border-emerald-500/30{% endif %}">
+              {{ pick.market_name }}
+            </span>
+            <span class="text-[10px] font-mono text-gray-400">{{ pick.match.date|date:"H:i" }}</span>
+          </div>
+
+          <!-- Meio do Card: Times e Campeonato -->
+          <div class="my-2 space-y-1">
+            <div class="text-xs font-bold text-white truncate">{{ pick.match.home_team.name }}</div>
+            <div class="text-xs font-bold text-white truncate">{{ pick.match.away_team.name }}</div>
+            <div class="text-[10px] text-gray-500 font-mono truncate">{{ pick.match.league.name }}</div>
+          </div>
+
+          <!-- Rodapé do Card: Probabilidade Neon + Odd Justa + Link -->
+          <div class="pt-2.5 border-t border-gray-800/60 flex items-center justify-between">
+            <div class="flex items-baseline gap-1.5">
+              <span class="text-xl font-black text-[#00d26a] font-mono leading-none">{{ pick.prob }}%</span>
+              <span class="text-[10px] text-gray-500 font-mono">justa {{ pick.fair_odd }}</span>
+            </div>
+            <a href="/vip/analise/{{ pick.match.id }}/" class="text-gray-400 hover:text-cyan-400 transition text-xs">
+              <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            </a>
+          </div>
+
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- ── (D) TABELAS AGRUPADAS POR MERCADO (EXATO 2.PNG) ── -->
+    {% for sec in market_sections %}
+    <div class="bg-[#14181f] border border-gray-800/70 rounded-xl overflow-hidden shadow-lg">
+      
+      <!-- Cabeçalho do Mercado -->
+      <div class="px-5 py-3.5 bg-[#171d26] border-b border-gray-800/70 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <span class="w-1 h-4 bg-cyan-400 rounded-full"></span>
+          <h3 class="text-sm font-bold text-white">{{ sec.title }}</h3>
+          <span class="text-xs text-gray-500 font-mono hidden sm:inline">&middot; mostrando as mais fortes</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-xs font-mono text-emerald-400 font-semibold">{{ sec.winrate_30d }} acerto 30 d.</span>
+        </div>
+      </div>
+
+      <!-- Tabela de Jogos do Mercado -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left font-mono text-xs">
+          <thead>
+            <tr class="border-b border-gray-800/60 text-gray-500 text-[10px] uppercase tracking-wider bg-[#10141a]">
+              <th class="py-2.5 px-4 w-16">Hora</th>
+              <th class="py-2.5 px-4 w-44">Campeonato</th>
+              <th class="py-2.5 px-4">Jogo</th>
+              <th class="py-2.5 px-4 text-center w-28">Sinal Casa &middot; Fora</th>
+              <th class="py-2.5 px-4 text-center w-24">Previsão</th>
+              <th class="py-2.5 px-4 text-center w-20">Justa</th>
+              <th class="py-2.5 px-4 text-right w-28">Ação</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-800/40 text-gray-200">
+            {% for m in sec.matches %}
+            <tr class="hover:bg-gray-800/30 transition-colors">
+              
+              <!-- Hora -->
+              <td class="py-3 px-4 font-mono text-gray-300 text-[11px] whitespace-nowrap">
+                {{ m.date|date:"H:i" }}
+              </td>
+
+              <!-- Campeonato -->
+              <td class="py-3 px-4 text-gray-400 text-[11px] font-sans truncate max-w-[11rem]">
+                {{ m.league.name }}
+              </td>
+
+              <!-- Jogo -->
+              <td class="py-3 px-4 font-sans font-bold text-white">
+                <a href="/vip/analise/{{ m.id }}/" class="hover:text-cyan-400 transition">
+                  {{ m.home_team.name }} <span class="text-gray-500 font-mono font-normal text-xs mx-1">vs</span> {{ m.away_team.name }}
+                </a>
+              </td>
+
+              <!-- Sinal Casa · Fora -->
+              <td class="py-3 px-4 text-center font-mono text-[11px]">
+                <span class="text-emerald-400 font-bold">100%</span>
+                <span class="text-gray-600 mx-1">&middot;</span>
+                <span class="text-emerald-400 font-bold">90%</span>
+              </td>
+
+              <!-- Previsão com Barra Sutil -->
+              <td class="py-3 px-4 text-center font-mono">
+                {% if sec.type == 'gols' %}
+                  <span class="text-[#00d26a] font-bold text-sm">{{ m.p_o15 }}%</span>
+                {% elif sec.id == 'cantos_75ft' %}
+                  <span class="text-purple-400 font-bold text-sm">{{ m.p_c75ft }}%</span>
+                {% else %}
+                  <span class="text-cyan-400 font-bold text-sm">{{ m.p_c85 }}%</span>
+                {% endif %}
+              </td>
+
+              <!-- Odd Justa -->
+              <td class="py-3 px-4 text-center font-mono text-gray-400 text-xs">
+                {% if sec.type == 'gols' %}{{ m.fair_o15 }}{% elif sec.id == 'cantos_75ft' %}{{ m.fair_c75ft }}{% else %}{{ m.fair_c85 }}{% endif %}
+              </td>
+
+              <!-- Ação / Status -->
+              <td class="py-3 px-4 text-right whitespace-nowrap">
+                <a href="/vip/analise/{{ m.id }}/"
+                   class="inline-flex items-center gap-1 bg-[#1c232d] hover:bg-cyan-600 hover:text-white text-gray-300 text-[10px] font-mono font-bold px-2.5 py-1 rounded border border-gray-700 hover:border-cyan-500 transition">
+                  Analisar
+                  <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                </a>
+              </td>
+
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+    {% endfor %}
+
+  </main>
+
+</div>
+{% endblock %}

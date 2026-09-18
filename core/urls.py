@@ -28,6 +28,17 @@ urlpatterns = [
 
 from django.conf import settings
 
+from core import vip_views
+
+urlpatterns += [
+    path('vip/', vip_views.vip_games_list_view, name='vip_hub'),
+    path('vip/jogos/', vip_views.vip_games_list_view, name='vip_games_list'),
+    path('vip/analise/<int:match_id>/', vip_views.vip_match_analysis_view, name='vip_match_analysis'),
+    path('vip/live-radar/', vip_views.vip_live_radar_view, name='vip_live_radar'),
+    path('vip/bilhetes/', vip_views.vip_tickets_view, name='vip_tickets'),
+    path('vip/gestao/', vip_views.vip_management_view, name='vip_management'),
+]
+
 # Rotas com prefixo de idioma (/pt-br/, /es/, /de/) - inglês sem prefixo (/)
 i18n_routes = [
     path('admin/', admin.site.urls),

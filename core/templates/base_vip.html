@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}StatsFut VIP &middot; Terminal de Alta Precis&atilde;o{% endblock %}</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              cyan: '#00b4d8',
+              green: '#00d26a',
+              dark: '#0e1217',
+              card: '#14181f',
+              cardHover: '#1c232d'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Inter & JetBrains Mono Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #0e1217;
+      color: #e2e8f0;
+      font-family: 'Inter', sans-serif;
+    }
+    /* Scrollbar fina padrão terminal */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0e1217;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1f2937;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00b4d8;
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="min-h-screen flex flex-col bg-[#0e1217] text-gray-200">
+
+  <!-- ═════════════════════════════════════════════════════════════════
+       BARRA DE NAVEGAÇÃO SUPERIOR (ESTILO EXATO CORNERPRO)
+       ═════════════════════════════════════════════════════════════════ -->
+  <header class="sticky top-0 z-50 bg-[#121518] border-b border-gray-800/80 shadow-md">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+      
+      <!-- Lado Esquerdo: Logo + Redes -->
+      <div class="flex items-center gap-5">
+        <a href="/" class="flex items-center gap-2 text-white font-black tracking-wider text-base">
+          <span class="text-[#00b4d8] font-mono text-lg">STATSFUT</span>
+          <span class="text-xs bg-cyan-500/15 text-cyan-400 font-mono font-bold px-1.5 py-0.5 rounded border border-cyan-500/30">VIP</span>
+        </a>
+
+        <!-- Ícones Sociais (exato CornerPro) -->
+        <div class="hidden md:flex items-center gap-2.5 text-gray-400 border-l border-gray-800 pl-4">
+          <a href="https://t.me/statsfut" target="_blank" class="hover:text-[#00b4d8] transition text-sm"><i class="fa-brands fa-telegram"></i></a>
+          <a href="#" class="hover:text-pink-400 transition text-sm"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="hover:text-red-500 transition text-sm"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+
+      <!-- Links de Navegação Principal (Estilo CornerPro) -->
+      <nav class="hidden lg:flex items-center gap-6 font-mono text-xs font-semibold tracking-wider">
+        <a href="/vip/jogos/" class="text-white hover:text-[#00b4d8] transition">TODOS JOGOS</a>
+        <a href="/vip/jogos/?status=live" class="text-gray-400 hover:text-rose-400 transition flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>AO VIVO
+        </a>
+        <a href="/" class="text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1">PREVISÕES</a>
+        <a href="/members/plans/" class="text-gray-400 hover:text-white transition">SNIPER EV+</a>
+        <a href="/members/plans/" class="text-gray-400 hover:text-white transition">LAY MERCADOS</a>
+      </nav>
+
+      <!-- Lado Direito: Status / Sair -->
+      <div class="flex items-center gap-3">
+        <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#1c232d] border border-emerald-500/30 text-[#00d26a] font-mono text-[11px] font-bold">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#00d26a] animate-pulse"></span>
+          VIP ATIVO
+        </span>
+        <a href="/login" class="text-gray-400 hover:text-white text-xs font-mono transition">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ═════════════════════════════════════════════════════════════════
+       SUB-HEADER COM TÍTULO E EXPLICAÇÃO (EXATO 2.PNG)
+       ═════════════════════════════════════════════════════════════════ -->
+  <div class="bg-[#10141a] border-b border-gray-800/60 py-3.5">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div>
+        <h1 class="text-lg font-black text-white tracking-tight flex items-center gap-2">
+          <span>Previsões</span>
+          <span class="text-[10px] font-mono font-normal bg-gray-800 text-gray-300 px-2 py-0.5 rounded">v2.4</span>
+        </h1>
+        <p class="text-xs text-gray-400 mt-0.5">
+          Algoritmo estatístico auditado com leitura de linhas asiáticas, gols esperados (xG) e pressão final.
+        </p>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-[11px] font-mono text-gray-400 bg-[#14181f] px-3 py-1.5 rounded-lg border border-gray-800">
+          <span class="text-cyan-400 font-bold">Modo:</span> Escuro Profissional
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════════════
+       CONTEÚDO PRINCIPAL (MAX-W 1600PX)
+       ═════════════════════════════════════════════════════════════════ -->
+  <div class="max-w-[1600px] mx-auto px-4 sm:px-6 py-6 flex-1 w-full">
+    {% block content %}{% endblock %}
+  </div>
+
+  <!-- Footer Discreto -->
+  <footer class="border-t border-gray-800/60 py-4 bg-[#10141a] text-center text-xs font-mono text-gray-500">
+    <div class="max-w-[1600px] mx-auto px-4">
+      StatsFut VIP &middot; Modelo Matem&aacute;tico Exclusivo &middot; Proibi&ccedil;&atilde;o de Repasse
+    </div>
+  </footer>
+
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>
