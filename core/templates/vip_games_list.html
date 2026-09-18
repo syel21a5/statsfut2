@@ -188,9 +188,9 @@
 
     </div>
 
-    <!-- ── (B) BARRA DE FILTROS RÁPIDOS ── -->
+    <!-- ── (B) BARRA DE FILTROS RÁPIDOS & BUSCA INSTANTÂNEA ── -->
     <div class="flex flex-wrap items-center justify-between gap-3 bg-[#14181f] border border-gray-800/60 rounded-xl px-4 py-2.5 text-xs font-mono">
-      <div class="flex items-center gap-2">
+      <div class="flex flex-wrap items-center gap-2">
         <span class="text-gray-400 font-mono text-[11px]">Filtros:</span>
         <a href="?status=today" class="px-3 py-1.5 rounded-lg font-semibold transition {% if current_status == 'today' %}bg-cyan-500/20 text-cyan-300 border border-cyan-500/40{% else %}bg-[#0e1217] text-gray-400 hover:text-white border border-gray-800{% endif %}">
           Hoje
@@ -208,12 +208,20 @@
         <a href="?status=finished" class="px-3 py-1.5 rounded-lg font-semibold transition {% if current_status == 'finished' %}bg-cyan-500/20 text-cyan-300 border border-cyan-500/40{% else %}bg-[#0e1217] text-gray-400 hover:text-white border border-gray-800{% endif %}">
           Encerrados
         </a>
+
+        <!-- Botão Filtro Sniper Só >= 80% -->
+        <button id="btnSniperFilter" onclick="toggleSniperFilter()" class="ml-2 px-3 py-1.5 rounded-lg bg-[#0e1217] hover:bg-emerald-500/10 text-gray-400 hover:text-emerald-400 border border-gray-800 hover:border-emerald-500/40 transition font-bold flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+          <span>Só &ge; 80% (Sniper)</span>
+        </button>
       </div>
 
+      <!-- Barra de Busca Instantânea -->
       <div class="flex items-center gap-2">
-        <span class="px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono text-[11px] font-bold">
-          Prob. &ge; 75%
-        </span>
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-500 text-xs"></i>
+          <input type="text" id="matchSearchInput" oninput="filterMatchesLive()" placeholder="Buscar time ou liga..." class="bg-[#0e1217] border border-gray-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-gray-500 outline-none focus:border-cyan-500 transition w-48 sm:w-56 font-sans">
+        </div>
       </div>
     </div>
 
@@ -286,10 +294,14 @@
         <div class="flex items-center gap-2.5">
           <span class="w-1 h-4 bg-cyan-400 rounded-full"></span>
           <h3 class="text-sm font-bold text-white">{{ sec.title }}</h3>
-          <span class="text-xs text-gray-500 font-mono hidden sm:inline">&middot; mostrando as mais fortes</span>
+          <span class="text-xs text-gray-500 font-mono hidden sm:inline">&middot; a mostrar as mais fortes</span>
         </div>
         <div class="flex items-center gap-3">
           <span class="text-xs font-mono text-emerald-400 font-semibold">{{ sec.winrate_30d }} acerto 30 d.</span>
+          <button onclick="toggleSectionRows('{{ sec.id }}')" id="btn-toggle-{{ sec.id }}" class="px-2.5 py-1 rounded bg-[#0e1217] hover:bg-gray-800 text-cyan-400 border border-gray-800 hover:border-cyan-500/40 text-[11px] font-mono font-bold transition flex items-center gap-1.5">
+            <span>Ver todas ({{ sec.matches|length }})</span>
+            <i class="fa-solid fa-chevron-down text-[9px] transition-transform duration-200" id="icon-toggle-{{ sec.id }}"></i>
+          </button>
         </div>
       </div>
 
@@ -307,9 +319,12 @@
               <th class="py-2.5 px-4 text-right w-28">Ação</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-800/40 text-gray-200">
+          <tbody class="divide-y divide-gray-800/40 text-gray-200" id="tbody-{{ sec.id }}">
             {% for m in sec.matches %}
-            <tr class="hover:bg-gray-800/30 transition-colors">
+            <tr class="match-row hover:bg-gray-800/30 transition-colors {% if forloop.counter > 5 %}hidden row-extra-{{ sec.id }}{% endif %}"
+                data-teams="{{ m.home_team.name|lower }} {{ m.away_team.name|lower }}"
+                data-league="{{ m.league.name|lower }}"
+                data-prob="{% if sec.type == 'gols' %}{{ m.p_o15 }}{% elif sec.id == 'cantos_75ft' %}{{ m.p_c75ft }}{% else %}{{ m.p_c85 }}{% endif %}">
               
               <!-- Hora -->
               <td class="py-3 px-4 font-mono text-gray-300 text-[11px] whitespace-nowrap">
@@ -373,4 +388,78 @@
   </main>
 
 </div>
+
+<script>
+  let sniperActive = false;
+
+  function toggleSectionRows(secId) {
+    const extraRows = document.querySelectorAll('.row-extra-' + secId);
+    const btn = document.getElementById('btn-toggle-' + secId);
+    const icon = document.getElementById('icon-toggle-' + secId);
+    if (!extraRows.length) return;
+
+    const isHidden = extraRows[0].classList.contains('hidden');
+    extraRows.forEach(row => {
+      if (isHidden) {
+        row.classList.remove('hidden');
+      } else {
+        row.classList.add('hidden');
+      }
+    });
+
+    if (isHidden) {
+      btn.querySelector('span').innerText = 'Recolher Top 5';
+      icon.classList.add('rotate-180');
+    } else {
+      btn.querySelector('span').innerText = 'Ver todas (' + (extraRows.length + 5) + ')';
+      icon.classList.remove('rotate-180');
+    }
+  }
+
+  function toggleSniperFilter() {
+    sniperActive = !sniperActive;
+    const btn = document.getElementById('btnSniperFilter');
+    
+    if (sniperActive) {
+      btn.classList.add('bg-emerald-500/20', 'text-emerald-300', 'border-emerald-500/50');
+      btn.classList.remove('bg-[#0e1217]', 'text-gray-400', 'border-gray-800');
+    } else {
+      btn.classList.remove('bg-emerald-500/20', 'text-emerald-300', 'border-emerald-500/50');
+      btn.classList.add('bg-[#0e1217]', 'text-gray-400', 'border-gray-800');
+    }
+
+    applyFilters();
+  }
+
+  function filterMatchesLive() {
+    applyFilters();
+  }
+
+  function applyFilters() {
+    const term = (document.getElementById('matchSearchInput').value || '').toLowerCase().trim();
+    const rows = document.querySelectorAll('.match-row');
+
+    rows.forEach(row => {
+      const teams = row.getAttribute('data-teams') || '';
+      const league = row.getAttribute('data-league') || '';
+      const prob = parseInt(row.getAttribute('data-prob')) || 0;
+
+      let matchSearch = true;
+      if (term) {
+        matchSearch = teams.includes(term) || league.includes(term);
+      }
+
+      let matchSniper = true;
+      if (sniperActive) {
+        matchSniper = prob >= 80;
+      }
+
+      if (matchSearch && matchSniper) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  }
+</script>
 {% endblock %}
