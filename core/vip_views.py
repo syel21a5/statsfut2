@@ -212,6 +212,8 @@ def vip_games_list_view(request):
     )
 
     # 1. Filtro Temporal
+    live_count = Match.objects.filter(status='Live').count()
+    
     if status_filter == 'today':
         qs = qs.filter(date__gte=now - timedelta(hours=3), date__lte=now + timedelta(hours=24)).order_by('date')
     elif status_filter == 'tomorrow':
@@ -327,6 +329,7 @@ def vip_games_list_view(request):
         'market_sections': market_sections,
         'day_selectors': day_selectors,
         'current_status': status_filter,
+        'live_count': live_count,
         'total_count': len(processed_matches),
         'server_date': now.strftime('%d set.')
     })
@@ -342,6 +345,7 @@ def vip_match_analysis_view(request, match_id):
     )
     
     # Probabilidades & Projeções Baseadas em Odds ou Modelos
+    live_count = Match.objects.filter(status='Live').count()
     p_o15 = 82 if (match.over_15_odds and float(match.over_15_odds) <= 1.35) else 75
     p_o25 = 55 if (match.over_25_odds and float(match.over_25_odds) <= 1.80) else 42
     p_o35 = 28
@@ -377,6 +381,7 @@ def vip_match_analysis_view(request, match_id):
         'p_c105': p_c105,
         'p_c75ft': p_c75ft,
         'p_37ht': p_37ht,
+        'live_count': live_count,
         'players': players
     })
 

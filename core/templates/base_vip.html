@@ -88,12 +88,17 @@
       <!-- Links de Navegação Principal (Estilo CornerPro) -->
       <nav class="hidden lg:flex items-center gap-6 font-mono text-xs font-semibold tracking-wider">
         <a href="/vip/jogos/" class="text-white hover:text-[#00b4d8] transition">TODOS JOGOS</a>
-        <a href="/vip/jogos/?status=live" class="text-gray-400 hover:text-rose-400 transition flex items-center gap-1.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>AO VIVO
+        <a href="/vip/jogos/?status=live" class="text-rose-400 hover:text-rose-300 transition flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-500/10 border border-rose-500/20 shadow-sm">
+          <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+          <span>AO VIVO</span>
+          <span class="ml-0.5 px-1.5 py-0.2 rounded-full bg-rose-500 text-white font-bold text-[10px]">
+            {{ live_count|default:"8" }}
+          </span>
         </a>
         <a href="/" class="text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1">PREVISÕES</a>
-        <a href="/members/plans/" class="text-gray-400 hover:text-white transition">SNIPER EV+</a>
-        <a href="/members/plans/" class="text-gray-400 hover:text-white transition">LAY MERCADOS</a>
+        <a href="/vip/jogos/?market=gols" class="text-gray-400 hover:text-white transition">GOLS</a>
+        <a href="/vip/jogos/?market=cantos" class="text-gray-400 hover:text-white transition">ESCANTEIOS</a>
+        <a href="/vip/jogos/?market=lays" class="text-gray-400 hover:text-white transition">LAY MERCADOS</a>
       </nav>
 
       <!-- Lado Direito: Status / Sair -->

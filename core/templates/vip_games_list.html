@@ -189,15 +189,25 @@
     </div>
 
     <!-- ── (B) BARRA DE FILTROS RÁPIDOS ── -->
-    <div class="flex flex-wrap items-center justify-between gap-3 bg-[#14181f] border border-gray-800/60 rounded-xl px-4 py-2.5 text-xs">
+    <div class="flex flex-wrap items-center justify-between gap-3 bg-[#14181f] border border-gray-800/60 rounded-xl px-4 py-2.5 text-xs font-mono">
       <div class="flex items-center gap-2">
-        <span class="text-gray-400 font-mono">Filtros:</span>
-        <a href="?status=today" class="px-3 py-1 rounded-lg bg-[#1c232d] text-white border border-gray-700 font-semibold">Hoje</a>
-        <a href="?status=tomorrow" class="px-3 py-1 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition">Amanhã</a>
-        <a href="?status=live" class="px-3 py-1 rounded-lg text-gray-400 hover:text-rose-400 hover:bg-gray-800 transition flex items-center gap-1.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></span>Ao Vivo
+        <span class="text-gray-400 font-mono text-[11px]">Filtros:</span>
+        <a href="?status=today" class="px-3 py-1.5 rounded-lg font-semibold transition {% if current_status == 'today' %}bg-cyan-500/20 text-cyan-300 border border-cyan-500/40{% else %}bg-[#0e1217] text-gray-400 hover:text-white border border-gray-800{% endif %}">
+          Hoje
         </a>
-        <a href="?status=finished" class="px-3 py-1 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition">Encerrados</a>
+        <a href="?status=tomorrow" class="px-3 py-1.5 rounded-lg font-semibold transition {% if current_status == 'tomorrow' %}bg-cyan-500/20 text-cyan-300 border border-cyan-500/40{% else %}bg-[#0e1217] text-gray-400 hover:text-white border border-gray-800{% endif %}">
+          Amanhã
+        </a>
+        <a href="?status=live" class="px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1.5 {% if current_status == 'live' %}bg-rose-500/25 text-rose-300 border border-rose-500/50{% else %}bg-[#0e1217] text-rose-400 hover:text-rose-300 border border-rose-500/20{% endif %}">
+          <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+          <span>Ao Vivo</span>
+          <span class="px-1.5 py-0.2 rounded-full bg-rose-500 text-white font-bold text-[10px]">
+            {{ live_count|default:"8" }}
+          </span>
+        </a>
+        <a href="?status=finished" class="px-3 py-1.5 rounded-lg font-semibold transition {% if current_status == 'finished' %}bg-cyan-500/20 text-cyan-300 border border-cyan-500/40{% else %}bg-[#0e1217] text-gray-400 hover:text-white border border-gray-800{% endif %}">
+          Encerrados
+        </a>
       </div>
 
       <div class="flex items-center gap-2">
