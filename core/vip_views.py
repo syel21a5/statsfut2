@@ -212,21 +212,28 @@ def vip_games_list_view(request):
     )
 
     # 1. Filtro Temporal
-    live_count = Match.objects.filter(status='Live').count()
+    live_count = Match.objects.filter(status__iexact='Live').count()
     
     if status_filter == 'today':
         qs = qs.filter(date__gte=now - timedelta(hours=3), date__lte=now + timedelta(hours=24)).order_by('date')
     elif status_filter == 'tomorrow':
         qs = qs.filter(date__gte=now + timedelta(hours=24), date__lte=now + timedelta(hours=48)).order_by('date')
     elif status_filter == 'finished':
-        qs = qs.filter(home_score__isnull=False).order_by('-date')
+        qs = qs.filter(status__in=['Finished', 'FT']).order_by('-date')
     elif status_filter == 'live':
-        qs = qs.filter(status='Live').order_by('date')
+        qs = qs.filter(status__iexact='Live').order_by('date')
     else:
         qs = qs.order_by('date')
 
     raw_matches = list(qs[:120])
     
+    # Fallback se não encontrar partidas ao vivo no status exato, traz as mais recentes em andamento
+    if status_filter == 'live' and not raw_matches:
+        raw_matches = list(Match.objects.select_related('home_team', 'away_team', 'league').filter(
+            date__gte=now - timedelta(hours=2),
+            date__lte=now + timedelta(minutes=15)
+        ).order_by('date')[:30])
+
     if not raw_matches and status_filter == 'today':
         raw_matches = list(Match.objects.select_related('home_team', 'away_team', 'league').filter(
             date__gte=now

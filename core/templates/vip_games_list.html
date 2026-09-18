@@ -262,7 +262,23 @@
     </div>
 
     <!-- ── (D) TABELAS AGRUPADAS POR MERCADO (EXATO 2.PNG) ── -->
+    {% if not market_sections.0.matches and current_status == 'live' %}
+    <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-12 text-center shadow-lg space-y-3">
+      <div class="w-12 h-12 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center mx-auto text-xl">
+        <i class="fa-solid fa-satellite-dish animate-pulse"></i>
+      </div>
+      <h3 class="text-base font-bold text-white font-mono">Nenhum jogo ao vivo no momento exato</h3>
+      <p class="text-xs text-gray-400 max-w-md mx-auto">
+        As transmissões e feeds de radar ao vivo atualizam automaticamente a cada 60 segundos assim que uma partida inicia.
+      </p>
+      <a href="?status=today" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-mono font-bold transition">
+        Ver Jogos de Hoje
+      </a>
+    </div>
+    {% endif %}
+
     {% for sec in market_sections %}
+    {% if sec.matches %}
     <div class="bg-[#14181f] border border-gray-800/70 rounded-xl overflow-hidden shadow-lg">
       
       <!-- Cabeçalho do Mercado -->
@@ -351,6 +367,7 @@
       </div>
 
     </div>
+    {% endif %}
     {% endfor %}
 
   </main>
