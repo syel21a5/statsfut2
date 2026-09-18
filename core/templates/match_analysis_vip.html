@@ -737,6 +737,162 @@
 
   </div>
 
+  <!-- ── SEÇÃO EXCLUSIVA STATSFUT: FAIXAS DE GOLS, DISTRIBUIÇÃO E COMBOS ── -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-2">
+    
+    <!-- Bloco 1: Faixas de Gols (Multi-Gols) -->
+    <div class="lg:col-span-4 space-y-4">
+      <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
+        <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-4 bg-emerald-400 rounded-full"></span>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Faixas de Gols (Ranges)</h3>
+          </div>
+          <span class="text-xs font-mono text-emerald-400 font-bold">Multi-Gols</span>
+        </div>
+
+        <table class="w-full font-mono text-xs text-left">
+          <thead class="border-b border-gray-800/60 text-gray-500 text-[10px] uppercase">
+            <tr>
+              <th class="py-2">Intervalo de Gols</th>
+              <th class="py-2 text-center">Probabilidade</th>
+              <th class="py-2 text-right">Odd Justa</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-800/40 text-gray-200">
+            <tr>
+              <td class="py-2.5 font-bold text-white">Faixa 1 a 2 Gols FT</td>
+              <td class="py-2.5 text-center text-gray-300">45%</td>
+              <td class="py-2.5 text-right font-bold text-cyan-400">2.22</td>
+            </tr>
+            <tr class="bg-emerald-500/10">
+              <td class="py-2.5 font-bold text-emerald-300">Faixa 2 a 3 Gols FT</td>
+              <td class="py-2.5 text-center font-black text-[#00d26a] text-sm">66%</td>
+              <td class="py-2.5 text-right font-bold text-emerald-400">1.51</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 font-bold text-white">Faixa 2 a 4 Gols FT</td>
+              <td class="py-2.5 text-center font-black text-[#00d26a] text-sm">78%</td>
+              <td class="py-2.5 text-right font-bold text-emerald-400">1.28</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 font-bold text-white">1 a 2 Gols no 1º Tempo</td>
+              <td class="py-2.5 text-center text-cyan-400 font-bold">55%</td>
+              <td class="py-2.5 text-right font-bold text-cyan-400">1.82</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 font-bold text-white">1 a 2 Gols no 2º Tempo</td>
+              <td class="py-2.5 text-center text-cyan-400 font-bold">60%</td>
+              <td class="py-2.5 text-right font-bold text-cyan-400">1.66</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Bloco 2: Distribuição Temporal & Margens de Vitória -->
+    <div class="lg:col-span-4 space-y-4">
+      <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
+        <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-4 bg-cyan-400 rounded-full"></span>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Distribuição por Tempo</h3>
+          </div>
+          <span class="text-xs font-mono text-cyan-400">1ºT vs 2ºT</span>
+        </div>
+
+        <div class="space-y-2 font-mono text-xs">
+          <div class="flex items-center justify-between p-2.5 rounded bg-[#0e1217]">
+            <span class="text-gray-400">Mais Gols no 1º Tempo</span>
+            <span class="text-white font-bold">25% prob.</span>
+          </div>
+          <div class="flex items-center justify-between p-2.5 rounded bg-[#0e1217]">
+            <span class="text-gray-400">Mesmo Número nos Dois Tempos</span>
+            <span class="text-white font-bold">25% prob.</span>
+          </div>
+          <div class="flex items-center justify-between p-2.5 rounded bg-cyan-500/10 border border-cyan-500/20">
+            <span class="text-cyan-400 font-bold">Mais Gols no 2º Tempo (Pico)</span>
+            <span class="text-cyan-400 font-black text-sm">50% prob.</span>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-gray-800/70">
+          <h4 class="text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-2">Margens de Vitória</h4>
+          <div class="grid grid-cols-2 gap-2 text-center font-mono text-xs">
+            <div class="p-2 rounded bg-[#0e1217] border border-gray-800">
+              <span class="text-[10px] text-gray-500 block">Vitória por 1 gol</span>
+              <span class="text-white font-bold text-sm mt-0.5 block">32%</span>
+            </div>
+            <div class="p-2 rounded bg-[#0e1217] border border-gray-800">
+              <span class="text-[10px] text-gray-500 block">Vitória por 2 gols</span>
+              <span class="text-white font-bold text-sm mt-0.5 block">18%</span>
+            </div>
+            <div class="p-2 rounded bg-[#0e1217] border border-gray-800">
+              <span class="text-[10px] text-gray-500 block">Goleada (3+ gols)</span>
+              <span class="text-rose-400 font-bold text-sm mt-0.5 block">8%</span>
+            </div>
+            <div class="p-2 rounded bg-[#0e1217] border border-gray-800">
+              <span class="text-[10px] text-gray-500 block">Empate sem gols (0-0)</span>
+              <span class="text-amber-400 font-bold text-sm mt-0.5 block">6%</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Bloco 3: Combos Especiais (Vencedor + Gols) -->
+    <div class="lg:col-span-4 space-y-4">
+      <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
+        <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-4 bg-purple-400 rounded-full"></span>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Combos &middot; Vencedor + Gols</h3>
+          </div>
+          <span class="text-xs font-mono text-purple-400">Alta Odd</span>
+        </div>
+
+        <table class="w-full font-mono text-xs text-left">
+          <thead class="border-b border-gray-800/60 text-gray-500 text-[10px] uppercase">
+            <tr>
+              <th class="py-2">Mercado Combo</th>
+              <th class="py-2 text-center">Prob.</th>
+              <th class="py-2 text-right">Odd Justa</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-800/40 text-gray-200">
+            <tr>
+              <td class="py-2.5 font-bold text-white">{{ match.home_team.name|slice:":10" }} &amp; Não Sofre (Win to Nil)</td>
+              <td class="py-2.5 text-center text-emerald-400 font-bold">28%</td>
+              <td class="py-2.5 text-right font-bold text-cyan-400">3.57</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 font-bold text-white">{{ match.home_team.name|slice:":10" }} &amp; Ambos Marcam</td>
+              <td class="py-2.5 text-center text-gray-300">19%</td>
+              <td class="py-2.5 text-right font-bold text-cyan-400">5.26</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 font-bold text-white">Empate com Gols (Draw &amp; Yes)</td>
+              <td class="py-2.5 text-center text-amber-400 font-bold">12%</td>
+              <td class="py-2.5 text-right font-bold text-cyan-400">8.33</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 font-bold text-white">1X &amp; Faixa 2 a 4 Gols</td>
+              <td class="py-2.5 text-center text-[#00d26a] font-bold text-sm">38%</td>
+              <td class="py-2.5 text-right font-bold text-emerald-400">2.63</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 font-bold text-white">Dupla Chance 1X &amp; 1-2 Gols</td>
+              <td class="py-2.5 text-center text-gray-300">22%</td>
+              <td class="py-2.5 text-right font-bold text-cyan-400">4.54</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
 </div>
 
 <!-- ═════════════════════════════════════════════════════════════════
