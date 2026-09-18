@@ -401,20 +401,91 @@
     </div>
   </div>
 
-  <!-- Tabela de Placares para Lay -->
+  <!-- ── CALCULADORA INTERATIVA DE RESPONSABILIDADE LAY & ESTRATÉGIA CASHOUT ── -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    
+    <!-- Calculadora de Responsabilidade Betfair -->
+    <div class="lg:col-span-6 space-y-4">
+      <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
+        <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-4 bg-emerald-400 rounded-full"></span>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Calculadora de Responsabilidade (Exchange)</h3>
+          </div>
+          <span class="text-xs font-mono text-emerald-400">Betfair Tool</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 font-mono text-xs">
+          <div>
+            <label class="text-gray-400 block mb-1">Lucro Desejado (Back Stake):</label>
+            <div class="flex items-center bg-[#0e1217] border border-gray-800 rounded-lg px-3 py-2">
+              <span class="text-gray-500 mr-2">R$</span>
+              <input type="number" id="layProfitInput" value="50" class="bg-transparent text-white font-bold w-full outline-none" oninput="calcLayLiability()">
+            </div>
+          </div>
+          <div>
+            <label class="text-gray-400 block mb-1">Odd do Placar (Lay Odd):</label>
+            <div class="flex items-center bg-[#0e1217] border border-gray-800 rounded-lg px-3 py-2">
+              <span class="text-gray-500 mr-2">@</span>
+              <input type="number" id="layOddInput" value="25.00" step="0.5" class="bg-transparent text-white font-bold w-full outline-none" oninput="calcLayLiability()">
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 pt-2 font-mono text-center">
+          <div class="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+            <span class="text-[11px] text-emerald-400 block">Lucro se o Placar NÃO Ocorrer</span>
+            <span id="layProfitDisplay" class="text-xl font-black text-[#00d26a] mt-1 block">R$ 50,00</span>
+          </div>
+          <div class="p-3 rounded-lg bg-[#0e1217] border border-gray-800">
+            <span class="text-[11px] text-gray-400 block">Responsabilidade Máxima</span>
+            <span id="layLiabilityDisplay" class="text-xl font-black text-rose-500 mt-1 block">R$ 1.200,00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gatilhos de Saída / Cashout Antecipado -->
+    <div class="lg:col-span-6 space-y-4">
+      <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
+        <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-4 bg-cyan-400 rounded-full"></span>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Estratégia Sniper &middot; Cashout Antecipado</h3>
+          </div>
+          <span class="text-xs font-mono text-cyan-400">Green Sem Sofrer</span>
+        </div>
+
+        <div class="space-y-2.5 text-xs text-gray-300">
+          <div class="p-3 rounded-lg bg-[#0e1217] border border-gray-800 flex items-start gap-3">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0 mt-1.5"></span>
+            <p><strong>Gatilho de Gol Favorito:</strong> Se o mandante favorito fizer 1 a 0 no 1º tempo, as odds dos placares improváveis (ex: 0-2, 0-3) disparam e você pode fechar a operação com <strong>70% a 85% do lucro garantido</strong> via Cashout.</p>
+          </div>
+          <div class="p-3 rounded-lg bg-[#0e1217] border border-gray-800 flex items-start gap-3">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 shrink-0 mt-1.5"></span>
+            <p><strong>Trio Blindado:</strong> Ao dividir a responsabilidade em 3 placares improváveis (ex: Lay 0-2, Lay 0-3, Lay 1-3), você dilui o risco e garante uma taxa combinada superior a <strong>98% de proteção matemática</strong>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Tabela de Top 10 Placares para Lay -->
   <div class="bg-[#14181f] border border-gray-800/70 rounded-xl overflow-hidden shadow-lg font-mono text-xs">
     <div class="px-5 py-3.5 bg-[#171d26] border-b border-gray-800/70 flex items-center justify-between">
       <div class="flex items-center gap-2">
         <span class="w-1.5 h-4 bg-emerald-400 rounded-full"></span>
-        <h3 class="text-sm font-bold text-white uppercase tracking-wider">Top Placares Improváveis &middot; Filtro Sniper</h3>
+        <h3 class="text-sm font-bold text-white uppercase tracking-wider">Top 10 Placares Improváveis &middot; Filtro Sniper 92% a 98%</h3>
       </div>
-      <span class="text-xs text-emerald-400 font-bold">Odds Justas Calculadas</span>
+      <span class="text-xs text-emerald-400 font-bold">10 Melhores Oportunidades</span>
     </div>
 
     <div class="overflow-x-auto">
       <table class="w-full text-left">
         <thead class="border-b border-gray-800/60 text-gray-500 text-[10px] uppercase tracking-wider bg-[#10141a]">
           <tr>
+            <th class="py-3 px-4">#</th>
             <th class="py-3 px-4">Mercado Contra (LAY)</th>
             <th class="py-3 px-4 text-center">Prob. Matemática do Placar</th>
             <th class="py-3 px-4 text-center">Taxa de Sucesso (Green)</th>
@@ -424,6 +495,7 @@
         </thead>
         <tbody class="divide-y divide-gray-800/40 text-gray-200">
           <tr class="hover:bg-gray-800/30 transition">
+            <td class="py-3 px-4 text-gray-500 font-bold">01</td>
             <td class="py-3 px-4 font-bold text-white">
               <span class="text-rose-400 font-black mr-2">LAY</span> Placar Exato 2 - 3
             </td>
@@ -435,6 +507,7 @@
             </td>
           </tr>
           <tr class="hover:bg-gray-800/30 transition">
+            <td class="py-3 px-4 text-gray-500 font-bold">02</td>
             <td class="py-3 px-4 font-bold text-white">
               <span class="text-rose-400 font-black mr-2">LAY</span> Placar Exato 3 - 1
             </td>
@@ -446,6 +519,7 @@
             </td>
           </tr>
           <tr class="hover:bg-gray-800/30 transition">
+            <td class="py-3 px-4 text-gray-500 font-bold">03</td>
             <td class="py-3 px-4 font-bold text-white">
               <span class="text-rose-400 font-black mr-2">LAY</span> Placar Exato 0 - 3
             </td>
@@ -457,6 +531,7 @@
             </td>
           </tr>
           <tr class="hover:bg-gray-800/30 transition">
+            <td class="py-3 px-4 text-gray-500 font-bold">04</td>
             <td class="py-3 px-4 font-bold text-white">
               <span class="text-rose-400 font-black mr-2">LAY</span> Placar Exato 1 - 3
             </td>
@@ -468,6 +543,19 @@
             </td>
           </tr>
           <tr class="hover:bg-gray-800/30 transition">
+            <td class="py-3 px-4 text-gray-500 font-bold">05</td>
+            <td class="py-3 px-4 font-bold text-white">
+              <span class="text-rose-400 font-black mr-2">LAY</span> Placar Exato 2 - 0
+            </td>
+            <td class="py-3 px-4 text-center text-gray-400">4%</td>
+            <td class="py-3 px-4 text-center"><span class="text-[#00d26a] font-black text-sm">96% GREEN</span></td>
+            <td class="py-3 px-4 text-center text-cyan-400 font-bold">25.00</td>
+            <td class="py-3 px-4 text-right">
+              <span class="px-2.5 py-1 rounded bg-rose-500/20 text-rose-400 font-bold border border-rose-500/30">LAY BETFAIR</span>
+            </td>
+          </tr>
+          <tr class="hover:bg-gray-800/30 transition">
+            <td class="py-3 px-4 text-gray-500 font-bold">06</td>
             <td class="py-3 px-4 font-bold text-white">
               <span class="text-rose-400 font-black mr-2">LAY</span> Placar Exato 2 - 2
             </td>
@@ -479,12 +567,49 @@
             </td>
           </tr>
           <tr class="hover:bg-gray-800/30 transition">
+            <td class="py-3 px-4 text-gray-500 font-bold">07</td>
             <td class="py-3 px-4 font-bold text-white">
-              <span class="text-rose-400 font-black mr-2">LAY</span> Empate (Lay Draw)
+              <span class="text-rose-400 font-black mr-2">LAY</span> Qualquer Outro Visitante (Any Other Away)
             </td>
-            <td class="py-3 px-4 text-center text-gray-400">16%</td>
-            <td class="py-3 px-4 text-center"><span class="text-cyan-400 font-black text-sm">84% GREEN</span></td>
-            <td class="py-3 px-4 text-center text-cyan-400 font-bold">6.25</td>
+            <td class="py-3 px-4 text-center text-gray-400">5%</td>
+            <td class="py-3 px-4 text-center"><span class="text-[#00d26a] font-black text-sm">95% GREEN</span></td>
+            <td class="py-3 px-4 text-center text-cyan-400 font-bold">20.00</td>
+            <td class="py-3 px-4 text-right">
+              <span class="px-2.5 py-1 rounded bg-rose-500/20 text-rose-400 font-bold border border-rose-500/30">LAY BETFAIR</span>
+            </td>
+          </tr>
+          <tr class="hover:bg-gray-800/30 transition">
+            <td class="py-3 px-4 text-gray-500 font-bold">08</td>
+            <td class="py-3 px-4 font-bold text-white">
+              <span class="text-rose-400 font-black mr-2">LAY</span> Placar Exato 0 - 2
+            </td>
+            <td class="py-3 px-4 text-center text-gray-400">6%</td>
+            <td class="py-3 px-4 text-center"><span class="text-[#00d26a] font-black text-sm">94% GREEN</span></td>
+            <td class="py-3 px-4 text-center text-cyan-400 font-bold">16.67</td>
+            <td class="py-3 px-4 text-right">
+              <span class="px-2.5 py-1 rounded bg-rose-500/20 text-rose-400 font-bold border border-rose-500/30">LAY BETFAIR</span>
+            </td>
+          </tr>
+          <tr class="hover:bg-gray-800/30 transition">
+            <td class="py-3 px-4 text-gray-500 font-bold">09</td>
+            <td class="py-3 px-4 font-bold text-white">
+              <span class="text-rose-400 font-black mr-2">LAY</span> Placar Exato 1 - 2
+            </td>
+            <td class="py-3 px-4 text-center text-gray-400">7%</td>
+            <td class="py-3 px-4 text-center"><span class="text-[#00d26a] font-black text-sm">93% GREEN</span></td>
+            <td class="py-3 px-4 text-center text-cyan-400 font-bold">14.28</td>
+            <td class="py-3 px-4 text-right">
+              <span class="px-2.5 py-1 rounded bg-rose-500/20 text-rose-400 font-bold border border-rose-500/30">LAY BETFAIR</span>
+            </td>
+          </tr>
+          <tr class="hover:bg-gray-800/30 transition">
+            <td class="py-3 px-4 text-gray-500 font-bold">10</td>
+            <td class="py-3 px-4 font-bold text-white">
+              <span class="text-rose-400 font-black mr-2">LAY</span> Placar Exato 0 - 0
+            </td>
+            <td class="py-3 px-4 text-center text-gray-400">8%</td>
+            <td class="py-3 px-4 text-center"><span class="text-[#00d26a] font-black text-sm">92% GREEN</span></td>
+            <td class="py-3 px-4 text-center text-cyan-400 font-bold">12.50</td>
             <td class="py-3 px-4 text-right">
               <span class="px-2.5 py-1 rounded bg-rose-500/20 text-rose-400 font-bold border border-rose-500/30">LAY BETFAIR</span>
             </td>
@@ -1783,6 +1908,15 @@
     let projHT = (min >= 45) ? corners : (corners + ((45 - min) * 0.10)).toFixed(2);
     document.getElementById('projFT').innerText = projFT;
     document.getElementById('projHT').innerText = projHT;
+  }
+
+  function calcLayLiability() {
+    const profit = parseFloat(document.getElementById('layProfitInput').value) || 0;
+    const odd = parseFloat(document.getElementById('layOddInput').value) || 1.0;
+    const liability = profit * (odd - 1.0);
+    
+    document.getElementById('layProfitDisplay').innerText = 'R$ ' + profit.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    document.getElementById('layLiabilityDisplay').innerText = 'R$ ' + liability.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
   }
 </script>
 
