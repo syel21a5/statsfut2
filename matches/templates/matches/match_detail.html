@@ -24,6 +24,223 @@
 <h1 class="h3 mb-0 text-white">{% if request.LANGUAGE_CODE == 'pt-br' %}{{ match.home_team.name }} x {{ match.away_team.name }}{% elif request.LANGUAGE_CODE == 'es' %}{{ match.home_team.name }} vs {{ match.away_team.name }}{% elif request.LANGUAGE_CODE == 'de' %}{{ match.home_team.name }} gegen {{ match.away_team.name }}{% else %}{{ match.home_team.name }} vs {{ match.away_team.name }}{% endif %}</h1>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
+    /* HERO PREMIUM DESIGN */
+    .match-hero-premium {
+        background: radial-gradient(circle at 50% -20%, rgba(16, 185, 129, 0.12), rgba(15, 23, 42, 0.95) 75%), #090e17;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 1.5rem 1.8rem;
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+        position: relative;
+        overflow: hidden;
+    }
+    .match-hero-premium::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.4), transparent);
+    }
+    .hero-meta-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        padding-bottom: 0.8rem;
+        margin-bottom: 1.2rem;
+        font-size: 0.82rem;
+    }
+    .hero-badge-league {
+        color: #cbd5e1;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+    }
+    .hero-badge-time {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-family: 'JetBrains Mono', monospace, sans-serif;
+    }
+    .hero-teams-wrap {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 1.5rem;
+    }
+    .hero-team {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+    }
+    .hero-team.away {
+        flex-direction: row-reverse;
+        text-align: right;
+    }
+    .hero-logo-box {
+        width: 72px;
+        height: 72px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        padding: 6px;
+    }
+    .hero-team-img {
+        max-height: 56px;
+        max-width: 56px;
+        object-fit: contain;
+        filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+    }
+    .hero-logo-placeholder {
+        width: 56px;
+        height: 56px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+        color: #fff;
+        font-weight: 900;
+        font-size: 1.3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .hero-logo-placeholder.away {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    }
+    .hero-team-role {
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 0.2rem;
+    }
+    .hero-team-name {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: #f8fafc;
+        margin: 0;
+        line-height: 1.2;
+    }
+    .hero-center-box {
+        text-align: center;
+        min-width: 140px;
+    }
+    .hero-score-board {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        background: rgba(2, 6, 23, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 0.4rem 1.2rem;
+        border-radius: 12px;
+        box-shadow: inset 0 2px 6px rgba(0,0,0,0.6);
+    }
+    .hero-score-digit {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 2.2rem;
+        font-weight: 900;
+        color: #10b981;
+    }
+    .hero-score-sep {
+        font-size: 1.8rem;
+        color: #64748b;
+        font-weight: 800;
+    }
+    .hero-ht-score {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        margin-top: 0.4rem;
+        font-family: 'JetBrains Mono', monospace;
+    }
+    .hero-vs-badge {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: #64748b;
+        letter-spacing: 2px;
+    }
+    .hero-prematch-tag {
+        font-size: 0.7rem;
+        color: #10b981;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-top: 0.2rem;
+    }
+    @media (max-width: 768px) {
+        .hero-teams-wrap {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        .hero-team {
+            justify-content: center;
+            text-align: center;
+            flex-direction: column;
+        }
+        .hero-team.away {
+            flex-direction: column;
+            text-align: center;
+        }
+        .hero-team-name { font-size: 1.15rem; }
+    }
+
+    /* HIGHLIGHT STAT CARDS */
+    .stat-highlight-card {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.45) 0%, rgba(15, 23, 42, 0.6) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 12px;
+        padding: 0.9rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+        transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .stat-highlight-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(255, 255, 255, 0.12);
+    }
+    .highlight-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+        flex-shrink: 0;
+    }
+    .highlight-icon.green { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.25); }
+    .highlight-icon.blue { background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.25); }
+    .highlight-icon.purple { background: rgba(139, 92, 246, 0.15); color: #a855f7; border: 1px solid rgba(139, 92, 246, 0.25); }
+    .highlight-icon.amber { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.25); }
+    .highlight-data {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .highlight-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .highlight-val {
+        font-family: 'JetBrains Mono', monospace, sans-serif;
+        font-size: 1.3rem;
+        font-weight: 800;
+        line-height: 1.1;
+    }
+
     /* TAB NAVIGATION PARA MERCADOS */
     .market-tabs {
         display: flex;
@@ -86,15 +303,21 @@
     .mg-row {
         display: flex;
         justify-content: space-between;
-        padding: 0.6rem 0;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
+        align-items: center;
+        padding: 0.65rem 0.8rem;
+        border-bottom: 1px solid rgba(255,255,255,0.04);
         font-size: 0.85rem;
         color: #94a3b8;
+        border-radius: 8px;
+        transition: background 0.2s ease;
+    }
+    .mg-row:hover {
+        background: rgba(255, 255, 255, 0.03);
     }
     .mg-row:last-child { border-bottom: none; }
     .mg-row.header { font-weight: 800; color: #cbd5e1; text-transform: uppercase; font-size: 0.7rem; }
-    .mg-row .perc { font-weight: 700; color: #e2e8f0; }
-    .mg-row .perc.high { color: #10b981; }
+    .mg-row .perc { font-weight: 700; color: #e2e8f0; font-family: 'JetBrains Mono', monospace; }
+    .mg-row .perc.high, .mg-row strong { font-weight: 800; color: #10b981; font-family: 'JetBrains Mono', monospace; }
     .mg-row .perc.low { color: #ef4444; }
     
     .cs-wrap { display: flex; gap: 1rem; margin-top: 0.5rem; height: 100%; align-items: center; justify-content: center; }
@@ -473,37 +696,77 @@
         <!-- Main Content Column (75% Width) -->
         <div class="col-lg-9">
 
-    <!-- PLACAR E TIMES (COMPACTO) -->
-    <div class="match-hero-minimal mb-4">
-        <div class="team-mini">
-            {% if match.home_team.logo_url %}
-            <img src="{{ match.home_team.logo_url }}" alt="{{ match.home_team.name }}" class="img-fluid drop-shadow mb-2" style="max-height: 70px; object-fit: contain;" loading="lazy" decoding="async" height="70">
-            {% else %}
-            <div class="t-logo">{{ match.home_team.name|slice:":1" }}</div>
-            {% endif %}
-            <span class="t-name">{{ match.home_team.name }}</span>
+    <!-- PLACAR E TIMES (HERO PREMIUM) -->
+    <div class="match-hero-premium mb-4">
+        <!-- Top Meta Bar -->
+        <div class="hero-meta-bar">
+            <span class="hero-badge-league">
+                <i class="fa-solid fa-trophy text-warning me-1"></i> {{ match.league.name }}
+                {% if match.round_name %} • {{ match.round_name }}{% endif %}
+            </span>
+            <span class="hero-badge-time">
+                {% if match.status == '1H' or match.status == '2H' or match.status == 'HT' %}
+                    <span class="pulse-dot"></span>
+                    <strong class="text-danger">{% if match.status == 'HT' %}HT{% else %}{{ match.elapsed_time }}'{% endif %}</strong>
+                {% elif match.status == 'FT' or match.status == 'AET' or match.status == 'PEN' %}
+                    <span class="text-secondary"><i class="fa-regular fa-circle-check text-success me-1"></i>{% translate "FINALIZADO" %}</span>
+                {% else %}
+                    <i class="fa-regular fa-calendar-days text-primary me-1"></i> {{ match.date|date:"d/m/Y • H:i" }} UTC
+                {% endif %}
+            </span>
         </div>
-        <div class="score-mini">
-            {% if match.status == 'Scheduled' or match.home_score is None or match.away_score is None %}
-                <span class="vs">VS</span>
-            {% else %}
-                <span class="val">{{ match.home_score }}</span>
-                <span class="sep">:</span>
-                <span class="val">{{ match.away_score }}</span>
-            {% endif %}
-        </div>
-        <div class="team-mini">
-            {% if match.away_team.logo_url %}
-            <img src="{{ match.away_team.logo_url }}" alt="{{ match.away_team.name }}" class="img-fluid drop-shadow mb-2" style="max-height: 70px; object-fit: contain;" loading="lazy" decoding="async" height="70">
-            {% else %}
-            <div class="t-logo away">{{ match.away_team.name|slice:":1" }}</div>
-            {% endif %}
-            <span class="t-name">{{ match.away_team.name }}</span>
+
+        <div class="hero-teams-wrap">
+            <!-- Home Team -->
+            <div class="hero-team home">
+                <div class="hero-logo-box">
+                    {% if match.home_team.logo_url %}
+                    <img src="{{ match.home_team.logo_url }}" alt="{{ match.home_team.name }}" class="hero-team-img" loading="lazy">
+                    {% else %}
+                    <div class="hero-logo-placeholder">{{ match.home_team.name|slice:":2"|upper }}</div>
+                    {% endif %}
+                </div>
+                <div class="hero-team-info">
+                    <span class="hero-team-role text-emerald">{% translate "MANDANTE" %}</span>
+                    <h1 class="hero-team-name">{{ match.home_team.name }}</h1>
+                </div>
+            </div>
+
+            <!-- Score / VS Display -->
+            <div class="hero-center-box">
+                {% if match.status == 'Scheduled' or match.home_score is None or match.away_score is None %}
+                    <div class="hero-vs-badge">VS</div>
+                    <div class="hero-prematch-tag">{% translate "PRÉ-JOGO" %}</div>
+                {% else %}
+                    <div class="hero-score-board">
+                        <span class="hero-score-digit">{{ match.home_score }}</span>
+                        <span class="hero-score-sep">:</span>
+                        <span class="hero-score-digit">{{ match.away_score }}</span>
+                    </div>
+                    {% if match.ht_home_score is not None %}
+                    <div class="hero-ht-score">
+                        {% translate "Intervalo" %}: {{ match.ht_home_score }} - {{ match.ht_away_score }}
+                    </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            <!-- Away Team -->
+            <div class="hero-team away">
+                <div class="hero-logo-box">
+                    {% if match.away_team.logo_url %}
+                    <img src="{{ match.away_team.logo_url }}" alt="{{ match.away_team.name }}" class="hero-team-img" loading="lazy">
+                    {% else %}
+                    <div class="hero-logo-placeholder away">{{ match.away_team.name|slice:":2"|upper }}</div>
+                    {% endif %}
+                </div>
+                <div class="hero-team-info">
+                    <span class="hero-team-role text-blue">{% translate "VISITANTE" %}</span>
+                    <h2 class="hero-team-name">{{ match.away_team.name }}</h2>
+                </div>
+            </div>
         </div>
     </div>
-    
-    <!-- Ad: topo do conteudo (acima da dobra) -->
-    <div class="ad-placeholder my-4" data-ad-slot="1511520655" data-ad-format="auto" data-ad-position="top-match"></div>
     
     <!-- SEO TEXT DYNAMIC GENERATION -->
     <div class="seo-match-text mb-4 p-3 rounded" style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; color: #94a3b8; line-height: 1.6;">
@@ -516,8 +779,8 @@
     {% if match.goals.all or match.home_corners is not None %}
     <div class="match-report-section mb-4">
         <div class="report-tabs">
-            <div class="tab-item active" onclick="switchTab('timeline')">{% translate "TIMELINE" %}</div>
-            <div class="tab-item" onclick="switchTab('stats')">{% translate "MATCH STATS" %}</div>
+            <div class="tab-item active" onclick="switchTab('timeline')"><i class="fa-solid fa-timeline me-1.5 text-primary"></i> {% translate "Linha do Tempo" %}</div>
+            <div class="tab-item" onclick="switchTab('stats')"><i class="fa-solid fa-chart-column me-1.5 text-emerald"></i> {% translate "Estatísticas da Partida" %}</div>
         </div>
 
         <div class="report-content" id="timeline-content">
@@ -584,6 +847,46 @@
 
     {% if advanced_stats %}
     
+    <!-- TOP STATISTICAL HIGHLIGHTS (KEY INSIGHTS BAR) -->
+    <div class="row g-2 mb-4">
+        <div class="col-md-3 col-6">
+            <div class="stat-highlight-card">
+                <div class="highlight-icon green"><i class="fa-solid fa-futbol"></i></div>
+                <div class="highlight-data">
+                    <span class="highlight-label">{% translate "Over 1.5 Gols" %}</span>
+                    <span class="highlight-val text-emerald">{{ advanced_stats.goals.over_15 }}%</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-highlight-card">
+                <div class="highlight-icon blue"><i class="fa-solid fa-arrows-to-circle"></i></div>
+                <div class="highlight-data">
+                    <span class="highlight-label">{% translate "Ambos Marcam (BTTS)" %}</span>
+                    <span class="highlight-val text-blue">{{ advanced_stats.goals.btts }}%</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-highlight-card">
+                <div class="highlight-icon purple"><i class="fa-solid fa-flag"></i></div>
+                <div class="highlight-data">
+                    <span class="highlight-label">{% translate "Over 8.5 Cantos" %}</span>
+                    <span class="highlight-val text-purple">{{ advanced_stats.corners.match_overs.8|default:"34" }}%</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-highlight-card">
+                <div class="highlight-icon amber"><i class="fa-solid fa-clone"></i></div>
+                <div class="highlight-data">
+                    <span class="highlight-label">{% translate "Over 3.5 Cartões" %}</span>
+                    <span class="highlight-val text-warning">{{ advanced_stats.disciplinary.cards_totals_overs.3|default:"20" }}%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- MENU DE ABAS DE MERCADO -->
     <div class="market-tabs mb-4">
         <button class="market-tab-btn active" onclick="switchMarketTab('gols', this)"><i class="fa-solid fa-futbol"></i> {% translate "Gols & Tempos" %}</button>
@@ -713,11 +1016,11 @@
                     <div class="title" style="color:#3b82f6;">{% translate "Marcar Primeiro" %}</div>
                     <div class="d-flex w-100 justify-content-around mt-1">
                         <div>
-                            <span style="font-size:0.7rem; color:#94a3b8;">{{ match.home_team.name|slice:":3" }}</span><br>
+                            <span style="font-size:0.75rem; color:#10b981; font-weight:700;">{{ match.home_team.name }}</span><br>
                             <span style="font-size:1.1rem; font-weight:800; color:#fff;">{{ advanced_stats.goals.home_first_score }}%</span>
                         </div>
                         <div>
-                            <span style="font-size:0.7rem; color:#94a3b8;">{{ match.away_team.name|slice:":3" }}</span><br>
+                            <span style="font-size:0.75rem; color:#3b82f6; font-weight:700;">{{ match.away_team.name }}</span><br>
                             <span style="font-size:1.1rem; font-weight:800; color:#fff;">{{ advanced_stats.goals.away_first_score }}%</span>
                         </div>
                     </div>
@@ -731,9 +1034,9 @@
             <!-- MARGENS E METADES -->
             <div class="glass-panel">
                 <div class="panel-header"><i class="fa-solid fa-gauge-high"></i> {% translate "Margens & Metades" %}</div>
-                <div class="mg-row"><span>{{ match.home_team.name|slice:":3" }} {% translate "por 1 gol" %}</span><strong>{{ advanced_stats.goals.winning_margins.home_1 }}%</strong></div>
-                <div class="mg-row"><span>{{ match.home_team.name|slice:":3" }} {% translate "por 2 gols" %}</span><strong>{{ advanced_stats.goals.winning_margins.home_2 }}%</strong></div>
-                <div class="mg-row"><span>{{ match.home_team.name|slice:":3" }} {% translate "por 3+ gols" %}</span><strong>{{ advanced_stats.goals.winning_margins.home_3plus }}%</strong></div>
+                <div class="mg-row"><span>{{ match.home_team.name }} {% translate "por 1 gol" %}</span><strong>{{ advanced_stats.goals.winning_margins.home_1 }}%</strong></div>
+                <div class="mg-row"><span>{{ match.home_team.name }} {% translate "por 2 gols" %}</span><strong>{{ advanced_stats.goals.winning_margins.home_2 }}%</strong></div>
+                <div class="mg-row"><span>{{ match.home_team.name }} {% translate "por 3+ gols" %}</span><strong>{{ advanced_stats.goals.winning_margins.home_3plus }}%</strong></div>
                 <div class="mg-row"><span>{% translate "Empate (Com Gols)" %}</span><strong>{{ advanced_stats.goals.winning_margins.draw_goals }}%</strong></div>
                 <div class="mg-row"><span>{% translate "Empate (0-0)" %}</span><strong>{{ advanced_stats.goals.winning_margins.draw_no_goals }}%</strong></div>
                 
@@ -754,8 +1057,8 @@
                     </div>
                     <div style="flex:1;">
                         <div style="font-size:0.7rem; color:#94a3b8; font-weight:800; text-transform:uppercase; margin-bottom:5px;">{% translate "Clean Sheet" %}</div>
-                        <div class="mg-row"><span>{{ match.home_team.name|slice:":3" }}</span><strong>{{ advanced_stats.goals.home_special.clean_sheet }}%</strong></div>
-                        <div class="mg-row"><span>{{ match.away_team.name|slice:":3" }}</span><strong>{{ advanced_stats.goals.away_special.clean_sheet }}%</strong></div>
+                        <div class="mg-row"><span>{{ match.home_team.name }}</span><strong>{{ advanced_stats.goals.home_special.clean_sheet }}%</strong></div>
+                        <div class="mg-row"><span>{{ match.away_team.name }}</span><strong>{{ advanced_stats.goals.away_special.clean_sheet }}%</strong></div>
                     </div>
                 </div>
 
@@ -778,11 +1081,11 @@
             <div class="stat-card-premium">
                 <div class="box-label"><i class="fa-solid fa-dice text-success me-1"></i> {% translate "Vencedor + Ambos Marcam" %}</div>
                 <div class="combo-pill">
-                    <span class="market-title">{{ match.home_team.name|slice:":3" }} & {% translate "Sim" %}</span>
+                    <span class="market-title">{{ match.home_team.name }} & {% translate "Sim" %}</span>
                     <span class="perc {% if advanced_stats.goals.winner_btts.home_yes >= 30 %}high{% endif %}">{{ advanced_stats.goals.winner_btts.home_yes }}%</span>
                 </div>
                 <div class="combo-pill">
-                    <span class="market-title">{{ match.home_team.name|slice:":3" }} & {% translate "Não" %}</span>
+                    <span class="market-title">{{ match.home_team.name }} & {% translate "Não" %}</span>
                     <span class="perc {% if advanced_stats.goals.winner_btts.home_no >= 30 %}high{% endif %}">{{ advanced_stats.goals.winner_btts.home_no }}%</span>
                 </div>
                 <div class="combo-pill">
@@ -794,11 +1097,11 @@
                     <span class="perc {% if advanced_stats.goals.winner_btts.draw_no >= 20 %}high{% endif %}">{{ advanced_stats.goals.winner_btts.draw_no }}%</span>
                 </div>
                 <div class="combo-pill">
-                    <span class="market-title">{{ match.away_team.name|slice:":3" }} & {% translate "Sim" %}</span>
+                    <span class="market-title">{{ match.away_team.name }} & {% translate "Sim" %}</span>
                     <span class="perc {% if advanced_stats.goals.winner_btts.away_yes >= 30 %}high{% endif %}">{{ advanced_stats.goals.winner_btts.away_yes }}%</span>
                 </div>
                 <div class="combo-pill">
-                    <span class="market-title">{{ match.away_team.name|slice:":3" }} & {% translate "Não" %}</span>
+                    <span class="market-title">{{ match.away_team.name }} & {% translate "Não" %}</span>
                     <span class="perc {% if advanced_stats.goals.winner_btts.away_no >= 30 %}high{% endif %}">{{ advanced_stats.goals.winner_btts.away_no }}%</span>
                 </div>
             </div>
@@ -817,23 +1120,23 @@
         <div class="grid-2-col mb-4">
             <div class="stat-card-premium">
                 <div class="box-label"><i class="fa-solid fa-shield text-info me-1"></i> {% translate "Handicap Asiático & Europeu" %}</div>
-                <div class="mg-row"><span>{{ match.home_team.name|slice:":3" }} -1.5</span><strong>{{ advanced_stats.goals.handicaps.home_minus_1_5 }}%</strong></div>
-                <div class="mg-row"><span>{{ match.home_team.name|slice:":3" }} -0.5</span><strong>{{ advanced_stats.goals.handicaps.home_minus_0_5 }}%</strong></div>
-                <div class="mg-row"><span>{{ match.home_team.name|slice:":3" }} +0.5</span><strong>{{ advanced_stats.goals.handicaps.home_plus_0_5 }}%</strong></div>
-                <div class="mg-row"><span>{{ match.away_team.name|slice:":3" }} -1.5</span><strong>{{ advanced_stats.goals.handicaps.away_minus_1_5 }}%</strong></div>
-                <div class="mg-row"><span>{{ match.away_team.name|slice:":3" }} -0.5</span><strong>{{ advanced_stats.goals.handicaps.away_minus_0_5 }}%</strong></div>
-                <div class="mg-row"><span>{{ match.away_team.name|slice:":3" }} +0.5</span><strong>{{ advanced_stats.goals.handicaps.away_plus_0_5 }}%</strong></div>
+                <div class="mg-row"><span>{{ match.home_team.name }} -1.5</span><strong>{{ advanced_stats.goals.handicaps.home_minus_1_5 }}%</strong></div>
+                <div class="mg-row"><span>{{ match.home_team.name }} -0.5</span><strong>{{ advanced_stats.goals.handicaps.home_minus_0_5 }}%</strong></div>
+                <div class="mg-row"><span>{{ match.home_team.name }} +0.5</span><strong>{{ advanced_stats.goals.handicaps.home_plus_0_5 }}%</strong></div>
+                <div class="mg-row"><span>{{ match.away_team.name }} -1.5</span><strong>{{ advanced_stats.goals.handicaps.away_minus_1_5 }}%</strong></div>
+                <div class="mg-row"><span>{{ match.away_team.name }} -0.5</span><strong>{{ advanced_stats.goals.handicaps.away_minus_0_5 }}%</strong></div>
+                <div class="mg-row"><span>{{ match.away_team.name }} +0.5</span><strong>{{ advanced_stats.goals.handicaps.away_plus_0_5 }}%</strong></div>
             </div>
 
             <div class="stat-card-premium">
                 <div class="box-label"><i class="fa-solid fa-percent text-danger me-1"></i> {% translate "Empate Anula Aposta (Draw No Bet)" %}</div>
                 <div class="cs-wrap">
                     <div class="cs-team">
-                        <span class="t-name">{{ match.home_team.name|slice:":3" }}</span>
+                        <span class="t-name">{{ match.home_team.name }}</span>
                         <span class="perc {% if advanced_stats.goals.dnb.home >= 50 %}high{% endif %}">{{ advanced_stats.goals.dnb.home }}%</span>
                     </div>
                     <div class="cs-team">
-                        <span class="t-name">{{ match.away_team.name|slice:":3" }}</span>
+                        <span class="t-name">{{ match.away_team.name }}</span>
                         <span class="perc {% if advanced_stats.goals.dnb.away >= 50 %}high{% endif %}">{{ advanced_stats.goals.dnb.away }}%</span>
                     </div>
                 </div>
@@ -865,7 +1168,7 @@
                 <div class="d-flex flex-column gap-3">
                     <div style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem;">
                         <div class="d-flex justify-content-between mb-2">
-                            <span style="font-weight:700; color:#cbd5e1; font-size:0.85rem;">{{ match.home_team.name|slice:":3" }} {% translate "Avg" %}</span>
+                            <span style="font-weight:700; color:#10b981; font-size:0.85rem;">{{ match.home_team.name }} {% translate "Avg" %}</span>
                             <span style="font-weight:800; color:#fff;">{{ advanced_stats.corners.home.avg_total }}</span>
                         </div>
                         <div class="d-flex gap-2">
@@ -876,7 +1179,7 @@
 
                     <div style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem;">
                         <div class="d-flex justify-content-between mb-2">
-                            <span style="font-weight:700; color:#cbd5e1; font-size:0.85rem;">{{ match.away_team.name|slice:":3" }} {% translate "Avg" %}</span>
+                            <span style="font-weight:700; color:#3b82f6; font-size:0.85rem;">{{ match.away_team.name }} {% translate "Avg" %}</span>
                             <span style="font-weight:800; color:#fff;">{{ advanced_stats.corners.away.avg_total }}</span>
                         </div>
                         <div class="d-flex gap-2">
@@ -925,14 +1228,14 @@
             <div class="grid-elite-2 mt-4 pt-4" style="border-top: 1px solid rgba(255,255,255,0.05);">
                 <div>
                     <div style="font-size:0.7rem; color:#94a3b8; font-weight:800; text-transform:uppercase; margin-bottom:10px;"><i class="fa-solid fa-trophy me-1 text-warning"></i> {% translate "Match Winner (Cantos)" %}</div>
-                    <div class="mg-row"><span>{{ match.home_team.name|slice:":3" }} {% translate "Mais Escanteios" %}</span><strong>{{ advanced_stats.corners.winner_corners.home }}%</strong></div>
+                    <div class="mg-row"><span>{{ match.home_team.name }} {% translate "Mais Escanteios" %}</span><strong>{{ advanced_stats.corners.winner_corners.home }}%</strong></div>
                     <div class="mg-row"><span>{% translate "Empate" %}</span><strong>{{ advanced_stats.corners.winner_corners.draw }}%</strong></div>
-                    <div class="mg-row"><span>{{ match.away_team.name|slice:":3" }} {% translate "Mais Escanteios" %}</span><strong>{{ advanced_stats.corners.winner_corners.away }}%</strong></div>
+                    <div class="mg-row"><span>{{ match.away_team.name }} {% translate "Mais Escanteios" %}</span><strong>{{ advanced_stats.corners.winner_corners.away }}%</strong></div>
                 </div>
                 <div>
                     <div style="font-size:0.7rem; color:#94a3b8; font-weight:800; text-transform:uppercase; margin-bottom:10px;"><i class="fa-solid fa-shield-halved me-1 text-info"></i> {% translate "Handicap Asiático" %}</div>
-                    <div class="mg-row"><span>{{ match.home_team.name|slice:":3" }} -1.5</span><strong>{{ advanced_stats.corners.handicaps.home_minus_1_5 }}%</strong></div>
-                    <div class="mg-row"><span>{{ match.away_team.name|slice:":3" }} +1.5</span><strong>{{ advanced_stats.corners.handicaps.away_plus_1_5 }}%</strong></div>
+                    <div class="mg-row"><span>{{ match.home_team.name }} -1.5</span><strong>{{ advanced_stats.corners.handicaps.home_minus_1_5 }}%</strong></div>
+                    <div class="mg-row"><span>{{ match.away_team.name }} +1.5</span><strong>{{ advanced_stats.corners.handicaps.away_plus_1_5 }}%</strong></div>
                 </div>
             </div>
 
@@ -977,13 +1280,13 @@
                     <div class="d-flex flex-column gap-3">
                         <div class="discipline-grid" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem;">
                             <div class="d-team home">
-                                <span style="font-size:0.7rem; color:#94a3b8; font-weight:700; text-transform:uppercase;">{{ match.home_team.name|slice:":3" }}</span>
+                                <span style="font-size:0.75rem; color:#10b981; font-weight:700; text-transform:uppercase;">{{ match.home_team.name }}</span>
                                 <div class="d-val mt-2"><strong>{{ advanced_stats.disciplinary.home.yellow }}</strong><span class="y-card"></span></div>
                                 <div class="d-val mt-1"><strong style="color:#cbd5e1; font-size:1rem;">{{ advanced_stats.disciplinary.home.fouls }}</strong><span style="font-size:0.6rem; color:#64748b; text-transform:uppercase;">{% translate "Fouls" %}</span></div>
                             </div>
                             <div class="d-vs" style="color: rgba(255,255,255,0.1); font-size: 1.5rem;">VS</div>
                             <div class="d-team away">
-                                <span style="font-size:0.7rem; color:#94a3b8; font-weight:700; text-transform:uppercase;">{{ match.away_team.name|slice:":3" }}</span>
+                                <span style="font-size:0.75rem; color:#3b82f6; font-weight:700; text-transform:uppercase;">{{ match.away_team.name }}</span>
                                 <div class="d-val mt-2"><strong>{{ advanced_stats.disciplinary.away.yellow }}</strong><span class="y-card"></span></div>
                                 <div class="d-val mt-1"><strong style="color:#cbd5e1; font-size:1rem;">{{ advanced_stats.disciplinary.away.fouls }}</strong><span style="font-size:0.6rem; color:#64748b; text-transform:uppercase;">{% translate "Fouls" %}</span></div>
                             </div>
@@ -1021,14 +1324,14 @@
                 <div class="grid-elite-2 mt-4 pt-4" style="border-top: 1px solid rgba(255,255,255,0.05);">
                     <div>
                         <div style="font-size:0.7rem; color:#94a3b8; font-weight:800; text-transform:uppercase; margin-bottom:10px;"><i class="fa-solid fa-handshake-slash me-1 text-warning"></i> {% translate "Match Winner (Cartões)" %}</div>
-                        <div class="mg-row"><span>{{ match.home_team.name|slice:":3" }} {% translate "Mais Cartões" %}</span><strong>{{ advanced_stats.disciplinary.winner_cards.home }}%</strong></div>
-                        <div class="mg-row"><span>{% translate "Empate" %}</span><strong>{{ advanced_stats.disciplinary.winner_cards.draw }}%</strong></div>
-                        <div class="mg-row"><span>{{ match.away_team.name|slice:":3" }} {% translate "Mais Cartões" %}</span><strong>{{ advanced_stats.disciplinary.winner_cards.away }}%</strong></div>
+                        <div class="mg-row"><span>{{ match.home_team.name }} {% translate "Mais Cartões" %}</span><strong>{{ advanced_stats.disciplinary.winner_cards.home }}%</strong></div>
+                        <div class="mg-row"><span>{% translate "Empate em Cartões" %}</span><strong>{{ advanced_stats.disciplinary.winner_cards.draw }}%</strong></div>
+                        <div class="mg-row"><span>{{ match.away_team.name }} {% translate "Mais Cartões" %}</span><strong>{{ advanced_stats.disciplinary.winner_cards.away }}%</strong></div>
                     </div>
                     <div>
-                        <div style="font-size:0.7rem; color:#94a3b8; font-weight:800; text-transform:uppercase; margin-bottom:10px;"><i class="fa-solid fa-shield-halved me-1 text-info"></i> {% translate "Handicap Asiático" %}</div>
-                        <div class="mg-row"><span>{{ match.home_team.name|slice:":3" }} -0.5</span><strong>{{ advanced_stats.disciplinary.handicaps.home_minus_0_5 }}%</strong></div>
-                        <div class="mg-row"><span>{{ match.away_team.name|slice:":3" }} +0.5</span><strong>{{ advanced_stats.disciplinary.handicaps.away_plus_0_5 }}%</strong></div>
+                        <div style="font-size:0.7rem; color:#94a3b8; font-weight:800; text-transform:uppercase; margin-bottom:10px;"><i class="fa-solid fa-shield-halved me-1 text-danger"></i> {% translate "Handicap Asiático" %}</div>
+                        <div class="mg-row"><span>{{ match.home_team.name }} -0.5</span><strong>{{ advanced_stats.disciplinary.handicaps.home_minus_0_5 }}%</strong></div>
+                        <div class="mg-row"><span>{{ match.away_team.name }} +0.5</span><strong>{{ advanced_stats.disciplinary.handicaps.away_plus_0_5 }}%</strong></div>
                     </div>
                 </div>
 
@@ -1080,15 +1383,14 @@
                             
                             <!-- Tug of War -->
                             <div class="tug-row mt-3">
-                                <div class="tug-team home">{{ match.home_team.name|slice:":3" }}</div>
+                                <div class="tug-team home" style="max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ match.home_team.name }}</div>
                                 <div class="tug-val" style="color: #60a5fa;">{{ advanced_stats.efficiency.home.accuracy }}%</div>
                                 <div class="tug-track">
                                     <div class="tug-fill-home" style="width: {{ advanced_stats.efficiency.home.accuracy }}%;"></div>
                                 </div>
                             </div>
-                            
                             <div class="tug-row mt-2">
-                                <div class="tug-team home">{{ match.away_team.name|slice:":3" }}</div>
+                                <div class="tug-team home" style="max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ match.away_team.name }}</div>
                                 <div class="tug-val" style="color: #f87171;">{{ advanced_stats.efficiency.away.accuracy }}%</div>
                                 <div class="tug-track">
                                     <div class="tug-fill-away" style="width: {{ advanced_stats.efficiency.away.accuracy }}%;"></div>
@@ -1098,12 +1400,14 @@
 
                         <div class="d-flex gap-2">
                             <div class="mini-widget flex-fill m-0" style="background:rgba(16,185,129,0.1); border-color:rgba(16,185,129,0.3);">
-                                <div class="title" style="color:#34d399;">{% translate "Shots per Goal" %} ({{ match.home_team.name|slice:":3" }})</div>
+                                <div class="title" style="color:#34d399;">{% translate "Chutes por Gol" %}</div>
                                 <div class="value" style="color:#6ee7b7; font-size:1.1rem; padding: 5px 0;">{{ advanced_stats.efficiency.home.conversion }}</div>
+                                <div style="font-size:0.7rem; color:#94a3b8;">{{ match.home_team.name }}</div>
                             </div>
                             <div class="mini-widget flex-fill m-0" style="background:rgba(239,68,68,0.1); border-color:rgba(239,68,68,0.3);">
-                                <div class="title" style="color:#f87171;">{% translate "Shots per Goal" %} ({{ match.away_team.name|slice:":3" }})</div>
+                                <div class="title" style="color:#f87171;">{% translate "Chutes por Gol" %}</div>
                                 <div class="value" style="color:#fca5a5; font-size:1.1rem; padding: 5px 0;">{{ advanced_stats.efficiency.away.conversion }}</div>
+                                <div style="font-size:0.7rem; color:#94a3b8;">{{ match.away_team.name }}</div>
                             </div>
                         </div>
                     </div>
@@ -1146,19 +1450,19 @@
                 <div class="grid-elite-2 mt-4 pt-4" style="border-top: 1px solid rgba(255,255,255,0.05);">
                     <div>
                         <div style="font-size:0.7rem; color:#94a3b8; font-weight:800; text-transform:uppercase; margin-bottom:10px;"><i class="fa-solid fa-star me-1 text-primary"></i> {% translate "Match Winner (Chutes)" %}</div>
-                        <div class="mg-row"><span>{{ match.home_team.name|slice:":3" }} {% translate "Mais Chutes" %}</span><strong>{{ advanced_stats.efficiency.winner_shots.home }}%</strong></div>
-                        <div class="mg-row"><span>{{ match.away_team.name|slice:":3" }} {% translate "Mais Chutes" %}</span><strong>{{ advanced_stats.efficiency.winner_shots.away }}%</strong></div>
+                        <div class="mg-row"><span>{{ match.home_team.name }} {% translate "Mais Chutes" %}</span><strong>{{ advanced_stats.efficiency.winner_shots.home }}%</strong></div>
+                        <div class="mg-row"><span>{{ match.away_team.name }} {% translate "Mais Chutes" %}</span><strong>{{ advanced_stats.efficiency.winner_shots.away }}%</strong></div>
                         
                         <div style="font-size:0.7rem; color:#94a3b8; font-weight:800; text-transform:uppercase; margin-top:15px; margin-bottom:10px;"><i class="fa-solid fa-star me-1 text-info"></i> {% translate "Match Winner (No Alvo)" %}</div>
-                        <div class="mg-row"><span>{{ match.home_team.name|slice:":3" }} {% translate "Mais no Alvo" %}</span><strong>{{ advanced_stats.efficiency.winner_shots_ot.home }}%</strong></div>
-                        <div class="mg-row"><span>{{ match.away_team.name|slice:":3" }} {% translate "Mais no Alvo" %}</span><strong>{{ advanced_stats.efficiency.winner_shots_ot.away }}%</strong></div>
+                        <div class="mg-row"><span>{{ match.home_team.name }} {% translate "Mais no Alvo" %}</span><strong>{{ advanced_stats.efficiency.winner_shots_ot.home }}%</strong></div>
+                        <div class="mg-row"><span>{{ match.away_team.name }} {% translate "Mais no Alvo" %}</span><strong>{{ advanced_stats.efficiency.winner_shots_ot.away }}%</strong></div>
                     </div>
                     <div>
                         <div style="font-size:0.7rem; color:#94a3b8; font-weight:800; text-transform:uppercase; margin-bottom:10px;"><i class="fa-solid fa-shirt me-1 text-danger"></i> {% translate "Linhas Individuais" %}</div>
-                        <div class="mg-row"><span>{{ match.home_team.name|slice:":3" }} Over 12.5 {% translate "Chutes" %}</span><strong>{{ advanced_stats.efficiency.home_shots_overs.12_5 }}%</strong></div>
-                        <div class="mg-row"><span>{{ match.home_team.name|slice:":3" }} Over 4.5 {% translate "no Alvo" %}</span><strong>{{ advanced_stats.efficiency.home_ot_overs.4_5 }}%</strong></div>
-                        <div class="mg-row mt-2"><span>{{ match.away_team.name|slice:":3" }} Over 10.5 {% translate "Chutes" %}</span><strong>{{ advanced_stats.efficiency.away_shots_overs.10_5 }}%</strong></div>
-                        <div class="mg-row"><span>{{ match.away_team.name|slice:":3" }} Over 3.5 {% translate "no Alvo" %}</span><strong>{{ advanced_stats.efficiency.away_ot_overs.3_5 }}%</strong></div>
+                        <div class="mg-row"><span>{{ match.home_team.name }} Over 12.5 {% translate "Chutes" %}</span><strong>{{ advanced_stats.efficiency.home_shots_overs.12_5 }}%</strong></div>
+                        <div class="mg-row"><span>{{ match.home_team.name }} Over 4.5 {% translate "no Alvo" %}</span><strong>{{ advanced_stats.efficiency.home_ot_overs.4_5 }}%</strong></div>
+                        <div class="mg-row mt-2"><span>{{ match.away_team.name }} Over 10.5 {% translate "Chutes" %}</span><strong>{{ advanced_stats.efficiency.away_shots_overs.10_5 }}%</strong></div>
+                        <div class="mg-row"><span>{{ match.away_team.name }} Over 3.5 {% translate "no Alvo" %}</span><strong>{{ advanced_stats.efficiency.away_ot_overs.3_5 }}%</strong></div>
                     </div>
                 </div>
 
@@ -1291,12 +1595,31 @@
         </div>
     </div>
 
+    <!-- Ad: Rodapé do Conteúdo (Alta Visibilidade & Natural) -->
+    <div class="ad-placeholder mt-4 mb-4" data-ad-slot="1511520655" data-ad-format="auto" data-ad-position="bottom-match"></div>
+
         </div>
         <!-- Sidebar Column (25% Width) -->
         <div class="col-lg-3">
             <div class="position-sticky" style="top: 20px; padding-top: 20px;">
+                <!-- 1) Banner AdSense Principal (300x250) -->
                 {% include 'matches/includes/sidebar_widgets.html' %}
-                <div class="ad-placeholder mt-3" data-ad-slot="7384735802" data-ad-format="vertical"></div>
+                
+                <!-- 2) Card Nativo VIP / Telegram Pro (Conversão Premium) -->
+                <div class="sidebar-vip-card mt-3 p-3 rounded text-center" style="background: linear-gradient(145deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%); border: 1px solid rgba(245, 158, 11, 0.3); box-shadow: 0 8px 24px rgba(0,0,0,0.35);">
+                    <div class="d-inline-flex align-items-center justify-content-center mb-2" style="width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(239, 68, 68, 0.2)); border: 1px solid rgba(245, 158, 11, 0.4);">
+                        <i class="fa-solid fa-crown text-warning" style="font-size: 1.25rem;"></i>
+                    </div>
+                    <h4 style="font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 800; color: #f8fafc; margin-bottom: 0.3rem;">
+                        {% translate "StatsFut VIP & Telegram" %}
+                    </h4>
+                    <p style="font-size: 0.78rem; color: #94a3b8; line-height: 1.4; margin-bottom: 1rem;">
+                        {% translate "Receba projeções em tempo real, Radar Pro ao vivo e tips exclusivas diretamente no Telegram." %}
+                    </p>
+                    <a href="{% url 'members:paywall' %}" class="btn w-100 py-2 d-flex align-items-center justify-content-center gap-2" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); color: #fff; font-weight: 800; font-size: 0.85rem; border: none; border-radius: 10px; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3); transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">
+                        <i class="fa-solid fa-bolt"></i> {% translate "Testar 3 Dias Grátis" %}
+                    </a>
+                </div>
             </div>
         </div>
     </div> <!-- END ROW -->

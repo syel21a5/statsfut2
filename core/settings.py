@@ -28,11 +28,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-ag%%ixyoe(tcagidf45lbnq^&af%wlosgc0ogh4#b+g!4$@^3h')
 
-# Configuração do Telegram Bot (Radar Ao Vivo)
-TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', '8984489557:AAGEfYKwUWVoJFRAiCwJvtlCiqvwlbLJaW4')
-TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID', '7883491565') # Chat do grupo UNDER (não usar no Over)
-# Chat DEDICADO do robô Over 1.5 (separado do Under). Vazio = Over não envia nada.
+# Configuração do Telegram Bot (Canais de Alertas & Live)
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', '8984489557:***')
+TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID', '7883491565') # Chat pessoal/admin
 TELEGRAM_CHAT_ID_OVER = os.getenv('TELEGRAM_CHAT_ID_OVER', '')
+TELEGRAM_CHANNEL_FREE_ID = os.getenv('TELEGRAM_CHANNEL_FREE_ID', '-1004330583494')
+TELEGRAM_CHANNEL_VIP_ID = os.getenv('TELEGRAM_CHANNEL_VIP_ID', '-1003599900619')
+TELEGRAM_CHANNEL_FREE_URL = 'https://t.me/statsfut_free'
+TELEGRAM_CHANNEL_VIP_URL = 'https://t.me/+aV7EjM0ovMs3NTgx'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
@@ -40,6 +43,18 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', '*').split(',') if host.strip()]
 
 CSRF_TRUSTED_ORIGINS = [url.strip() for url in os.getenv('CSRF_TRUSTED_ORIGINS', 'https://statsfut.com,https://www.statsfut.com,https://statsfut2.statsfut.com').split(',') if url.strip()]
+
+# E-mail Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = '127.0.0.1'
+EMAIL_PORT = 25
+EMAIL_USE_TLS = False
+DEFAULT_FROM_EMAIL = 'StatsFut VIP <support@statsfut.com>'
+SERVER_EMAIL = 'support@statsfut.com'
+
+# Kiwify & Stripe Webhook Security Tokens
+KIWIFY_WEBHOOK_SECRET = os.getenv('KIWIFY_WEBHOOK_SECRET', 'statsfut_kiwify_key_2026')
+STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', 'statsfut_stripe_key_2026')
 
 # Ensure proper host/SSL handling behind reverse proxies (e.g., Cloudflare, Nginx)
 USE_X_FORWARDED_HOST = True

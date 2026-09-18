@@ -160,6 +160,8 @@ class Command(BaseCommand):
                     away_shots_off_target=rich['away_shots_off_target'],
                     home_corners=rich['home_corners'],
                     away_corners=rich['away_corners'],
+                    home_dangerous_attacks=rich.get('home_dangerous_attacks', 0) or 0,
+                    away_dangerous_attacks=rich.get('away_dangerous_attacks', 0) or 0,
                     home_possession=rich['home_possession'],
                     away_possession=rich['away_possession'],
                 )

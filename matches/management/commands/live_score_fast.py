@@ -102,26 +102,33 @@ class Command(BaseCommand):
             return
 
         date_str = now().strftime("%Y%m%d")
-        url = f"https://prod-public-api.livescore.com/v1/api/app/date/soccer/{date_str}/7?MD=1"
+        url_date = f"https://prod-public-api.livescore.com/v1/api/app/date/soccer/{date_str}/7?MD=1"
+        url_live = "https://prod-public-api.livescore.com/v1/api/app/live/soccer/0?MD=1"
 
         session = requests.Session(impersonate="chrome120")
         proxy_url = os.getenv("RESIDENTIAL_PROXY")
 
-        try:
-            response = session.get(url, timeout=20)
-        except Exception as e:
-            self.stdout.write(self.style.WARNING(f"Falha rede LiveScore: {e}"))
-            return
-
-        if response.status_code != 200:
-            self.stdout.write(self.style.ERROR(f"Erro LiveScore: {response.status_code}"))
-            return
-
-        data = response.json()
-        stages = data.get('Stages', [])
         events = []
-        for stage in stages:
-            events.extend(stage.get('Events', []))
+        # 1. Busca feed ao vivo puro (tempo real sem cache)
+        try:
+            r_live = session.get(url_live, timeout=10)
+            if r_live.status_code == 200:
+                for stage in r_live.json().get('Stages', []):
+                    events.extend(stage.get('Events', []))
+        except Exception as e:
+            self.stdout.write(self.style.WARNING(f"LiveScore live feed warning: {e}"))
+
+        # 2. Busca feed por data para cobrir jogos que acabaram de começar / encerrar
+        try:
+            response = session.get(url_date, timeout=15)
+            if response.status_code == 200:
+                for stage in response.json().get('Stages', []):
+                    events.extend(stage.get('Events', []))
+        except Exception as e:
+            self.stdout.write(self.style.WARNING(f"Falha rede LiveScore date: {e}"))
+
+        if not events:
+            return
 
         matches_updated = 0
         updated_ids = set()

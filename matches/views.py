@@ -7209,20 +7209,58 @@ def live_radar_partial(request, match_id):
     pressure_5 = LiveRadarService.calculate_pressure(match, window_minutes=5)
     pressure_10 = LiveRadarService.calculate_pressure(match, window_minutes=10)
     pressure_15 = LiveRadarService.calculate_pressure(match, window_minutes=15)
-    pressure_ft = LiveRadarService.calculate_pressure(match, window_minutes=120)  # Effectively total match
+    pressure_ft = LiveRadarService.calculate_pressure(match, window_minutes=120)  # Total match
     
+    # Cálculo de métricas derivadas para o visual do radar
+    home_shots = match.home_shots or 0
+    away_shots = match.away_shots or 0
+    tot_shots = home_shots + away_shots
+    home_shots_pct = int((home_shots / tot_shots) * 100) if tot_shots > 0 else 50
+    away_shots_pct = 100 - home_shots_pct if tot_shots > 0 else 50
+
+    home_sot = match.home_shots_on_target or 0
+    away_sot = match.away_shots_on_target or 0
+    tot_sot = home_sot + away_sot
+    home_sot_pct = int((home_sot / tot_sot) * 100) if tot_sot > 0 else 50
+    away_sot_pct = 100 - home_sot_pct if tot_sot > 0 else 50
+
+    home_corners = match.home_corners or 0
+    away_corners = match.away_corners or 0
+    tot_corners = home_corners + away_corners
+    home_corners_pct = int((home_corners / tot_corners) * 100) if tot_corners > 0 else 50
+    away_corners_pct = 100 - home_corners_pct if tot_corners > 0 else 50
+
+    home_da = getattr(match, 'home_dangerous_attacks', 0) or 0
+    away_da = getattr(match, 'away_dangerous_attacks', 0) or 0
+    tot_da = home_da + away_da
+    home_da_pct = int((home_da / tot_da) * 100) if tot_da > 0 else 50
+    away_da_pct = 100 - home_da_pct if tot_da > 0 else 50
+
+    home_poss = match.home_possession or 50
+    away_poss = match.away_possession or (100 - home_poss)
+
+    pressure_windows = [
+        (_("Last 5 Minutes"), pressure_5, "5m"),
+        (_("Last 10 Minutes"), pressure_10, "10m"),
+        (_("Last 15 Minutes"), pressure_15, "15m"),
+        (_("Full Match (FT)"), pressure_ft, "ft"),
+    ]
+
     context = {
         'match': match,
         'pressure_5': pressure_5,
         'pressure_10': pressure_10,
         'pressure_15': pressure_15,
         'pressure_ft': pressure_ft,
-        'pressure_windows': [
-            ('Últimos 5 Minutos', pressure_5),
-            ('Últimos 10 Minutos', pressure_10),
-            ('Últimos 15 Minutos', pressure_15),
-            ('Jogo Todo (FT)', pressure_ft),
-        ],
+        'pressure_windows': pressure_windows,
+        'stats_bars': {
+            'possession': {'home': home_poss, 'away': away_poss},
+            'shots': {'home': home_shots, 'away': away_shots, 'home_pct': home_shots_pct, 'away_pct': away_shots_pct},
+            'shots_on_target': {'home': home_sot, 'away': away_sot, 'home_pct': home_sot_pct, 'away_pct': away_sot_pct},
+            'corners': {'home': home_corners, 'away': away_corners, 'home_pct': home_corners_pct, 'away_pct': away_corners_pct},
+            'dangerous_attacks': {'home': home_da, 'away': away_da, 'home_pct': home_da_pct, 'away_pct': away_da_pct},
+            'fouls': {'home': match.home_fouls or 0, 'away': match.away_fouls or 0},
+        }
     }
     return render(request, 'members/partials/live_radar_modal.html', context)
 

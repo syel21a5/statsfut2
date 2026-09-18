@@ -69,62 +69,21 @@ class Command(BaseCommand):
                 home_btts_pct = int((sum(1 for m in analyzer.home_last_10 if m.home_score is not None and m.home_score > 0 and m.away_score > 0) / home_len) * 100) if home_len > 0 else 0
                 away_btts_pct = int((sum(1 for m in analyzer.away_last_10 if m.home_score is not None and m.home_score > 0 and m.away_score > 0) / away_len) * 100) if away_len > 0 else 0
 
-                # ========== MERCADO DE GOLS ==========
-                if goals.get('ht_goal', 0) >= 85:
-                    save_tip(match, 'HT_GOAL', goals['ht_goal'], 'Goal in 1st Half (HT)')
-                
-                dc_unders = goals.get('dc_unders') or {}
-                for combo in ['1X', 'X2']:
-                    label_combo = f"{home} or Draw" if combo == '1X' else f"Draw or {away}"
-                    for line in [2.5, 3.5, 4.5, 5.5]:
-                        line_str = str(line).replace('.', '_')
-                        key = f"{combo}_under_{line_str}"
-                        prob = dc_unders.get(key, 0)
-                        threshold = 85 if line == 2.5 else (90 if line == 3.5 else 95)
-                        if prob >= threshold:
-                            save_tip(match, f"DC_{combo}_UNDER_{line_str}", prob, f"{label_combo} & Under {line} Goals")
-
-                dc_overs = goals.get('dc_overs') or {}
-                for combo in ['1X', 'X2']:
-                    label_combo = f"{home} or Draw" if combo == '1X' else f"Draw or {away}"
-                    for line in [1.5]:
-                        line_str = str(line).replace('.', '_')
-                        key = f"{combo}_over_{line_str}"
-                        prob = dc_overs.get(key, 0)
-                        threshold = 85
-                        if prob >= threshold:
-                            save_tip(match, f"DC_{combo}_OVER_{line_str}", prob, f"{label_combo} & Over {line} Goals")
-
-                dc_btts = goals.get('dc_btts') or {}
-                for combo in ['1X', 'X2']:
-                    label_combo = f"{home} or Draw" if combo == '1X' else f"Draw or {away}"
-                    for btts_val, label_btts in [('yes', 'Yes'), ('no', 'No')]:
-                        key = f"{combo}_btts_{btts_val}"
-                        prob = dc_btts.get(key, 0)
-                        threshold = 80 if btts_val == 'no' else 75
-                        
-                        # Apply the same strict history requirements for BTTS YES combos
-                        if btts_val == 'yes':
-                            if prob >= threshold and home_btts_pct >= 60 and away_btts_pct >= 60:
-                                save_tip(match, f"DC_{combo}_BTTS_YES", prob, f"{label_combo} & BTTS: Yes")
-                        else:
-                            if prob >= threshold:
-                                save_tip(match, f"DC_{combo}_BTTS_NO", prob, f"{label_combo} & BTTS: No")
-
+                # ========== MERCADO DE GOLS (Alta Assertividade) ==========
+                # HT_GOAL removido devido a baixa assertividade historica (16.4%)
+                # DC Combos (DC + Under, DC + BTTS) removidos devido a baixa assertividade historica (0% - 35%)
 
                 if goals.get('over_15', 0) >= 85:
                     save_tip(match, 'OVER_15', goals['over_15'], 'Over 1.5 Goals')
                 if goals.get('over_25', 0) >= 80 and home_over25_pct >= 70 and away_over25_pct >= 70:
                     save_tip(match, 'OVER_25', goals['over_25'], 'Over 2.5 Goals')
-                if goals.get('over_35', 0) >= 75 and home_over35_pct >= 60 and away_over35_pct >= 60:
-                    save_tip(match, 'OVER_35', goals['over_35'], 'Over 3.5 Goals')
+                # Over 3.5 removido por baixa frequencia e alta variancia
                 if goals.get('under_35', 0) >= 85:
                     save_tip(match, 'UNDER_35', goals['under_35'], 'Under 3.5 Goals')
                 if goals.get('under_45', 0) >= 90:
                     save_tip(match, 'UNDER_45', goals['under_45'], 'Under 4.5 Goals')
 
-                    
-                if goals.get('btts', 0) >= 75 and home_btts_pct >= 60 and away_btts_pct >= 60:
+                if goals.get('btts', 0) >= 75 and home_btts_pct >= 65 and away_btts_pct >= 65:
                     save_tip(match, 'BTTS', goals['btts'], 'Both Teams to Score')
                 
                 # ========== VENCEDOR / RESULTADO ==========
@@ -145,40 +104,26 @@ class Command(BaseCommand):
                     save_tip(match, 'DNB_AWAY', dnb['away'], f'Draw No Bet - {away}')
                 
                 # ========== CLEAN SHEET / WIN TO NIL ==========
-                home_special: dict = goals.get('home_special') or {}
-                away_special: dict = goals.get('away_special') or {}
-                
-                if home_special.get('clean_sheet', 0) >= 65:
-                    save_tip(match, 'HOME_CS', home_special['clean_sheet'], f'{home} Clean Sheet')
-                if away_special.get('clean_sheet', 0) >= 65:
-                    save_tip(match, 'AWAY_CS', away_special['clean_sheet'], f'{away} Clean Sheet')
-                if home_special.get('win_to_nil', 0) >= 65:
-                    save_tip(match, 'HOME_WTN', home_special['win_to_nil'], f'{home} Win to Nil')
-                if away_special.get('win_to_nil', 0) >= 65:
-                    save_tip(match, 'AWAY_WTN', away_special['win_to_nil'], f'{away} Win to Nil')
+                # Removidos: HOME_CS, AWAY_CS, HOME_WTN, AWAY_WTN tinham taxas entre 17% e 38% (altissimo risco)
                 
                 # ========== HANDICAPS ==========
                 handicaps: dict = goals.get('handicaps') or {}
                 if handicaps.get('home_minus_0_5', 0) >= 70:
                     save_tip(match, 'HC_HOME_M05', handicaps['home_minus_0_5'], f'{home} -0.5 (AH)')
                 
-                # ========== CORNERS ==========
-                if corners and corners.get('match_has_data'):
-                    m_overs: dict = corners.get('match_overs') or {}
-                    if m_overs.get(6, 0) >= 75: save_tip(match, 'CORNERS_OVER_65', m_overs[6], 'Over 6.5 Corners')
-                    if m_overs.get(7, 0) >= 75: save_tip(match, 'CORNERS_OVER_75', m_overs[7], 'Over 7.5 Corners')
-                    if m_overs.get(8, 0) >= 75: save_tip(match, 'CORNERS_OVER_85', m_overs[8], 'Over 8.5 Corners')
+                # ========== CORNERS (Apenas Over 6.5 com alta probabilidade) ==========
+                # Cantos desativados por baixa assertividade (59% com odds baixas)
+                # if corners and corners.get('match_has_data'):
+                #     m_overs: dict = corners.get('match_overs') or {}
+                #     if m_overs.get(6, 0) >= 80: 
+                #         save_tip(match, 'CORNERS_OVER_65', m_overs[6], 'Over 6.5 Corners')
                     
-                    wc: dict = corners.get('winner_corners') or {}
-                    if wc.get('home', 0) >= 75: save_tip(match, 'CORNER_WIN_H', wc['home'], f'{home} Wins Corners')
-                    elif wc.get('away', 0) >= 75: save_tip(match, 'CORNER_WIN_A', wc['away'], f'{away} Wins Corners')
-                    
-                # ========== LAY CORRECT SCORES ==========
+                # ========== LAY CORRECT SCORES (Alta Assertividade 96%+) ==========
                 lay_scores: dict = goals.get('lay_correct_scores') or {}
-                # Vamos focar apenas nos placares mais comuns para evitar poluir o painel com "Lay 3-3" que bate 99%
+                # Placares estratégicos para evitar poluição visual e manter taxa de acerto em ~97%
                 target_lays = ['0_0', '0_1', '1_0', '1_1', '0_2', '2_0', '1_2', '2_1', '2_2', '3_0', '0_3']
                 for score in target_lays:
-                    if lay_scores.get(score, 0) >= 92:
+                    if lay_scores.get(score, 0) >= 96:
                         readable_score = score.replace('_', '-')
                         save_tip(match, f'LAY_CS_{score}', lay_scores[score], f'Lay Score {readable_score}')
 

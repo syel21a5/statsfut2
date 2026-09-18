@@ -17,9 +17,11 @@
         gtag('config', 'G-9Q2MX8RCT6');
     </script>
 
-    <!-- Google AdSense (Visível para todos os usuários) -->
+    {% if not user.is_authenticated or not user.profile.is_premium_active %}
+    <!-- Google AdSense (Apenas para usuários Gratuitos) -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2087369649856188"
          crossorigin="anonymous"></script>
+    {% endif %}
 
     <!-- Ezoic Privacy Consent Scripts -->
     <script data-cfasync="false" src="https://cmp.gatekeeperconsent.com/min.js"></script>
@@ -101,10 +103,25 @@
         <a href="{% url 'matches:live_matches' %}" class="nav-link text-danger fw-bold">
             <i class="fa-solid fa-circle-dot live-pulse"></i> {% translate "Live" %}
         </a>
+        {% if user.is_authenticated and user.profile.is_premium_active %}
         <a href="{% url 'members:premium_dashboard' %}" class="nav-link premium-nav-link d-flex align-items-center">
             <i class="fa-solid fa-crown" style="color: #f59e0b;"></i>
             <span class="ms-1">{% translate "Premium" %}</span>
+            <span class="badge ms-auto px-2 py-1 rounded-pill" style="background: linear-gradient(135deg, #f59e0b, #f97316); font-size: 0.6rem; color: #fff;">VIP</span>
+        </a>
+        {% else %}
+        <a href="{% url 'members:paywall' %}" class="nav-link premium-nav-link d-flex align-items-center">
+            <i class="fa-solid fa-crown" style="color: #f59e0b;"></i>
+            <span class="ms-1">{% translate "Upgrade to Premium" %}</span>
             <span class="badge ms-auto px-2 py-1 rounded-pill" style="background: linear-gradient(135deg, #f59e0b, #f97316); font-size: 0.6rem; color: #fff;">PRO</span>
+        </a>
+        {% endif %}
+
+        <!-- Botão Telegram Free -->
+        <a href="https://t.me/statsfut_free" target="_blank" rel="noopener" class="nav-link d-flex align-items-center my-1" style="background: rgba(14, 165, 233, 0.08); border: 1px solid rgba(14, 165, 233, 0.25); border-radius: 8px; color: #38bdf8;">
+            <i class="fa-brands fa-telegram fa-lg me-2" style="color: #0ea5e9;"></i>
+            <span class="fw-bold" style="font-size: 0.85rem;">Telegram Free</span>
+            <span class="badge bg-info bg-opacity-25 text-info ms-auto" style="font-size: 0.6rem;">TIPS</span>
         </a>
 
         <div class="menu-label">{% translate "Countries & Leagues" %}</div>
@@ -159,20 +176,48 @@
 
             <!-- User / Date / Language -->
             <div class="d-flex align-items-center gap-3">
-                <!-- Language Switcher -->
-                <div class="language-switcher d-flex gap-3 me-2">
-                    <a href="{% translated_url 'pt-br' %}" class="d-inline-block" title="Português">
-                        <span class="fi fi-br" style="font-size: 1.1rem; border-radius: 2px;"></span>
-                    </a>
-                    <a href="{% translated_url 'en' %}" class="d-inline-block" title="English">
-                        <span class="fi fi-us" style="font-size: 1.1rem; border-radius: 2px;"></span>
-                    </a>
-                    <a href="{% translated_url 'es' %}" class="d-inline-block" title="Español">
-                        <span class="fi fi-es" style="font-size: 1.1rem; border-radius: 2px;"></span>
-                    </a>
-                    <a href="{% translated_url 'de' %}" class="d-inline-block" title="Deutsch">
-                        <span class="fi fi-de" style="font-size: 1.1rem; border-radius: 2px;"></span>
-                    </a>
+                <!-- Language Selector Dropdown -->
+                {% get_current_language as CURRENT_LANG %}
+                <div class="dropdown me-1">
+                    <button class="btn btn-sm d-flex align-items-center gap-2 text-white shadow-none" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="langDropdownBtn" style="background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 10px; padding: 6px 12px;" title="{% translate 'Change language' %}">
+                        <i class="fa-solid fa-globe" style="color: #60a5fa; font-size: 0.95rem;"></i>
+                        {% if CURRENT_LANG == 'pt-br' or CURRENT_LANG == 'pt' %}
+                            <span class="fi fi-br" style="font-size: 1rem; border-radius: 2px;"></span>
+                            <span class="small fw-semibold">PT</span>
+                        {% elif CURRENT_LANG == 'es' %}
+                            <span class="fi fi-es" style="font-size: 1rem; border-radius: 2px;"></span>
+                            <span class="small fw-semibold">ES</span>
+                        {% elif CURRENT_LANG == 'de' %}
+                            <span class="fi fi-de" style="font-size: 1rem; border-radius: 2px;"></span>
+                            <span class="small fw-semibold">DE</span>
+                        {% else %}
+                            <span class="fi fi-us" style="font-size: 1rem; border-radius: 2px;"></span>
+                            <span class="small fw-semibold">EN</span>
+                        {% endif %}
+                        <i class="fa-solid fa-chevron-down text-secondary" style="font-size: 0.65rem;"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="background: var(--bg-panel, #121622); border: 1px solid var(--border) !important; min-width: 170px; z-index: 1060;">
+                        <li>
+                            <a class="dropdown-item text-white d-flex align-items-center gap-2 py-2 {% if CURRENT_LANG == 'pt-br' or CURRENT_LANG == 'pt' %}active fw-bold{% endif %}" href="{% translated_url 'pt-br' %}">
+                                <span class="fi fi-br"></span> Português (BR)
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item text-white d-flex align-items-center gap-2 py-2 {% if CURRENT_LANG == 'en' %}active fw-bold{% endif %}" href="{% translated_url 'en' %}">
+                                <span class="fi fi-us"></span> English (US)
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item text-white d-flex align-items-center gap-2 py-2 {% if CURRENT_LANG == 'es' %}active fw-bold{% endif %}" href="{% translated_url 'es' %}">
+                                <span class="fi fi-es"></span> Español
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item text-white d-flex align-items-center gap-2 py-2 {% if CURRENT_LANG == 'de' %}active fw-bold{% endif %}" href="{% translated_url 'de' %}">
+                                <span class="fi fi-de"></span> Deutsch
+                            </a>
+                        </li>
+                    </ul>
                 </div>
 
                 <div class="date-badge d-none d-md-inline-block">
@@ -458,7 +503,8 @@
 
 
 
-    <!-- Global Ad Injection (bypasses Django template cache) -->
+    <!-- Global Ad Injection (bypasses Django template cache - Apenas para usuários Gratuitos) -->
+    {% if not user.is_authenticated or not user.profile.is_premium_active %}
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         var placeholders = document.querySelectorAll('.ad-placeholder');
@@ -493,6 +539,16 @@
         });
     });
     </script>
+    {% else %}
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Remove todos os placeholders de anúncio para assinantes Premium
+        document.querySelectorAll('.ad-placeholder, .sidebar-ad-widget').forEach(function(el) {
+            el.remove();
+        });
+    });
+    </script>
+    {% endif %}
 
     {% block extra_js %}{% endblock %}
 </body>

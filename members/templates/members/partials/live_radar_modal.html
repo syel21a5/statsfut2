@@ -1,138 +1,187 @@
-<div class="modal-header border-0" style="background: #1e293b; border-bottom: 1px solid rgba(255,255,255,0.05)!important; border-top-left-radius: 16px; border-top-right-radius: 16px;">
+{% load i18n %}
+<div class="modal-header border-0 py-3 px-4" style="background: #111827; border-bottom: 1px solid rgba(255,255,255,0.07)!important;">
     <div class="d-flex w-100 justify-content-between align-items-center">
-        <div>
-            <h5 class="modal-title text-white fw-bold mb-0">Radar Ao Vivo</h5>
-            <span class="text-secondary small">{{ match.league.name }}</span>
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge rounded-pill px-2.5 py-1 text-uppercase fw-bold" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); font-size: 0.7rem; letter-spacing: 0.5px;">
+                <i class="fa-solid fa-satellite-dish me-1 fa-fade"></i> {% translate "RADAR PRO" %}
+            </span>
+            <span class="text-secondary small fw-medium">{{ match.league.name }}</span>
         </div>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="{% translate 'Close' %}"></button>
     </div>
 </div>
-<div class="modal-body p-0" style="background: #0f172a;">
+
+<div class="modal-body p-0" style="background: #0b0f19; color: #f8fafc;">
     
-    <!-- Header Jogo -->
-    <div class="p-4 text-center" style="background: linear-gradient(180deg, rgba(30,41,59,1) 0%, rgba(15,23,42,1) 100%); border-bottom: 1px solid rgba(255,255,255,0.05);">
-        <div class="d-flex justify-content-center align-items-center mb-3">
-            <span class="text-danger blink fw-bold me-2"><i class="fa-solid fa-circle small"></i> {{ match.elapsed_time|default:"HT" }}'</span>
+    <!-- Placar e Status Central -->
+    <div class="p-4 text-center position-relative overflow-hidden" style="background: radial-gradient(circle at top, #1e293b 0%, #0b0f19 100%); border-bottom: 1px solid rgba(255,255,255,0.06);">
+        <!-- Minuto / Status -->
+        <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-3" style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.25);">
+            <span class="spinner-grow spinner-grow-sm text-danger" style="width: 7px; height: 7px;" role="status"></span>
+            <span class="text-danger fw-bold small text-uppercase" style="letter-spacing: 0.5px;">
+                {% if match.status == 'HT' or match.status == 'Halftime' %}
+                    {% translate "INTERVAL (HT)" %}
+                {% elif match.status == 'FT' %}
+                    {% translate "FINISHED (FT)" %}
+                {% else %}
+                    {{ match.elapsed_time|default:"LIVE" }}'
+                {% endif %}
+            </span>
         </div>
-        
-        <div class="d-flex justify-content-between align-items-center px-3">
-            <div class="text-end" style="flex: 1;">
-                <h4 class="text-white mb-0">{{ match.home_team.name }}</h4>
-                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 mt-1">Casa</span>
+
+        <!-- Times e Placar -->
+        <div class="row align-items-center justify-content-center g-2 px-2">
+            <!-- Mandante -->
+            <div class="col-4 text-end">
+                <h5 class="text-white fw-bold mb-1 text-truncate" title="{{ match.home_team.name }}">{{ match.home_team.name }}</h5>
+                <span class="badge" style="background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.25); font-size: 0.65rem;">{% translate "HOME" %}</span>
             </div>
-            
-            <div class="px-4 text-center">
-                <h1 class="text-white fw-bold mb-0 mx-2" style="font-size: 3rem; text-shadow: 0 0 20px rgba(16, 185, 129, 0.3);">
-                    {{ match.home_score|default:"0" }} <span class="text-secondary">:</span> {{ match.away_score|default:"0" }}
-                </h1>
+
+            <!-- Placar -->
+            <div class="col-4 text-center">
+                <div class="d-inline-flex align-items-center justify-content-center px-3 py-1.5 rounded-4" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08); box-shadow: inset 0 0 20px rgba(0,0,0,0.4);">
+                    <span class="fw-black text-white" style="font-size: 2.5rem; font-weight: 900; line-height: 1; text-shadow: 0 0 25px rgba(255,255,255,0.2);">
+                        {{ match.home_score|default:"0" }}
+                    </span>
+                    <span class="text-secondary mx-2.5 fw-light" style="font-size: 1.8rem; opacity: 0.5;">:</span>
+                    <span class="fw-black text-white" style="font-size: 2.5rem; font-weight: 900; line-height: 1; text-shadow: 0 0 25px rgba(255,255,255,0.2);">
+                        {{ match.away_score|default:"0" }}
+                    </span>
+                </div>
             </div>
-            
-            <div class="text-start" style="flex: 1;">
-                <h4 class="text-white mb-0">{{ match.away_team.name }}</h4>
-                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 mt-1">Fora</span>
+
+            <!-- Visitante -->
+            <div class="col-4 text-start">
+                <h5 class="text-white fw-bold mb-1 text-truncate" title="{{ match.away_team.name }}">{{ match.away_team.name }}</h5>
+                <span class="badge" style="background: rgba(59, 130, 246, 0.12); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.25); font-size: 0.65rem;">{% translate "AWAY" %}</span>
             </div>
         </div>
     </div>
 
-    <!-- Estatísticas Gerais -->
-    <div class="p-4">
-        <h6 class="text-secondary text-uppercase fw-bold mb-3" style="font-size: 0.75rem; letter-spacing: 1px;">Estatísticas do Jogo (FT)</h6>
-        
-        <div class="row g-3 mb-4">
-            <!-- Chutes -->
-            <div class="col-4">
-                <div class="p-3 rounded-3 h-100 d-flex flex-column justify-content-center" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
-                    <div class="text-center mb-2 text-secondary" style="font-size: 0.7rem;">Chutes no Alvo</div>
-                    <div class="d-flex justify-content-between align-items-center mt-auto">
-                        <span class="fs-5 text-success fw-bold">{{ match.home_shots_on_target|default:"0" }}</span>
-                        <span class="fs-5 text-danger fw-bold">{{ match.away_shots_on_target|default:"0" }}</span>
-                    </div>
-                </div>
-            </div>
-            <!-- Escanteios -->
-            <div class="col-4">
-                <div class="p-3 rounded-3 h-100 d-flex flex-column justify-content-center" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
-                    <div class="text-center mb-2 text-secondary" style="font-size: 0.7rem;">Escanteios</div>
-                    <div class="d-flex justify-content-between align-items-center mt-auto">
-                        <span class="fs-5 text-success fw-bold">{{ match.home_corners|default:"0" }}</span>
-                        <span class="fs-5 text-danger fw-bold">{{ match.away_corners|default:"0" }}</span>
-                    </div>
-                </div>
-            </div>
-            <!-- Ataques Perigosos -->
-            <div class="col-4">
-                <div class="p-3 rounded-3 h-100 d-flex flex-column justify-content-center" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
-                    <div class="text-center mb-2 text-secondary" style="font-size: 0.7rem;">Atq. Perigosos</div>
-                    <div class="d-flex justify-content-between align-items-center mt-auto">
-                        <span class="fs-5 text-success fw-bold">{{ match.home_dangerous_attacks|default:"0" }}</span>
-                        <span class="fs-5 text-danger fw-bold">{{ match.away_dangerous_attacks|default:"0" }}</span>
-                    </div>
-                </div>
-            </div>
+    <!-- Seção de Pressão e Dominância em Tempo Real -->
+    <div class="p-4" style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="text-uppercase fw-bold text-secondary mb-0" style="font-size: 0.72rem; letter-spacing: 1px;">
+                <i class="fa-solid fa-gauge-high me-1.5 text-warning"></i> {% translate "Pressure Index (In-Play Radar)" %}
+            </h6>
+            <span class="badge rounded-pill" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; font-size: 0.65rem; border: 1px solid rgba(245, 158, 11, 0.2);">
+                {% translate "Multi-Window" %}
+            </span>
         </div>
 
-        <!-- Radar de Pressão Multi-Tempo -->
-        <h6 class="text-secondary text-uppercase fw-bold mb-3 mt-4" style="font-size: 0.75rem; letter-spacing: 1px;">Índice de Pressão (Radar)</h6>
+        <div class="d-flex flex-column gap-3.5">
+            {% for label, pr, code in pressure_windows %}
+            <div class="p-2.5 rounded-3" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04);">
+                <div class="d-flex justify-content-between align-items-center mb-1.5">
+                    <span class="fw-semibold text-light" style="font-size: 0.78rem;">{{ label }}</span>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="fw-bold" style="color: #10b981; font-size: 0.75rem;">{{ pr.home_pressure }}%</span>
+                        <span class="badge rounded-pill px-2 py-0.5" style="font-size: 0.62rem; {% if 'Home' in pr.status or 'Casa' in pr.status %}background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);{% elif 'Away' in pr.status or 'Fora' in pr.status %}background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3);{% else %}background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3);{% endif %}">
+                            {{ pr.status }}
+                        </span>
+                        <span class="fw-bold" style="color: #3b82f6; font-size: 0.75rem;">{{ pr.away_pressure }}%</span>
+                    </div>
+                </div>
+                <!-- Barra Bifocal Neon -->
+                <div class="progress rounded-pill overflow-hidden" style="height: 7px; background: rgba(255,255,255,0.05);">
+                    <div class="progress-bar" role="progressbar" style="width: {{ pr.home_pressure }}%; background: linear-gradient(90deg, #059669, #10b981); box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);" aria-valuenow="{{ pr.home_pressure }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar" role="progressbar" style="width: {{ pr.away_pressure }}%; background: linear-gradient(90deg, #3b82f6, #2563eb); box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);" aria-valuenow="{{ pr.away_pressure }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Estatísticas Comparativas Detalhadas -->
+    <div class="p-4">
+        <h6 class="text-uppercase fw-bold text-secondary mb-3" style="font-size: 0.72rem; letter-spacing: 1px;">
+            <i class="fa-solid fa-chart-simple me-1.5 text-info"></i> {% translate "Match Accumulated Statistics" %}
+        </h6>
 
         <div class="d-flex flex-column gap-3">
             
-            <!-- 5 Minutos -->
+            <!-- Posse de Bola -->
             <div>
-                <div class="d-flex justify-content-between mb-1">
-                    <span class="small text-white">Últimos 5 Minutos</span>
-                    <span class="small" style="color: #10b981;">{{ pressure_5.home_pressure }}% Casa</span>
+                <div class="d-flex justify-content-between align-items-center mb-1 small">
+                    <span class="fw-bold" style="color: #10b981;">{{ stats_bars.possession.home }}%</span>
+                    <span class="text-secondary" style="font-size: 0.75rem;">{% translate "Ball Possession" %}</span>
+                    <span class="fw-bold" style="color: #3b82f6;">{{ stats_bars.possession.away }}%</span>
                 </div>
-                <div class="progress" style="height: 10px; background: #2a2e37;">
-                    <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" style="width: {{ pressure_5.home_pressure }}%"></div>
-                    <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" style="width: {{ pressure_5.away_pressure }}%"></div>
-                </div>
-                <div class="text-center mt-1" style="font-size: 0.65rem; color: #64748b;">
-                    Status: {{ pressure_5.status }}
+                <div class="progress rounded-pill" style="height: 6px; background: rgba(255,255,255,0.05);">
+                    <div class="progress-bar" style="width: {{ stats_bars.possession.home }}%; background: #10b981;"></div>
+                    <div class="progress-bar" style="width: {{ stats_bars.possession.away }}%; background: #3b82f6;"></div>
                 </div>
             </div>
 
-            <!-- 10 Minutos -->
+            <!-- Chutes no Alvo -->
             <div>
-                <div class="d-flex justify-content-between mb-1">
-                    <span class="small text-white">Últimos 10 Minutos</span>
-                    <span class="small" style="color: #10b981;">{{ pressure_10.home_pressure }}% Casa</span>
+                <div class="d-flex justify-content-between align-items-center mb-1 small">
+                    <span class="fw-bold" style="color: #10b981;">{{ stats_bars.shots_on_target.home }}</span>
+                    <span class="text-secondary" style="font-size: 0.75rem;">{% translate "Shots on Target" %}</span>
+                    <span class="fw-bold" style="color: #3b82f6;">{{ stats_bars.shots_on_target.away }}</span>
                 </div>
-                <div class="progress" style="height: 10px; background: #2a2e37;">
-                    <div class="progress-bar bg-success" style="width: {{ pressure_10.home_pressure }}%"></div>
-                    <div class="progress-bar bg-danger" style="width: {{ pressure_10.away_pressure }}%"></div>
+                <div class="progress rounded-pill" style="height: 6px; background: rgba(255,255,255,0.05);">
+                    <div class="progress-bar" style="width: {{ stats_bars.shots_on_target.home_pct }}%; background: #10b981;"></div>
+                    <div class="progress-bar" style="width: {{ stats_bars.shots_on_target.away_pct }}%; background: #3b82f6;"></div>
                 </div>
             </div>
 
-            <!-- 15 Minutos -->
+            <!-- Total de Chutes -->
             <div>
-                <div class="d-flex justify-content-between mb-1">
-                    <span class="small text-white">Últimos 15 Minutos</span>
-                    <span class="small" style="color: #10b981;">{{ pressure_15.home_pressure }}% Casa</span>
+                <div class="d-flex justify-content-between align-items-center mb-1 small">
+                    <span class="fw-bold" style="color: #10b981;">{{ stats_bars.shots.home }}</span>
+                    <span class="text-secondary" style="font-size: 0.75rem;">{% translate "Total Shots" %}</span>
+                    <span class="fw-bold" style="color: #3b82f6;">{{ stats_bars.shots.away }}</span>
                 </div>
-                <div class="progress" style="height: 10px; background: #2a2e37;">
-                    <div class="progress-bar bg-success" style="width: {{ pressure_15.home_pressure }}%"></div>
-                    <div class="progress-bar bg-danger" style="width: {{ pressure_15.away_pressure }}%"></div>
+                <div class="progress rounded-pill" style="height: 6px; background: rgba(255,255,255,0.05);">
+                    <div class="progress-bar" style="width: {{ stats_bars.shots.home_pct }}%; background: #10b981;"></div>
+                    <div class="progress-bar" style="width: {{ stats_bars.shots.away_pct }}%; background: #3b82f6;"></div>
                 </div>
             </div>
 
-            <!-- Jogo Todo (FT) -->
+            <!-- Escanteios -->
             <div>
-                <div class="d-flex justify-content-between mb-1">
-                    <span class="small text-white">Jogo Todo (FT)</span>
-                    <span class="small" style="color: #10b981;">{{ pressure_ft.home_pressure }}% Casa</span>
+                <div class="d-flex justify-content-between align-items-center mb-1 small">
+                    <span class="fw-bold" style="color: #10b981;">{{ stats_bars.corners.home }}</span>
+                    <span class="text-secondary" style="font-size: 0.75rem;">{% translate "Corners" %}</span>
+                    <span class="fw-bold" style="color: #3b82f6;">{{ stats_bars.corners.away }}</span>
                 </div>
-                <div class="progress" style="height: 10px; background: #2a2e37;">
-                    <div class="progress-bar bg-success" style="width: {{ pressure_ft.home_pressure }}%"></div>
-                    <div class="progress-bar bg-danger" style="width: {{ pressure_ft.away_pressure }}%"></div>
+                <div class="progress rounded-pill" style="height: 6px; background: rgba(255,255,255,0.05);">
+                    <div class="progress-bar" style="width: {{ stats_bars.corners.home_pct }}%; background: #10b981;"></div>
+                    <div class="progress-bar" style="width: {{ stats_bars.corners.away_pct }}%; background: #3b82f6;"></div>
+                </div>
+            </div>
+
+            <!-- Ataques Perigosos -->
+            <div>
+                <div class="d-flex justify-content-between align-items-center mb-1 small">
+                    <span class="fw-bold" style="color: #10b981;">{{ stats_bars.dangerous_attacks.home }}</span>
+                    <span class="text-secondary" style="font-size: 0.75rem;">{% translate "Dangerous Attacks" %}</span>
+                    <span class="fw-bold" style="color: #3b82f6;">{{ stats_bars.dangerous_attacks.away }}</span>
+                </div>
+                <div class="progress rounded-pill" style="height: 6px; background: rgba(255,255,255,0.05);">
+                    <div class="progress-bar" style="width: {{ stats_bars.dangerous_attacks.home_pct }}%; background: #10b981;"></div>
+                    <div class="progress-bar" style="width: {{ stats_bars.dangerous_attacks.away_pct }}%; background: #3b82f6;"></div>
+                </div>
+            </div>
+
+            <!-- Faltas Cometidas -->
+            <div>
+                <div class="d-flex justify-content-between align-items-center mb-1 small">
+                    <span class="fw-bold text-secondary">{{ stats_bars.fouls.home }}</span>
+                    <span class="text-secondary" style="font-size: 0.75rem;">{% translate "Fouls" %}</span>
+                    <span class="fw-bold text-secondary">{{ stats_bars.fouls.away }}</span>
                 </div>
             </div>
 
         </div>
-
     </div>
+
 </div>
-<div class="modal-footer border-0" style="background: #0f172a; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;">
-    <a href="{% url 'matches:match_detail' match.id match.slug %}" class="btn w-100" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2);">
-        Ver Análise Completa Pré-Live
+
+<div class="modal-footer border-0 p-3" style="background: #111827; border-top: 1px solid rgba(255,255,255,0.07)!important;">
+    <a href="{% url 'matches:match_detail' match.id match.slug %}" class="btn w-100 py-2.5 fw-bold d-flex align-items-center justify-content-center gap-2 rounded-3 text-white" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25); border: none;">
+        <span>{% translate "View Full Pre-Match Analysis" %}</span>
+        <i class="fa-solid fa-arrow-right small"></i>
     </a>
 </div>

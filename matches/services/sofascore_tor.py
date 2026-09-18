@@ -226,12 +226,19 @@ class SofaScoreTorService:
     def _rotate_tor(self):
         """Força novo circuito no Tor (novo IP de saída)."""
         try:
-            subprocess.run(["systemctl", "reload", "tor"], timeout=10, capture_output=True)
+            # 1. Via Tor ControlPort (9051) com SIGNAL NEWNYM (imediato e não exige sudo/systemctl)
+            import socket
+            with socket.create_connection(('127.0.0.1', 9051), timeout=5) as s:
+                s.sendall(b'AUTHENTICATE ""\r\nSIGNAL NEWNYM\r\nQUIT\r\n')
+                s.recv(1024)
         except Exception:
-            pass
-        time.sleep(6)
+            try:
+                subprocess.run(["systemctl", "reload", "tor"], timeout=10, capture_output=True)
+            except Exception:
+                pass
+        time.sleep(3)
 
-    def _fetch(self, url, retries=3):
+    def _fetch(self, url, retries=5):
         if not self.session:
             self._create_session()
         for attempt in range(retries):

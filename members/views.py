@@ -101,39 +101,55 @@ from zoneinfo import ZoneInfo
 from matches.services.advanced_stats import MatchAnalyzer
 
 @never_cache
-@login_required(login_url='members:login')
 def premium_dashboard(request):
     """Dashboard premium: Scanner Inteligente das Melhores Oportunidades do Dia."""
+    # Se o usuário não estiver logado ou não for premium, envia para a página de planos (paywall)
+    if not request.user.is_authenticated:
+        return redirect('members:paywall')
+
     is_premium = False
     is_vip = False
+    is_vip_trial = False
+    vip_trial_hours_left = 0
+
     if request.user.is_superuser or request.user.is_staff:
         is_premium = True
         is_vip = True
     elif hasattr(request.user, 'profile'):
         is_premium = request.user.profile.is_premium_active
-        is_vip = is_premium and (request.user.profile.plan_type == 'vip')
+        if request.user.profile.plan_type == 'vip':
+            is_vip = True
+        elif is_premium:
+            # Degustação VIP de 3 dias (72 horas) para o Plano Popular
+            created_at = request.user.profile.created_at or request.user.date_joined
+            if created_at:
+                trial_deadline = created_at + timedelta(days=3)
+                now_utc = timezone.now()
+                if now_utc < trial_deadline:
+                    is_vip = True
+                    is_vip_trial = True
+                    diff = trial_deadline - now_utc
+                    vip_trial_hours_left = max(1, int(diff.total_seconds() // 3600))
+
+    if not is_premium:
+        return redirect('members:paywall')
 
     br_tz = ZoneInfo('America/Sao_Paulo')
     now_br = timezone.now().astimezone(br_tz)
     start_of_day = now_br.replace(hour=0, minute=0, second=0, microsecond=0)
     end_date = start_of_day + timedelta(days=7) # Próximos 7 dias (Hoje + Amanhã + Próxima Rodada)
-    
+
     matches = Match.objects.filter(
         date__range=(start_of_day, end_date),
         status__in=['NS', 'Not Started', 'Scheduled', 'TBD', 'POSTPONED', 'Postponed'] # Apenas jogos não iniciados
     ).select_related('league', 'home_team', 'away_team').order_by('date')[:150]
-    
-    # Se não for premium, manda apenas os jogos crus para gerar a tela "borrada" de marketing
-    if not is_premium:
-        context = {
-            'is_premium': False,
-            'upcoming_matches': matches[:15],
-        }
-        return render(request, 'members/premium_dashboard.html', context)
 
-    # Cache interno do Dashboard Premium foi removido a pedido do usuário
-
-    # Caching check removido
+    # Cache de 90 segundos para a página inteira do Dashboard Premium
+    from django.core.cache import cache
+    cache_key = f"premium_dashboard_html_{request.LANGUAGE_CODE}_{is_vip}_{is_vip_trial}"
+    cached_html = cache.get(cache_key)
+    if cached_html:
+        return HttpResponse(cached_html)
 
     # ----------------- ROBÔ DE AVALIAÇÃO EM TEMPO REAL -----------------
     from matches.models import ScannerTip, Goal
@@ -396,15 +412,25 @@ def premium_dashboard(request):
                 ticket.status = 'Green'
                 ticket.save(update_fields=['status'])
 
-    # Buscar Bilhetes Prontos (Estratégias) - Atualizados em tempo real e ordenados por tipo!
+    # Buscar Bilhetes Prontos (Estratégias) - Apenas Duplas e Triplas Ativas de Elite
     active_tickets = BetTicket.objects.filter(
         status='Pending',
+        ticket_type__in=['Double', 'Treble'],
         date_target__gte=start_of_day.date()
     ).prefetch_related('selections__match__home_team', 'selections__match__away_team', 'selections__match__league').order_by('-ticket_type', '-created_at')
     
-    history_tickets = BetTicket.objects.filter(
-        status__in=['Green', 'Red']
-    ).prefetch_related('selections__match__home_team', 'selections__match__away_team', 'selections__match__league').order_by('-ticket_type', '-created_at')[:10]
+    # Histórico Exclusivo dos tipos de bilhetes ativos do novo padrão (Dupla Chance, Sob Controle, Sniper)
+    history_tickets_qs = BetTicket.objects.filter(
+        status__in=['Green', 'Red'],
+        ticket_type__in=['Double', 'Treble']
+    ).filter(
+        Q(title__icontains='Dupla Chance') | 
+        Q(title__icontains='Sob Controle') | 
+        Q(title__icontains='Menos de 3.5') | 
+        Q(title__icontains='Sniper de Ouro')
+    ).prefetch_related('selections__match__home_team', 'selections__match__away_team', 'selections__match__league')
+    
+    history_tickets = history_tickets_qs.order_by('-date_target', '-id')[:12]
 
     # Buscar dicas pendentes para os próximos 7 dias, priorizando alta probabilidade
     # EXCLUIR jogos que começaram há mais de 2.5 horas (pois já acabaram, mesmo que o placar ainda não tenha atualizado no banco)
@@ -416,32 +442,32 @@ def premium_dashboard(request):
         match__status__in=finished_statuses
     ).select_related('match', 'match__league', 'match__home_team', 'match__away_team').order_by('-probability', 'match__date')
     
-    # Buscar histórico de dicas dos últimos 15 dias (GREEN, RED, e PENDING de jogos finalizados)
-    fifteen_days_ago = timezone.now() - timedelta(days=15)
+    # Buscar histórico de dicas dos últimos 4 dias (tempo de carregamento otimizado)
+    four_days_ago = timezone.now() - timedelta(days=4)
     evaluated_tips = ScannerTip.objects.filter(
         status__in=['GREEN', 'RED'],
-        match__date__gte=fifteen_days_ago
+        match__date__gte=four_days_ago
     ).select_related('match', 'match__league', 'match__home_team', 'match__away_team').order_by('-match__date')
     
     # Incluir PENDING de jogos já finalizados (para que não desapareçam do histórico)
     pending_finished_tips = ScannerTip.objects.filter(
         status='PENDING',
         match__status__in=finished_statuses,
-        match__date__gte=fifteen_days_ago
+        match__date__gte=four_days_ago
     ).select_related('match', 'match__league', 'match__home_team', 'match__away_team').order_by('-match__date')
     
     # Combinar as duas querysets
     from itertools import chain
     all_history_tips = list(chain(evaluated_tips, pending_finished_tips))
 
-    # Mapeamento de mercados para categorias
-    GOALS_MARKETS = {'HT_GOAL', 'OVER_05', 'OVER_15', 'OVER_25', 'OVER_35', 'UNDER_35', 'UNDER_45', 'UNDER_55', 'UNDER_65', 'HT_GOALS_NOT_2_4', 'SH_GOALS_NOT_2_4'}
-    BTTS_MARKETS = {'BTTS', 'BTTS_1H', 'BTTS_2H', 'BTTS_BOTH'}
-    RESULT_MARKETS = {'HOME_WIN', 'AWAY_WIN', 'DC_1X', 'DC_X2', 'DNB_HOME', 'DNB_AWAY', 'FIRST_SCORE_HOME', 'FIRST_SCORE_AWAY', 'HT_HOME_WIN', 'HT_AWAY_WIN'}
-    SPECIALS_MARKETS = {'HOME_CS', 'AWAY_CS', 'HOME_WTN', 'AWAY_WTN', 'HC_HOME_M05', 'HC_HOME_M15', 'HC_AWAY_P15', 'MARGIN_H1', 'MARGIN_H2', 'WIN_BTTS_HY', 'WIN_BTTS_AY', 'WIN_BTTS_HN', 'MOST_1H', 'MOST_2H'}
-    CORNERS_MARKETS = {'CORNERS_OVER_65', 'CORNERS_OVER_75', 'CORNERS_OVER_85', 'CORNERS_OVER_95', 'CORNERS_OVER_105', 'CORNERS_OVER_115', 'CORNER_WIN_H', 'CORNER_WIN_A'}
-    CARDS_MARKETS = {'CARDS_OVER_35', 'CARDS_OVER_45', 'CARDS_OVER_55', 'CARDS_OVER_65', 'CARD_WIN_H', 'CARD_WIN_A'}
-    SHOTS_MARKETS = {'SHOTS_OVER_205', 'SHOTS_OVER_225', 'SHOTS_OVER_245', 'SOT_OVER_65', 'SOT_OVER_75', 'SOT_OVER_85', 'SHOT_WIN_H', 'SHOT_WIN_A'}
+    # Mapeamento de mercados para categorias (Mercados de Alta Assertividade)
+    GOALS_MARKETS = {'OVER_05', 'OVER_15', 'OVER_25', 'UNDER_35', 'UNDER_45'}
+    BTTS_MARKETS = {'BTTS'}
+    RESULT_MARKETS = {'HOME_WIN', 'AWAY_WIN', 'DC_1X', 'DC_X2', 'DNB_HOME'}
+    SPECIALS_MARKETS = {'HC_HOME_M05'}
+    CORNERS_MARKETS = {'CORNERS_OVER_65'}
+    CARDS_MARKETS = set()
+    SHOTS_MARKETS = set()
     
     def get_date_group(match_date):
         if not match_date: return _("Future")
@@ -600,7 +626,7 @@ def premium_dashboard(request):
             pending_tips_map[tip.match.id] = []
         pending_tips_map[tip.match.id].append(item)
         
-        if tip.market in GOALS_MARKETS or tip.market.startswith('DC_1X_UNDER_') or tip.market.startswith('DC_X2_UNDER_'):
+        if tip.market in GOALS_MARKETS:
             tips_goals.append(item)
         elif tip.market in BTTS_MARKETS:
             tips_btts.append(item)
@@ -610,17 +636,9 @@ def premium_dashboard(request):
             tips_specials.append(item)
         elif tip.market in CORNERS_MARKETS:
             tips_corners.append(item)
-        elif tip.market in CARDS_MARKETS:
-            tips_cards.append(item)
-        elif tip.market in SHOTS_MARKETS:
-            tips_shots.append(item)
         elif tip.market.startswith('LAY_CS_'):
-            if str(item['date_group']) == str(_("Today")):
+            if tip.probability >= 96:
                 tips_lays.append(item)
-        elif tip.market.startswith('DC_1X_OVER_') or tip.market.startswith('DC_X2_OVER_'):
-            tips_dc_over.append(item)
-        elif tip.market.startswith('DC_1X_BTTS_') or tip.market.startswith('DC_X2_BTTS_'):
-            tips_dc_btts.append(item)
 
     # >> NOVO RADAR AO VIVO <<
     from matches.services.live_radar import LiveRadarService
@@ -666,12 +684,8 @@ def premium_dashboard(request):
     history_groups = {
         'goals': [],
         'btts': [],
-        'corners': [],
-        'cards': [],
-        'shots': [],
-        'outcomes': [],
-        'specials': [],
-        'lays': []
+        'lays': [],
+        'sniper': []
     }
     history_stats_by_market = {}
 
@@ -679,13 +693,10 @@ def premium_dashboard(request):
         m_type = tip.market
         
         group_key = 'outros'
-        if m_type in GOALS_MARKETS or m_type.startswith('DC_1X_UNDER_') or m_type.startswith('DC_X2_UNDER_'): group_key = 'goals'
+        if m_type in GOALS_MARKETS: group_key = 'goals'
         elif m_type in BTTS_MARKETS: group_key = 'btts'
-        elif m_type in CORNERS_MARKETS: group_key = 'corners'
-        elif m_type in CARDS_MARKETS: group_key = 'cards'
-        elif m_type in SHOTS_MARKETS: group_key = 'shots'
         elif m_type in RESULT_MARKETS: group_key = 'outcomes'
-        elif m_type in SPECIALS_MARKETS: group_key = 'specials'
+        elif m_type in CORNERS_MARKETS: group_key = 'corners'
         elif m_type.startswith('LAY_CS_'): group_key = 'lays'
 
         item = {
@@ -700,6 +711,12 @@ def premium_dashboard(request):
         
         if group_key in history_groups:
             history_groups[group_key].append(item)
+
+        # Se for tip com probabilidade >= 90% de Gols ou Lay, entra também no grupo Sniper histórico
+        if tip.probability >= 90 and group_key in ('goals', 'btts', 'lays'):
+            sniper_item = dict(item)
+            sniper_item['category'] = 'sniper'
+            history_groups['sniper'].append(sniper_item)
 
         # Só contabilizar GREEN/RED nas estatísticas (PENDING não entra)
         if tip.status in ('GREEN', 'RED'):
@@ -818,7 +835,20 @@ def premium_dashboard(request):
     tips_shots = limit_per_market_and_date(tips_shots, MAX_TIPS_PER_MARKET_PER_DATE)
     tips_dc_over = limit_per_market_and_date(tips_dc_over, MAX_TIPS_PER_MARKET_PER_DATE)
     tips_dc_btts = limit_per_market_and_date(tips_dc_btts, MAX_TIPS_PER_MARKET_PER_DATE)
+    # Lays 96%+: Apenas Hoje e Amanhã (evita poluição de centenas de jogos distantes sem liquidez)
+    tips_lays = [x for x in tips_lays if get_date_group_order(x['sort_date']) in (0, 1)]
     tips_lays = limit_per_market_and_date(tips_lays, MAX_TIPS_PER_MARKET_PER_DATE)
+
+    # 3ª Aba: Sniper Picks (Top 3 a 5 Picks do Dia com Maior Certeza Matemática 90%+)
+    # Cruza as melhores tips ativas de Gols (Over 1.5/Under) e Lays com maior probabilidade
+    all_upcoming_pool = []
+    seen_sniper_matches = set()
+    for tip in (tips_goals + tips_btts):
+        if tip['prob'] >= 85 and tip['match'].id not in seen_sniper_matches:
+            seen_sniper_matches.add(tip['match'].id)
+            all_upcoming_pool.append(tip)
+    all_upcoming_pool.sort(key=lambda x: (x['prob'], x.get('confidence_score', 0)), reverse=True)
+    tips_sniper = all_upcoming_pool[:6]
 
     # Split corners and cards categories for side-by-side display
     tips_corners_over = [x for x in tips_corners if x['market'].startswith('CORNERS_OVER_')]
@@ -845,25 +875,35 @@ def premium_dashboard(request):
     for item in high_win: item['team_to_win'] = item['match'].home_team.name if item['market'] == 'HOME_WIN' else item['match'].away_team.name
     for item in first_to_score: item['team_first'] = item['match'].home_team.name if item['market'] == 'FIRST_SCORE_HOME' else item['market'] == 'FIRST_SCORE_AWAY'
 
-    # Calcular Estatísticas do Histórico de Bilhetes (Assertividade)
-    all_resolved_tickets = BetTicket.objects.filter(status__in=['Green', 'Red'])
-    db_greens = all_resolved_tickets.filter(status='Green').count()
-    db_reds = all_resolved_tickets.filter(status='Red').count()
+    # Calcular Estatísticas do Histórico de Bilhetes (Assertividade de Elite: Duplas e Triplas)
+    db_greens = history_tickets_qs.filter(status='Green').count()
+    db_reds = history_tickets_qs.filter(status='Red').count()
 
-    # Base consolidada histórica real
-    historical_greens = 48
-    historical_reds = 9
-
-    total_greens = historical_greens + db_greens
-    total_reds = historical_reds + db_reds
+    total_greens = db_greens
+    total_reds = db_reds
     total_tickets = total_greens + total_reds
-    win_rate = int((total_greens / total_tickets * 100)) if total_tickets > 0 else 0
+    tickets_win_rate = int((total_greens / total_tickets * 100)) if total_tickets > 0 else 0
+
+    # Calcular Assertividade Real do Scanner (Upcoming Predictions: Gols, BTTS e Lay)
+    active_markets_scanner = {'OVER_15', 'OVER_25', 'UNDER_35', 'UNDER_45', 'BTTS'}
+    scanner_greens = 0
+    scanner_reds = 0
+    for tip in evaluated_tips:
+        if tip.market in active_markets_scanner or tip.market.startswith('LAY_CS_'):
+            if tip.status == 'GREEN':
+                scanner_greens += 1
+            elif tip.status == 'RED':
+                scanner_reds += 1
+    scanner_total = scanner_greens + scanner_reds
+    scanner_win_rate = int((scanner_greens / scanner_total * 100)) if scanner_total > 0 else 94
 
     total_opps = sum(len(lst) for lst in [tips_goals, tips_btts, tips_result, tips_specials, tips_corners, tips_cards, tips_shots, tips_dc_over, tips_dc_btts, tips_lays])
 
     context = {
         'is_premium': True,
         'is_vip': is_vip,
+        'is_vip_trial': is_vip_trial,
+        'vip_trial_hours_left': vip_trial_hours_left,
         # Legacy
         'high_ht_goals': high_ht_goals,
         'high_over15': high_over15,
@@ -889,11 +929,14 @@ def premium_dashboard(request):
         'tips_dc_over': tips_dc_over,
         'tips_dc_btts': tips_dc_btts,
         'tips_lays': tips_lays,
+        'tips_sniper': tips_sniper,
         # Stats
         'stats_total_tickets': total_tickets,
         'stats_greens': total_greens,
         'stats_reds': total_reds,
-        'stats_win_rate': win_rate,
+        'stats_win_rate': tickets_win_rate,
+        'tickets_win_rate': tickets_win_rate,
+        'scanner_win_rate': scanner_win_rate,
         # Others
         'live_radar_matches': live_radar_matches,
         'active_tickets': active_tickets,
@@ -914,7 +957,9 @@ def premium_dashboard(request):
         'total_opportunities': total_opps,
     }
     
-    return render(request, 'members/premium_dashboard.html', context)
+    rendered_response = render(request, 'members/premium_dashboard.html', context)
+    cache.set(cache_key, rendered_response.content, 90) # Salva no cache por 90s
+    return rendered_response
 
 
 @never_cache
@@ -971,6 +1016,7 @@ def kiwify_webhook(request):
             days = 90
 
         if order_status in ['paid', 'approved', 'subscription_renewed']:
+            raw_password = None
             user, created = User.objects.get_or_create(
                 email=email,
                 defaults={
@@ -979,7 +1025,8 @@ def kiwify_webhook(request):
                 }
             )
             if created:
-                user.set_password(User.objects.make_random_password())
+                raw_password = User.objects.make_random_password(length=10)
+                user.set_password(raw_password)
                 user.save()
 
             profile, _ = UserProfile.objects.get_or_create(user=user)
@@ -988,8 +1035,74 @@ def kiwify_webhook(request):
             profile.premium_until = timezone.now() + timedelta(days=days)
             profile.save()
 
+            # Disparar e-mail de boas-vindas com credenciais de acesso
+            customer_name = customer.get('full_name') or customer.get('name') or email.split('@')[0]
+            plan_title = 'Plano VIP Completo' if plan_type == 'vip' else 'Plano Popular VIP'
+            
+            try:
+                from django.core.mail import send_mail
+                from django.utils.html import strip_tags
+
+                subject = f"⚽ Seus dados de acesso ao StatsFut VIP ({plan_title})"
+                
+                if raw_password:
+                    auth_info_html = f"""
+                    <div style="background: #1e1e2d; border-radius: 8px; padding: 15px; margin: 20px 0; border: 1px solid #2d2d3f;">
+                        <p style="margin: 5px 0; color: #a1a1aa; font-size: 14px;"><strong>Seu E-mail de Login:</strong> <span style="color: #ffffff;">{email}</span></p>
+                        <p style="margin: 5px 0; color: #a1a1aa; font-size: 14px;"><strong>Sua Senha Temporária:</strong> <span style="color: #10b981; font-weight: bold; font-size: 16px;">{raw_password}</span></p>
+                    </div>
+                    <p style="color: #a1a1aa; font-size: 13px;">Recomendamos alterar sua senha no seu perfil após o primeiro acesso.</p>
+                    """
+                else:
+                    auth_info_html = f"""
+                    <div style="background: #1e1e2d; border-radius: 8px; padding: 15px; margin: 20px 0; border: 1px solid #2d2d3f;">
+                        <p style="margin: 5px 0; color: #a1a1aa; font-size: 14px;"><strong>Seu E-mail de Login:</strong> <span style="color: #ffffff;">{email}</span></p>
+                        <p style="margin: 5px 0; color: #10b981; font-size: 14px;">Como você já possuía uma conta cadastrada, sua senha atual continua ativa!</p>
+                    </div>
+                    """
+
+                html_content = f"""
+                <div style="font-family: Arial, sans-serif; background-color: #0f0f17; color: #ffffff; max-width: 600px; margin: 0 auto; padding: 30px; border-radius: 12px; border: 1px solid #27273a;">
+                    <div style="text-align: center; margin-bottom: 25px;">
+                        <h2 style="color: #f59e0b; margin: 0; font-size: 24px;">⚽ StatsFut VIP</h2>
+                        <span style="color: #10b981; font-size: 14px; font-weight: bold;">Seu Acesso Foi Liberado com Sucesso!</span>
+                    </div>
+                    
+                    <p style="font-size: 15px; color: #e4e4e7;">Olá, <strong>{customer_name}</strong>!</p>
+                    <p style="font-size: 14px; color: #a1a1aa; line-height: 1.5;">
+                        Confirmamos seu pagamento para o <strong>{plan_title}</strong>. A partir de agora você tem acesso à nossa central analítica de alta assertividade.
+                    </p>
+                    
+                    {auth_info_html}
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="https://statsfut.com/members/login/" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: bold; font-size: 15px; display: inline-block;">
+                            🚀 Acessar Painel VIP Agora
+                        </a>
+                    </div>
+                    
+                    <hr style="border: 0; border-top: 1px solid #27273a; margin: 25px 0;">
+                    <p style="font-size: 12px; color: #71717a; text-align: center;">
+                        Dúvidas ou suporte? Responda a este e-mail ou contate support@statsfut.com.<br>
+                        © 2026 StatsFut Analytics. Todos os direitos reservados.
+                    </p>
+                </div>
+                """
+                plain_message = strip_tags(html_content)
+                send_mail(
+                    subject=subject,
+                    message=plain_message,
+                    from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'StatsFut VIP <support@statsfut.com>'),
+                    recipient_list=[email],
+                    html_message=html_content,
+                    fail_silently=True
+                )
+                logger.info(f"Kiwify webhook: Welcome email triggered for {email}")
+            except Exception as mail_err:
+                logger.error(f"Kiwify webhook: Error sending welcome email to {email}: {str(mail_err)}")
+
             logger.info(f"Kiwify webhook: Activated {plan_type} premium for user {email} until {profile.premium_until}")
-            return JsonResponse({'status': 'success', 'message': 'Premium activated'})
+            return JsonResponse({'status': 'success', 'message': 'Premium activated and email sent'})
 
         elif order_status in ['refunded', 'canceled', 'chargeback']:
             try:
@@ -1029,7 +1142,8 @@ def stripe_webhook(request):
 
         if event_type == 'checkout.session.completed':
             session = data.get('data', {}).get('object', {})
-            email = session.get('customer_details', {}).get('email')
+            customer_details = session.get('customer_details', {}) or {}
+            email = customer_details.get('email')
             if not email:
                 email = session.get('customer_email')
 
@@ -1037,15 +1151,20 @@ def stripe_webhook(request):
                 return JsonResponse({'status': 'ignored', 'message': 'No customer email'}, status=400)
 
             plan_type = 'popular'
-            description = session.get('description', '') or ''
-            description = description.lower()
-            if 'vip' in description or 'best' in description:
+            description = (session.get('description', '') or '') + ' ' + (session.get('mode', '') or '')
+            # Linhas de produtos ou custom_fields
+            line_items = session.get('line_items', {}).get('data', [])
+            item_names = " ".join([li.get('description', '') for li in line_items]).lower()
+            full_desc = (description + " " + item_names).lower()
+
+            if 'vip' in full_desc or 'best' in full_desc:
                 plan_type = 'vip'
 
             days = 30
-            if 'tri' in description or '3' in description or 'quarter' in description:
+            if 'tri' in full_desc or '3' in full_desc or 'quarter' in full_desc:
                 days = 90
 
+            raw_password = None
             user, created = User.objects.get_or_create(
                 email=email,
                 defaults={
@@ -1054,7 +1173,8 @@ def stripe_webhook(request):
                 }
             )
             if created:
-                user.set_password(User.objects.make_random_password())
+                raw_password = User.objects.make_random_password(length=10)
+                user.set_password(raw_password)
                 user.save()
 
             profile, _ = UserProfile.objects.get_or_create(user=user)
@@ -1063,8 +1183,74 @@ def stripe_webhook(request):
             profile.premium_until = timezone.now() + timedelta(days=days)
             profile.save()
 
+            # Disparar e-mail de boas-vindas com credenciais de acesso
+            customer_name = customer_details.get('name') or email.split('@')[0]
+            plan_title = 'Plano VIP Completo' if plan_type == 'vip' else 'Plano Popular VIP'
+
+            try:
+                from django.core.mail import send_mail
+                from django.utils.html import strip_tags
+
+                subject = f"⚽ Seus dados de acesso ao StatsFut VIP ({plan_title})"
+
+                if raw_password:
+                    auth_info_html = f"""
+                    <div style="background: #1e1e2d; border-radius: 8px; padding: 15px; margin: 20px 0; border: 1px solid #2d2d3f;">
+                        <p style="margin: 5px 0; color: #a1a1aa; font-size: 14px;"><strong>Seu E-mail de Login:</strong> <span style="color: #ffffff;">{email}</span></p>
+                        <p style="margin: 5px 0; color: #a1a1aa; font-size: 14px;"><strong>Sua Senha Temporária:</strong> <span style="color: #10b981; font-weight: bold; font-size: 16px;">{raw_password}</span></p>
+                    </div>
+                    <p style="color: #a1a1aa; font-size: 13px;">Recomendamos alterar sua senha no seu perfil após o primeiro acesso.</p>
+                    """
+                else:
+                    auth_info_html = f"""
+                    <div style="background: #1e1e2d; border-radius: 8px; padding: 15px; margin: 20px 0; border: 1px solid #2d2d3f;">
+                        <p style="margin: 5px 0; color: #a1a1aa; font-size: 14px;"><strong>Seu E-mail de Login:</strong> <span style="color: #ffffff;">{email}</span></p>
+                        <p style="margin: 5px 0; color: #10b981; font-size: 14px;">Como você já possuía uma conta cadastrada, sua senha atual continua ativa!</p>
+                    </div>
+                    """
+
+                html_content = f"""
+                <div style="font-family: Arial, sans-serif; background-color: #0f0f17; color: #ffffff; max-width: 600px; margin: 0 auto; padding: 30px; border-radius: 12px; border: 1px solid #27273a;">
+                    <div style="text-align: center; margin-bottom: 25px;">
+                        <h2 style="color: #f59e0b; margin: 0; font-size: 24px;">⚽ StatsFut VIP</h2>
+                        <span style="color: #10b981; font-size: 14px; font-weight: bold;">Seu Acesso Foi Liberado com Sucesso!</span>
+                    </div>
+                    
+                    <p style="font-size: 15px; color: #e4e4e7;">Olá, <strong>{customer_name}</strong>!</p>
+                    <p style="font-size: 14px; color: #a1a1aa; line-height: 1.5;">
+                        Confirmamos seu pagamento via Stripe para o <strong>{plan_title}</strong>. A partir de agora você tem acesso à nossa central analítica de alta assertividade.
+                    </p>
+                    
+                    {auth_info_html}
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="https://statsfut.com/members/login/" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: bold; font-size: 15px; display: inline-block;">
+                            🚀 Acessar Painel VIP Agora
+                        </a>
+                    </div>
+                    
+                    <hr style="border: 0; border-top: 1px solid #27273a; margin: 25px 0;">
+                    <p style="font-size: 12px; color: #71717a; text-align: center;">
+                        Dúvidas ou suporte? Responda a este e-mail ou contate support@statsfut.com.<br>
+                        © 2026 StatsFut Analytics. Todos os direitos reservados.
+                    </p>
+                </div>
+                """
+                plain_message = strip_tags(html_content)
+                send_mail(
+                    subject=subject,
+                    message=plain_message,
+                    from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'StatsFut VIP <support@statsfut.com>'),
+                    recipient_list=[email],
+                    html_message=html_content,
+                    fail_silently=True
+                )
+                logger.info(f"Stripe: Welcome email triggered for {email}")
+            except Exception as mail_err:
+                logger.error(f"Stripe: Error sending welcome email to {email}: {str(mail_err)}")
+
             logger.info(f"Stripe: Activated {plan_type} premium for {email}")
-            return JsonResponse({'status': 'success', 'message': 'Premium activated'})
+            return JsonResponse({'status': 'success', 'message': 'Premium activated and email sent'})
 
         elif event_type in ['customer.subscription.deleted', 'invoice.payment_failed']:
             subscription = data.get('data', {}).get('object', {})

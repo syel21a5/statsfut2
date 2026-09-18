@@ -2,32 +2,141 @@
 {% load static i18n %}
 
 {% block title %}{% translate "Upgrade to Premium" %} | StatsFut{% endblock %}
-{% block meta_description %}{% translate "Upgrade to StatsFut Premium for exclusive advanced football analytics, corner stats, card analysis and AI predictions." %}{% endblock %}
+{% block meta_description %}{% translate "Upgrade to StatsFut Premium for exclusive advanced football analytics, corner stats, card analysis and statistical predictions." %}{% endblock %}
 
 {% block header %}
 <h1 class="h3 mb-0 text-white"><i class="fa-solid fa-crown me-2" style="color: #f59e0b;"></i>{% translate "Upgrade to Premium" %}</h1>
 {% endblock %}
 
 {% block content %}
+<style>
+    /* Card Hover & Glow Effects */
+    .pricing-card {
+        background: var(--bg-panel, #121622);
+        border: 1px solid var(--border, rgba(255,255,255,0.08));
+        border-radius: 20px;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+        position: relative;
+    }
+    .pricing-card:hover {
+        transform: translateY(-4px);
+    }
+    .pricing-card-vip {
+        border: 2px solid #f59e0b !important;
+        background: linear-gradient(180deg, rgba(245, 158, 11, 0.06) 0%, rgba(18, 22, 34, 0.95) 100%);
+        box-shadow: 0 12px 40px rgba(245, 158, 11, 0.18);
+    }
+    .pricing-card-vip:hover {
+        box-shadow: 0 16px 50px rgba(245, 158, 11, 0.28);
+    }
+
+    /* Metric stats counter banner */
+    .metric-pill {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 14px;
+        padding: 16px 20px;
+    }
+
+    /* Comparison Table */
+    .comparison-table {
+        background: var(--bg-panel, #121622);
+        border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+        border-radius: 20px;
+        overflow: hidden;
+    }
+    .comparison-table th, .comparison-table td {
+        padding: 16px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        vertical-align: middle;
+    }
+    .comparison-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Trust Guarantee Box */
+    .guarantee-badge {
+        background: linear-gradient(145deg, rgba(16, 185, 129, 0.12), rgba(16, 185, 129, 0.04));
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        border-radius: 20px;
+    }
+
+    /* Custom Switch */
+    .form-check-input:checked {
+        background-color: #f59e0b !important;
+        border-color: #f59e0b !important;
+    }
+    .form-check-input {
+        background-color: rgba(255,255,255,0.1) !important;
+        border-color: rgba(255,255,255,0.2) !important;
+        cursor: pointer;
+    }
+    .accordion-button::after {
+        filter: invert(1);
+    }
+    .transition-all {
+        transition: all 0.3s ease;
+    }
+</style>
 
 <!-- Hero Section -->
-<div class="text-center mb-5">
-    <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 88px; height: 88px; background: linear-gradient(135deg, #f59e0b, #f97316); box-shadow: 0 8px 32px rgba(245,158,11,0.3);">
+<div class="text-center mb-4 pt-2">
+    <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 84px; height: 84px; background: linear-gradient(135deg, #f59e0b, #f97316); box-shadow: 0 8px 32px rgba(245,158,11,0.35);">
         <i class="fa-solid fa-crown fa-2x text-white"></i>
     </div>
-    <h2 class="text-white mb-2">{% translate "Unlock the Full Power of StatsFut" %}</h2>
-    <p class="text-secondary mx-auto" style="max-width: 600px;">{% translate "Get access to advanced analytics used by professional bettors and analysts. Corner stats, card trends, AI predictions and much more." %}</p>
+    <h2 class="text-white fw-bold mb-2 fs-2">{% translate "Unlock the Full Power of StatsFut" %}</h2>
+    <p class="text-secondary mx-auto fs-6 mb-2" style="max-width: 650px;">
+        {% translate "Get access to mathematical modeling (Poisson + xG), statistical predictions with high win-rate, Live Pressure Radar, and Ready-to-use tickets verified daily." %}
+    </p>
+    {% if not user.is_authenticated %}
+    <p class="small text-muted">
+        {% translate "Already have an account or subscription?" %} 
+        <a href="{% url 'members:login' %}?next={% url 'members:premium_dashboard' %}" class="text-warning fw-semibold text-decoration-none ms-1">
+            <i class="fa-solid fa-arrow-right-to-bracket me-1"></i>{% translate "Log in here" %}
+        </a>
+    </p>
+    {% endif %}
+</div>
+
+<!-- Social Proof / Metrics Ribbon -->
+<div class="row g-3 justify-content-center mb-5">
+    <div class="col-6 col-md-3">
+        <div class="metric-pill text-center">
+            <div class="h4 text-white fw-bold mb-0" style="color: #f59e0b !important;">34+</div>
+            <div class="text-secondary small">{% translate "Covered Leagues" %}</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="metric-pill text-center">
+            <div class="h4 text-white fw-bold mb-0" style="color: #10b981 !important;">80%+</div>
+            <div class="text-secondary small">{% translate "Target Win Rate" %}</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="metric-pill text-center">
+            <div class="h4 text-white fw-bold mb-0" style="color: #6366f1 !important;">100%</div>
+            <div class="text-secondary small">{% translate "Mathematical Base (Poisson)" %}</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="metric-pill text-center">
+            <div class="h4 text-white fw-bold mb-0" style="color: #38bdf8 !important;">Live</div>
+            <div class="text-secondary small">{% translate "Real-Time Pressure Radar" %}</div>
+        </div>
+    </div>
 </div>
 
 <!-- Billing Cycle Toggle -->
-<div class="d-flex align-items-center justify-content-center gap-3 mb-5">
+<div class="d-flex align-items-center justify-content-center gap-3 mb-4">
     <span class="fw-bold text-white fs-5 transition-all" id="label-monthly">{% translate "Monthly" %}</span>
     <div class="form-check form-switch fs-4 mb-0">
-        <input class="form-check-input" type="checkbox" role="switch" id="billingToggle" style="cursor: pointer;">
+        <input class="form-check-input" type="checkbox" role="switch" id="billingToggle">
     </div>
-    <span class="fw-bold text-secondary fs-5 transition-all" id="label-quarterly">
+    <span class="fw-bold text-secondary fs-5 transition-all d-flex align-items-center" id="label-quarterly">
         {% translate "Quarterly" %} 
-        <span class="badge bg-success ms-1 fs-6" style="padding: 4px 8px; border-radius: 6px;">-20% OFF</span>
+        <span class="badge bg-success ms-2 fs-6 fw-bold" style="padding: 4px 10px; border-radius: 8px; box-shadow: 0 0 12px rgba(16,185,129,0.35);">
+            -20% OFF
+        </span>
     </span>
 </div>
 
@@ -36,179 +145,293 @@
 
     <!-- Popular Plan -->
     <div class="col-lg-5 col-md-6">
-        <div class="p-4 rounded-4 h-100 text-center position-relative transition-all" style="background: var(--bg-panel); border: 1px solid var(--border); box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
-            <div class="mb-3 mt-2">
-                <span class="badge px-3 py-2 rounded-pill" style="background: rgba(255,255,255,0.08); color: #fff; font-size: 0.8rem;">
-                    <i class="fa-solid fa-star me-1"></i>{% translate "Popular" %}
+        <div class="pricing-card p-4 h-100 d-flex flex-column text-center">
+            <div class="mb-3 mt-1">
+                <span class="badge px-3 py-2 rounded-pill" style="background: rgba(255,255,255,0.08); color: #e5e7eb; font-size: 0.85rem; font-weight: 600;">
+                    <i class="fa-solid fa-user me-1 text-secondary"></i>{% translate "Popular Plan" %}
                 </span>
             </div>
+            
             <div class="mb-1">
-                <span class="h2 text-white fw-bold" id="popular-price">R$ 29</span>
+                <span class="display-6 text-white fw-bold" id="popular-price">R$ 29</span>
                 <span class="text-secondary small" id="popular-period">/{% translate "month" %}</span>
             </div>
-            <p class="text-secondary small mb-3" id="popular-desc">{% translate "Perfect to start using our AI predictions" %}</p>
-            <hr class="border-secondary border-opacity-25">
-            <ul class="list-unstyled text-start mb-4">
+            <p class="text-secondary small mb-3" id="popular-desc">{% translate "Perfect to start using our smart predictions and statistics" %}</p>
+            
+            <hr class="border-secondary border-opacity-25 my-3">
+            
+            <ul class="list-unstyled text-start mb-4 flex-grow-1">
                 <li class="py-2 d-flex align-items-center gap-2">
                     <i class="fa-solid fa-check text-success"></i>
-                    <span class="text-white small">{% translate "Advanced Corner Analysis" %}</span>
+                    <span class="text-white small">{% translate "Full Smart Scanner (Goals, Cards, Corners)" %}</span>
                 </li>
                 <li class="py-2 d-flex align-items-center gap-2">
                     <i class="fa-solid fa-check text-success"></i>
-                    <span class="text-white small">{% translate "Card & Foul Trends" %}</span>
+                    <span class="text-white small">{% translate "Deep H2H and Team Historical Analytics" %}</span>
                 </li>
                 <li class="py-2 d-flex align-items-center gap-2">
                     <i class="fa-solid fa-check text-success"></i>
-                    <span class="text-white small">{% translate "Shot Analysis & xG" %}</span>
+                    <span class="text-white small">{% translate "Poisson Distribution & Fair Odds Calculations" %}</span>
                 </li>
                 <li class="py-2 d-flex align-items-center gap-2">
                     <i class="fa-solid fa-check text-success"></i>
-                    <span class="text-white small">{% translate "AI Smart Predictions (Scanner)" %}</span>
+                    <span class="text-white small">{% translate "Filtered Matches Across 34+ World Leagues" %}</span>
                 </li>
-                <li class="py-2 d-flex align-items-center gap-2">
-                    <i class="fa-solid fa-check text-success"></i>
-                    <span class="text-white small">{% translate "Deep H2H Analytics" %}</span>
-                </li>
-                <li class="py-2 d-flex align-items-center gap-2 text-muted">
+                <li class="py-2 d-flex align-items-center gap-2 text-muted opacity-60">
                     <i class="fa-solid fa-xmark text-danger"></i>
-                    <span class="small">{% translate "Ready Strategies (Expert Tickets)" %}</span>
+                    <span class="small">{% translate "Ready-to-Bet Tickets (Doubles & Triples)" %}</span>
+                </li>
+                <li class="py-2 d-flex align-items-center gap-2 text-muted opacity-60">
+                    <i class="fa-solid fa-xmark text-danger"></i>
+                    <span class="small">{% translate "Live Radar Pressure Tracking" %}</span>
                 </li>
             </ul>
-            {% if user.is_authenticated %}
+
+            <div class="mt-auto">
                 <div class="d-flex flex-column gap-2">
-                    <a href="https://pay.kiwify.com.br/SHDf7mU" id="btn-popular-kiwify" class="btn btn-warning w-100 py-2 fw-bold text-white" style="background: linear-gradient(135deg, #f59e0b, #f97316); border: none; border-radius: 10px; font-size: 0.95rem; transition: all 0.3s ease;">
-                        <i class="fa-solid fa-pix me-2"></i>{% translate "PIX ou Cartão (Brasil)" %}
+                    <a href="https://pay.kiwify.com.br/SHDf7mU" id="btn-popular-kiwify" class="btn btn-warning w-100 py-2 fw-bold text-white" style="background: linear-gradient(135deg, #f59e0b, #f97316); border: none; border-radius: 12px; font-size: 0.95rem; box-shadow: 0 4px 15px rgba(245,158,11,0.2);">
+                        <i class="fa-solid fa-bolt me-2"></i>{% translate "Subscribe via PIX / Card (BR)" %}
                     </a>
-                    <a href="https://buy.stripe.com/dRm4gAdjg59L9M91PM7EQ00" id="btn-popular-stripe" class="btn btn-outline-light w-100 py-2 fw-bold" style="border-radius: 10px; font-size: 0.95rem;">
-                        <i class="fa-solid fa-globe me-2"></i>{% translate "International Card" %}
+                    <a href="https://buy.stripe.com/dRm4gAdjg59L9M91PM7EQ00" id="btn-popular-stripe" class="btn btn-outline-light w-100 py-2 fw-semibold" style="border-radius: 12px; font-size: 0.9rem; border-color: rgba(255,255,255,0.2);">
+                        <i class="fa-solid fa-globe me-2"></i>{% translate "International Payment (Stripe)" %}
                     </a>
                 </div>
-            {% else %}
-                <a href="{% url 'members:login' %}?next={% url 'members:paywall' %}" class="btn btn-outline-light w-100 py-2 fw-bold" style="border-radius: 10px;">
-                    <i class="fa-solid fa-bolt me-2"></i>{% translate "Subscribe Popular" %}
-                </a>
-            {% endif %}
+            </div>
         </div>
     </div>
 
     <!-- VIP / Best Value Plan (Highlighted) -->
     <div class="col-lg-5 col-md-6">
-        <div class="p-4 rounded-4 h-100 text-center position-relative transition-all" style="background: var(--bg-panel); border: 2px solid #f59e0b; box-shadow: 0 8px 40px rgba(245,158,11,0.25);">
-            <!-- Best Value Badge -->
+        <div class="pricing-card pricing-card-vip p-4 h-100 d-flex flex-column text-center">
+            <!-- Best Value Pill Badge -->
             <div class="position-absolute top-0 start-50 translate-middle">
-                <span class="badge px-3 py-2 rounded-pill fw-bold" style="background: linear-gradient(135deg, #f59e0b, #f97316); font-size: 0.75rem;">
-                    <i class="fa-solid fa-crown me-1"></i>{% translate "BEST VALUE / VIP" %}
+                <span class="badge px-4 py-2 rounded-pill fw-bold text-white shadow" style="background: linear-gradient(135deg, #f59e0b, #ea580c); font-size: 0.78rem; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(234,88,12,0.4) !important;">
+                    <i class="fa-solid fa-fire me-1"></i>{% translate "MOST POPULAR • BEST VALUE" %}
                 </span>
             </div>
-            <div class="mb-3 mt-2">
-                <span class="badge px-3 py-2 rounded-pill" style="background: rgba(245,158,11,0.15); color: #f59e0b; font-size: 0.8rem;">
-                    <i class="fa-solid fa-crown me-1"></i>{% translate "VIP Full Access" %}
+
+            <div class="mb-3 mt-1">
+                <span class="badge px-3 py-2 rounded-pill" style="background: rgba(245,158,11,0.18); color: #fbbf24; font-size: 0.85rem; font-weight: 700;">
+                    <i class="fa-solid fa-crown me-1"></i>{% translate "VIP FULL ACCESS" %}
                 </span>
             </div>
+
             <div class="mb-1">
-                <span class="h2 text-white fw-bold" id="vip-price">R$ 47</span>
+                <span class="display-6 text-white fw-bold" id="vip-price">R$ 47</span>
                 <span class="text-secondary small" id="vip-period">/{% translate "month" %}</span>
             </div>
-            <p class="text-success small mb-3" id="vip-desc"><i class="fa-solid fa-check-double me-1"></i>{% translate "Everything unlocked" %}</p>
-            <hr class="border-secondary border-opacity-25">
-            <ul class="list-unstyled text-start mb-4">
+            <p class="text-success small fw-semibold mb-3" id="vip-desc">
+                <i class="fa-solid fa-circle-check me-1"></i>{% translate "Full unrestricted access to all features" %}
+            </p>
+
+            <hr class="border-secondary border-opacity-25 my-3">
+
+            <ul class="list-unstyled text-start mb-4 flex-grow-1">
                 <li class="py-2 d-flex align-items-center gap-2">
                     <i class="fa-solid fa-check text-success"></i>
-                    <span class="text-white small fw-bold">{% translate "Everything in Popular" %}</span>
+                    <span class="text-white small fw-bold">{% translate "Everything included in the Popular Plan" %}</span>
                 </li>
                 <li class="py-2 d-flex align-items-center gap-2">
-                    <i class="fa-solid fa-crown" style="color: #f59e0b;"></i>
-                    <span class="text-white small fw-bold">{% translate "Ready Strategies (Expert Tickets)" %}</span>
+                    <i class="fa-solid fa-star" style="color: #f59e0b;"></i>
+                    <span class="text-white small fw-bold">{% translate "Ready-to-Bet Strategies (Doubles & Triples)" %}</span>
                 </li>
                 <li class="py-2 d-flex align-items-center gap-2">
-                    <i class="fa-solid fa-crown" style="color: #f59e0b;"></i>
-                    <span class="text-white small">{% translate "Doubles & Triples (80%+ win rate)" %}</span>
+                    <i class="fa-solid fa-star" style="color: #f59e0b;"></i>
+                    <span class="text-white small">{% translate "Trixie & Covered Combinations (Over 80% Win Rate)" %}</span>
                 </li>
                 <li class="py-2 d-flex align-items-center gap-2">
-                    <i class="fa-solid fa-crown" style="color: #f59e0b;"></i>
-                    <span class="text-white small">{% translate "Priority Support (WhatsApp)" %}</span>
+                    <i class="fa-solid fa-star" style="color: #f59e0b;"></i>
+                    <span class="text-white small">{% translate "Live Match Pressure Radar (Real-Time In-Play)" %}</span>
                 </li>
                 <li class="py-2 d-flex align-items-center gap-2">
-                    <i class="fa-solid fa-crown" style="color: #f59e0b;"></i>
-                    <span class="text-white small">{% translate "Early access to new features" %}</span>
+                    <i class="fa-solid fa-star" style="color: #f59e0b;"></i>
+                    <span class="text-white small">{% translate "VIP Telegram Alerts & Fast Priority Support" %}</span>
+                </li>
+                <li class="py-2 d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-star" style="color: #f59e0b;"></i>
+                    <span class="text-white small">{% translate "Early Access to New Algorithms & Features" %}</span>
                 </li>
             </ul>
-            {% if user.is_authenticated %}
+
+            <div class="mt-auto">
                 <div class="d-flex flex-column gap-2">
-                    <a href="https://pay.kiwify.com.br/qiGV4Pk" id="btn-vip-kiwify" class="btn w-100 py-2 fw-bold text-white" style="background: linear-gradient(135deg, #f59e0b, #f97316); border: none; border-radius: 10px; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(245,158,11,0.25);">
-                        <i class="fa-solid fa-pix me-2"></i>{% translate "PIX ou Cartão (Brasil)" %}
+                    <a href="https://pay.kiwify.com.br/qiGV4Pk" id="btn-vip-kiwify" class="btn w-100 py-3 fw-bold text-white" style="background: linear-gradient(135deg, #f59e0b, #ea580c); border: none; border-radius: 12px; font-size: 1rem; box-shadow: 0 6px 20px rgba(245,158,11,0.35); transition: all 0.3s ease;">
+                        <i class="fa-solid fa-crown me-2"></i>{% translate "Unlock VIP Access Now" %}
                     </a>
-                    <a href="https://buy.stripe.com/28E3cw4MK0TvaQddyu7EQ02" id="btn-vip-stripe" class="btn btn-outline-success w-100 py-2 fw-bold" style="border-radius: 10px; font-size: 0.95rem;">
-                        <i class="fa-solid fa-globe me-2"></i>{% translate "International Card" %}
+                    <a href="https://buy.stripe.com/28E3cw4MK0TvaQddyu7EQ02" id="btn-vip-stripe" class="btn btn-outline-success w-100 py-2 fw-semibold" style="border-radius: 12px; font-size: 0.9rem;">
+                        <i class="fa-solid fa-globe me-2"></i>{% translate "International Payment (Stripe)" %}
                     </a>
                 </div>
-            {% else %}
-                <a href="{% url 'members:login' %}?next={% url 'members:paywall' %}" id="btn-subscribe" class="btn w-100 py-2 fw-bold text-white" style="background: linear-gradient(135deg, #f59e0b, #f97316); border: none; border-radius: 10px; font-size: 1rem; transition: all 0.3s ease;">
-                    <i class="fa-solid fa-rocket me-2"></i>{% translate "Subscribe VIP" %}
-                </a>
-            {% endif %}
+            </div>
         </div>
     </div>
+</div>
+
+<!-- Plan Comparison Table -->
+<div class="mb-5">
+    <div class="text-center mb-4">
+        <h4 class="text-white fw-bold mb-1">{% translate "Detailed Feature Comparison" %}</h4>
+        <p class="text-secondary small">{% translate "Compare features between Free, Popular and VIP plans." %}</p>
+    </div>
+
+    <div class="comparison-table table-responsive">
+        <table class="table table-dark table-hover mb-0" style="background: transparent;">
+            <thead>
+                <tr style="background: rgba(255,255,255,0.02);">
+                    <th style="width: 46%;" class="text-white">{% translate "Feature" %}</th>
+                    <th style="width: 18%;" class="text-center text-secondary">{% translate "Free" %}</th>
+                    <th style="width: 18%;" class="text-center text-white">{% translate "Popular" %}</th>
+                    <th style="width: 18%;" class="text-center fw-bold" style="color: #f59e0b;">{% translate "VIP Full" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="text-secondary">{% translate "Standard match stats & league tables" %}</td>
+                    <td class="text-center text-success"><i class="fa-solid fa-check"></i></td>
+                    <td class="text-center text-success"><i class="fa-solid fa-check"></i></td>
+                    <td class="text-center text-success"><i class="fa-solid fa-check"></i></td>
+                </tr>
+                <tr>
+                    <td class="text-secondary">{% translate "Smart Scanner (Pre-game filters & picks)" %}</td>
+                    <td class="text-center text-muted"><i class="fa-solid fa-xmark text-danger"></i></td>
+                    <td class="text-center text-success"><i class="fa-solid fa-check"></i></td>
+                    <td class="text-center text-success"><i class="fa-solid fa-check"></i></td>
+                </tr>
+                <tr>
+                    <td class="text-secondary">{% translate "Poisson model fair odds & probability badges" %}</td>
+                    <td class="text-center text-muted"><i class="fa-solid fa-xmark text-danger"></i></td>
+                    <td class="text-center text-success"><i class="fa-solid fa-check"></i></td>
+                    <td class="text-center text-success"><i class="fa-solid fa-check"></i></td>
+                </tr>
+                <tr>
+                    <td class="text-secondary">{% translate "Corner and Card trend analytics" %}</td>
+                    <td class="text-center text-muted"><i class="fa-solid fa-xmark text-danger"></i></td>
+                    <td class="text-center text-success"><i class="fa-solid fa-check"></i></td>
+                    <td class="text-center text-success"><i class="fa-solid fa-check"></i></td>
+                </tr>
+                <tr>
+                    <td class="text-white fw-semibold">{% translate "Ready Strategies / Expert Tickets (Doubles & Triples)" %}</td>
+                    <td class="text-center text-muted"><i class="fa-solid fa-xmark text-danger"></i></td>
+                    <td class="text-center text-muted"><i class="fa-solid fa-xmark text-danger"></i></td>
+                    <td class="text-center text-success fw-bold"><i class="fa-solid fa-check-double text-warning"></i></td>
+                </tr>
+                <tr>
+                    <td class="text-white fw-semibold">{% translate "Live In-Play Radar (Real-Time Pressure Index)" %}</td>
+                    <td class="text-center text-muted"><i class="fa-solid fa-xmark text-danger"></i></td>
+                    <td class="text-center text-muted"><i class="fa-solid fa-xmark text-danger"></i></td>
+                    <td class="text-center text-success fw-bold"><i class="fa-solid fa-check-double text-warning"></i></td>
+                </tr>
+                <tr>
+                    <td class="text-white fw-semibold">{% translate "Priority VIP WhatsApp / Telegram Community" %}</td>
+                    <td class="text-center text-muted"><i class="fa-solid fa-xmark text-danger"></i></td>
+                    <td class="text-center text-muted"><i class="fa-solid fa-xmark text-danger"></i></td>
+                    <td class="text-center text-success fw-bold"><i class="fa-solid fa-check-double text-warning"></i></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- 7-Day Money-Back Guarantee Section -->
+<div class="guarantee-badge p-4 mb-4 text-center text-md-start">
+    <div class="row align-items-center g-3">
+        <div class="col-md-2 text-center">
+            <div class="d-inline-flex align-items-center justify-content-center rounded-circle" style="width: 72px; height: 72px; background: rgba(16, 185, 129, 0.2); border: 2px solid rgba(16, 185, 129, 0.4);">
+                <i class="fa-solid fa-shield-halved fa-2x text-success"></i>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <h4 class="text-white fw-bold mb-1">{% translate "Garantia Incondicional de 7 Dias" %}</h4>
+            <p class="text-secondary small mb-0">
+                {% translate "Assine com total tranquilidade. Se dentro dos primeiros 7 dias você achar que o StatsFut não é para você, basta solicitar o estorno pelo nosso suporte ou direto na plataforma de pagamento. Seu dinheiro é devolvido integralmente e sem burocracia." %}
+            </p>
+        </div>
+        <div class="col-md-3 text-center text-md-end">
+            <a href="#vip-price" class="btn btn-success fw-bold px-4 py-2 rounded-pill shadow-sm text-decoration-none d-inline-flex align-items-center gap-2" style="background: linear-gradient(135deg, #10b981, #059669); border: none; font-size: 0.9rem; transition: transform 0.2s ease;">
+                <i class="fa-solid fa-shield-check"></i>
+                <span>{% translate "Assinar com Garantia de 7 Dias" %}</span>
+            </a>
+            <div class="text-secondary small mt-1" style="font-size: 0.75rem;">
+                <i class="fa-solid fa-lock me-1 text-success"></i>{% translate "Compra 100% Segura" %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Telegram Free Invitation Banner on Paywall -->
+<div class="p-4 rounded-4 mb-5 text-center text-md-start d-flex flex-column flex-md-row align-items-center justify-content-between gap-3" style="background: linear-gradient(135deg, rgba(14, 165, 233, 0.12), rgba(3, 105, 161, 0.05)); border: 1px solid rgba(14, 165, 233, 0.3);">
+    <div class="d-flex align-items-center gap-3">
+        <div class="d-inline-flex align-items-center justify-content-center rounded-circle flex-shrink-0" style="width: 56px; height: 56px; background: rgba(14, 165, 233, 0.2); border: 1px solid rgba(14, 165, 233, 0.4);">
+            <i class="fa-brands fa-telegram fa-2x text-info"></i>
+        </div>
+        <div>
+            <h5 class="text-white fw-bold mb-1">Quer testar antes de assinar? Entre no Telegram Free!</h5>
+            <p class="text-secondary small mb-0">Enviamos diariamente tips gratuitas com alta probabilidade e bilhetes de demonstração para você ver nossos resultados na prática.</p>
+        </div>
+    </div>
+    <a href="https://t.me/statsfut_free" target="_blank" rel="noopener" class="btn btn-info fw-bold px-4 py-2.5 rounded-pill flex-shrink-0 text-white d-inline-flex align-items-center gap-2" style="background: linear-gradient(135deg, #0284c7, #0369a1); border: none; box-shadow: 0 4px 15px rgba(14, 165, 233, 0.25);">
+        <i class="fa-brands fa-telegram fa-lg"></i>
+        <span>Telegram Free</span>
+    </a>
 </div>
 
 <!-- FAQ Section -->
 <div class="p-4 rounded-4 mb-4" style="background: var(--bg-panel); border: 1px solid var(--border);">
-    <h4 class="text-white mb-4 text-center"><i class="fa-solid fa-circle-question me-2 text-primary"></i>{% translate "Frequently Asked Questions" %}</h4>
+    <h4 class="text-white mb-4 text-center fw-bold"><i class="fa-solid fa-circle-question me-2 text-primary"></i>{% translate "Frequently Asked Questions" %}</h4>
     <div class="accordion accordion-flush" id="faqAccordion">
         <div class="accordion-item bg-transparent border-bottom border-secondary border-opacity-25">
             <h2 class="accordion-header">
-                <button class="accordion-button collapsed bg-transparent text-white shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                    {% translate "What payment methods do you accept?" %}
+                <button class="accordion-button collapsed bg-transparent text-white shadow-none fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                    {% translate "How quickly do I get access after payment?" %}
                 </button>
             </h2>
             <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                <div class="accordion-body text-secondary small">{% translate "We accept PIX, credit cards, and boleto bancário. International users can pay via credit card." %}</div>
+                <div class="accordion-body text-secondary small">
+                    {% translate "Immediate! If you pay via PIX or Credit Card, your account is upgraded automatically in less than 60 seconds through our automated webhook integration." %}
+                </div>
             </div>
         </div>
+
         <div class="accordion-item bg-transparent border-bottom border-secondary border-opacity-25">
             <h2 class="accordion-header">
-                <button class="accordion-button collapsed bg-transparent text-white shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                    {% translate "Can I cancel anytime?" %}
+                <button class="accordion-button collapsed bg-transparent text-white shadow-none fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                    {% translate "What payment methods are supported?" %}
                 </button>
             </h2>
             <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                <div class="accordion-body text-secondary small">{% translate "Yes! You can cancel your subscription at any time. You'll keep access until the end of your billing period." %}</div>
+                <div class="accordion-body text-secondary small">
+                    {% translate "In Brazil, we accept instant PIX, Credit Card and Boleto via Kiwify. For international members, we support all major Credit & Debit cards via Stripe." %}
+                </div>
             </div>
         </div>
-        <div class="accordion-item bg-transparent border-0">
+
+        <div class="accordion-item bg-transparent border-bottom border-secondary border-opacity-25">
             <h2 class="accordion-header">
-                <button class="accordion-button collapsed bg-transparent text-white shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
-                    {% translate "How often is the data updated?" %}
+                <button class="accordion-button collapsed bg-transparent text-white shadow-none fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                    {% translate "Can I cancel whenever I want?" %}
                 </button>
             </h2>
             <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                <div class="accordion-body text-secondary small">{% translate "All statistics are updated automatically every day. Live scores update in real-time during matches." %}</div>
+                <div class="accordion-body text-secondary small">
+                    {% translate "Yes! There are zero long-term commitments. You can cancel your renewal anytime directly through the payment receipt or member area, retaining full access until the end of your prepaid period." %}
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item bg-transparent border-0">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed bg-transparent text-white shadow-none fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                    {% translate "How do the Ready Tickets and System Predictions work?" %}
+                </button>
+            </h2>
+            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body text-secondary small">
+                    {% translate "Our mathematical model simulates every fixture using Poisson distribution, recent xG momentum, referee profiles, and game state metrics to identify positive expected value (+EV) markets before bookmakers adjust." %}
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-<style>
-    #btn-subscribe:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 30px rgba(245, 158, 11, 0.4);
-    }
-    .accordion-button::after {
-        filter: invert(1);
-    }
-    /* Custom style for the bootstrap form-switch */
-    .form-check-input:checked {
-        background-color: #f59e0b !important;
-        border-color: #f59e0b !important;
-    }
-    .form-check-input {
-        background-color: rgba(255,255,255,0.1) !important;
-        border-color: rgba(255,255,255,0.2) !important;
-    }
-    .transition-all {
-        transition: all 0.3s ease;
-    }
-</style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -255,11 +478,11 @@
                 // Mensal active
                 popularPrice.textContent = 'R$ 29';
                 popularPeriod.textContent = '/{% translate "month" %}';
-                popularDesc.textContent = '{% translate "Perfect to start using our AI predictions" %}';
+                popularDesc.textContent = '{% translate "Perfect to start using our smart predictions and statistics" %}';
 
                 vipPrice.textContent = 'R$ 47';
                 vipPeriod.textContent = '/{% translate "month" %}';
-                vipDesc.innerHTML = '<i class="fa-solid fa-check-double me-1"></i> {% translate "Everything unlocked" %}';
+                vipDesc.innerHTML = '<i class="fa-solid fa-circle-check me-1"></i> {% translate "Full unrestricted access to all features" %}';
 
                 labelMonthly.classList.remove('text-secondary');
                 labelMonthly.classList.add('text-white');

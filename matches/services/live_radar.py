@@ -1,6 +1,7 @@
 import logging
 from datetime import timedelta
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from django.db.models import F
 from matches.models import Match, LiveMatchSnapshot
 
@@ -50,6 +51,15 @@ class LiveRadarService:
         return snapshots_created
 
     @staticmethod
+    def cleanup_old_snapshots(hours=24):
+        """Limpa snapshots com mais de 24 horas para manter o banco ultra leve."""
+        try:
+            limite = timezone.now() - timedelta(hours=hours)
+            LiveMatchSnapshot.objects.filter(timestamp__lt=limite).delete()
+        except Exception:
+            pass
+
+    @staticmethod
     def calculate_pressure(match, window_minutes=5):
         """
         Calcula a pressão dos últimos X minutos.
@@ -61,24 +71,27 @@ class LiveRadarService:
         try:
             sd = match.statistics_data or {}
             pts = sd.get('graph_points') or []
-            elapsed = match.elapsed_time or 0
-            if pts and elapsed > 0:
-                home = away = 0
-                corte = max(0, elapsed - window_minutes)
-                for p in pts:
-                    minute = p.get('minute', 0)
-                    if minute > corte:
-                        v = p.get('value', 0) or 0
-                        if v > 0:
-                            home += v
-                        else:
-                            away += abs(v)
-                total = home + away
-                if total > 0:
-                    hp = int((home / total) * 100)
-                    ap = 100 - hp
-                    status = 'Casa Dominando' if hp > 60 else 'Fora Dominando' if ap > 60 else 'Equilibrado'
-                    return {'home_pressure': hp, 'away_pressure': ap, 'status': status, 'source': 'graph'}
+            if pts:
+                # O minuto atual mais confiável do gráfico é o último ponto registrado
+                max_minute = max(p.get('minute', 0) for p in pts)
+                elapsed = max(int(match.elapsed_time or 0), max_minute)
+                if elapsed > 0:
+                    home = away = 0
+                    corte = max(0, elapsed - window_minutes)
+                    for p in pts:
+                        minute = p.get('minute', 0)
+                        if minute > corte:
+                            v = p.get('value', 0) or 0
+                            if v > 0:
+                                home += v
+                            else:
+                                away += abs(v)
+                    total = home + away
+                    if total > 0:
+                        hp = int((home / total) * 100)
+                        ap = 100 - hp
+                        status = _('Home Dominating') if hp > 60 else _('Away Dominating') if ap > 60 else _('Balanced')
+                        return {'home_pressure': hp, 'away_pressure': ap, 'status': status, 'source': 'graph'}
         except Exception:
             pass
 
@@ -93,17 +106,21 @@ class LiveRadarService:
             'away_corners': match.away_corners or 0
         }
         
-        # Pega o snapshot salvo há X minutos atrás (Momento T-X)
+        # Pega o snapshot mais recente salvo há pelo menos X minutos (Momento T-X)
         time_threshold = timezone.now() - timedelta(minutes=window_minutes)
-        # Pega o snapshot mais próximo desse tempo limite, mas que seja ANTES do limite
         old_snapshot = LiveMatchSnapshot.objects.filter(
             match=match, 
             timestamp__lte=time_threshold
-        ).first()
+        ).order_by('-timestamp').first()
         
         if not old_snapshot:
-            # Se não tem histórico antigo o suficiente, usa o T0 (ou seja, desde o início do jogo)
-            # Para não quebrar a lógica, assumimos que as estatísticas passadas eram 0
+            # Se não tem histórico anterior a X minutos, usa o snapshot mais antigo registrado
+            # para comparar a evolução real do jogo ao invés de subtrair de zero absoluto.
+            first_snapshot = LiveMatchSnapshot.objects.filter(match=match).order_by('timestamp').first()
+            if first_snapshot and first_snapshot.timestamp < (timezone.now() - timedelta(minutes=2)):
+                old_snapshot = first_snapshot
+
+        if not old_snapshot:
             old_stats = {k: 0 for k in current_stats}
         else:
             old_stats = {
@@ -150,5 +167,5 @@ class LiveRadarService:
         return {
             'home_pressure': home_pressure,
             'away_pressure': away_pressure,
-            'status': 'Casa Dominando' if home_pressure > 60 else 'Fora Dominando' if away_pressure > 60 else 'Equilibrado'
+            'status': _('Home Dominating') if home_pressure > 60 else _('Away Dominating') if away_pressure > 60 else _('Balanced')
         }

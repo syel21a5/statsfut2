@@ -196,7 +196,16 @@ function openLiveRadar(matchId) {
     modalContent.innerHTML = '<div class="text-center p-5 text-white"><div class="spinner-border text-success" role="status"></div><div class="mt-3 small">Carregando dados ao vivo...</div></div>';
     const myModal = new bootstrap.Modal(document.getElementById('liveRadarModal'));
     myModal.show();
-    fetch(`/live-radar/${matchId}/`)
+    
+    // Detecta o prefixo de idioma atual na URL (ex: /pt-br/, /es/, /de/)
+    const pathParts = window.location.pathname.split('/').filter(Boolean);
+    const supportedLangs = ['pt-br', 'es', 'de'];
+    let langPrefix = '';
+    if (pathParts.length > 0 && supportedLangs.includes(pathParts[0].toLowerCase())) {
+        langPrefix = '/' + pathParts[0].toLowerCase();
+    }
+
+    fetch(`${langPrefix}/live-radar/${matchId}/`)
         .then(response => response.text())
         .then(html => { modalContent.innerHTML = html; })
         .catch(err => { modalContent.innerHTML = '<div class="p-4 text-center text-white bg-dark rounded">Erro ao carregar o radar. Tente novamente.</div>'; });

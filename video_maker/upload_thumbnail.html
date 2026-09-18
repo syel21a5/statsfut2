@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StatsFut · Central de Thumbnails (Lote)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: #0b0f19;
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(16, 185, 129, 0.08) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(59, 130, 246, 0.08) 0%, transparent 45%);
+        }
+
+        .card {
+            width: 100%;
+            max-width: 680px;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 36px 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(20px);
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .icon-circle {
+            width: 52px;
+            height: 52px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 14px auto;
+            color: #10b981;
+        }
+
+        .icon-circle svg {
+            width: 26px;
+            height: 26px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(16, 185, 129, 0.12);
+            color: #10b981;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 10px;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+
+        .badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #10b981;
+        }
+
+        h1 {
+            font-size: 1.55rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+
+        p.subtitle {
+            color: #94a3b8;
+            font-size: 0.86rem;
+            line-height: 1.4;
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper svg {
+            position: absolute;
+            left: 16px;
+            width: 20px;
+            height: 20px;
+            stroke: #64748b;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 14px 16px 14px 48px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .input-wrapper input:focus {
+            border-color: #10b981;
+            background: rgba(30, 41, 59, 0.7);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 14px;
+            padding: 15px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+            margin-top: 18px;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 22px rgba(16, 185, 129, 0.45);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Upload Area */
+        .drop-zone {
+            border: 2px dashed rgba(255, 255, 255, 0.15);
+            border-radius: 18px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: rgba(30, 41, 59, 0.35);
+            margin-bottom: 20px;
+        }
+
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .drop-zone svg {
+            width: 44px;
+            height: 44px;
+            stroke: #64748b;
+            margin-bottom: 10px;
+            transition: stroke 0.2s;
+        }
+
+        .drop-zone:hover svg {
+            stroke: #10b981;
+        }
+
+        .drop-text {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 4px;
+        }
+
+        .drop-hint {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* Batch Grid View */
+        .batch-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 14px;
+            margin-bottom: 20px;
+            max-height: 420px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .batch-item {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: border-color 0.2s;
+        }
+
+        .batch-item.success {
+            border-color: rgba(16, 185, 129, 0.6);
+        }
+
+        .batch-item.error {
+            border-color: rgba(239, 68, 68, 0.6);
+        }
+
+        .batch-thumb {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            background: #020617;
+            display: block;
+        }
+
+        .batch-info {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .batch-filename {
+            font-size: 0.76rem;
+            color: #94a3b8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .batch-tag {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #10b981;
+            background: rgba(16, 185, 129, 0.15);
+            padding: 2px 6px;
+            border-radius: 6px;
+            align-self: flex-start;
+        }
+
+        .batch-tag.not-found {
+            color: #f59e0b;
+            background: rgba(245, 158, 11, 0.15);
+        }
+
+        .batch-status {
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .status-box {
+            margin-top: 14px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            display: none;
+        }
+
+        .status-box.success {
+            display: block;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34d399;
+        }
+
+        .status-box.error {
+            display: block;
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 0.82rem;
+            color: #94a3b8;
+        }
+
+        .btn-logout {
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 5px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.78rem;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <!-- VIEW 1: LOGIN -->
+    <div id="loginSection">
+        <div class="header">
+            <div class="icon-circle">
+                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                </svg>
+            </div>
+            <div class="badge">Acesso Restrito</div>
+            <h1>Painel de Produção</h1>
+            <p class="subtitle">Identifique-se para enviar thumbnails direto ao servidor.</p>
+        </div>
+
+        <form id="loginForm" onsubmit="return handleLogin(event)">
+            <div class="form-group">
+                <label for="usernameInput">Usuário</label>
+                <div class="input-wrapper">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7 0 3.75 3.75 0 017 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                    <input type="text" id="usernameInput" placeholder="Digite seu usuário" required autocomplete="username">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="passwordInput">Senha de Acesso</label>
+                <div class="input-wrapper">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                    </svg>
+                    <input type="password" id="passwordInput" placeholder="••••••••••••••••" required autocomplete="current-password">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary" id="loginBtn">
+                <span>Entrar no Painel</span>
+            </button>
+            <div class="status-box" id="loginStatusBox"></div>
+        </form>
+    </div>
+
+    <!-- VIEW 2: UPLOAD EM LOTE -->
+    <div id="uploadSection" class="hidden">
+        <div class="top-bar">
+            <span>Operador: <strong style="color: #10b981;">statsfut</strong></span>
+            <button type="button" class="btn-logout" onclick="handleLogout()">Sair</button>
+        </div>
+
+        <div class="header">
+            <div class="badge">Pipeline de Vídeo · Upload em Lote</div>
+            <h1>Central de Thumbnails</h1>
+            <p class="subtitle">Selecione ou arraste todas as 6 imagens de uma vez só.<br>O sistema lê o ID no nome de cada arquivo automaticamente.</p>
+        </div>
+
+        <!-- Múltiplos arquivos permitidos com multiple -->
+        <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" multiple style="display: none;">
+
+        <div class="drop-zone" id="dropZone">
+            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+            </svg>
+            <div class="drop-text">Arraste todas as thumbnails aqui</div>
+            <div class="drop-hint">ou clique para selecionar vários arquivos juntos</div>
+        </div>
+
+        <div class="batch-list" id="batchList" style="display: none;"></div>
+
+        <button type="button" class="btn-primary" id="submitBtn" disabled>
+            <span>Enviar Thumbnails em Lote</span>
+        </button>
+
+        <div class="status-box" id="uploadStatusBox"></div>
+    </div>
+</div>
+
+<script>
+    const AUTH_KEY = 'statsfut_thumb_auth';
+
+    function getSavedAuth() {
+        return localStorage.getItem(AUTH_KEY);
+    }
+
+    function checkExistingAuth() {
+        if (getSavedAuth()) {
+            showUploadSection();
+        }
+    }
+
+    function handleLogin(e) {
+        e.preventDefault();
+        const user = document.getElementById('usernameInput').value.trim();
+        const pass = document.getElementById('passwordInput').value.trim();
+        const statusBox = document.getElementById('loginStatusBox');
+        const loginBtn = document.getElementById('loginBtn');
+
+        const token = btoa(user + ':' + pass);
+        loginBtn.disabled = true;
+        loginBtn.innerHTML = '<span>Verificando...</span>';
+        statusBox.className = 'status-box';
+        statusBox.style.display = 'none';
+
+        fetch('/api/upload-thumbnail/?check_auth=1', {
+            headers: { 'Authorization': 'Basic ' + token }
+        })
+        .then(res => {
+            if (res.status === 200) {
+                localStorage.setItem(AUTH_KEY, token);
+                showUploadSection();
+            } else {
+                throw new Error('Usuário ou senha incorretos.');
+            }
+        })
+        .catch(err => {
+            statusBox.className = 'status-box error';
+            statusBox.textContent = err.message;
+            statusBox.style.display = 'block';
+        })
+        .finally(() => {
+            loginBtn.disabled = false;
+            loginBtn.innerHTML = '<span>Entrar no Painel</span>';
+        });
+
+        return false;
+    }
+
+    function handleLogout() {
+        localStorage.removeItem(AUTH_KEY);
+        document.getElementById('uploadSection').classList.add('hidden');
+        document.getElementById('loginSection').classList.remove('hidden');
+        document.getElementById('passwordInput').value = '';
+    }
+
+    function showUploadSection() {
+        document.getElementById('loginSection').classList.add('hidden');
+        document.getElementById('uploadSection').classList.remove('hidden');
+    }
+
+    // Elementos da interface de upload em lote
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const batchList = document.getElementById('batchList');
+    const submitBtn = document.getElementById('submitBtn');
+    const uploadStatusBox = document.getElementById('uploadStatusBox');
+
+    let queue = []; // Lista de objetos { file, matchId, element }
+
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('dragover');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            handleMultipleFiles(Array.from(e.dataTransfer.files));
+        }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            handleMultipleFiles(Array.from(e.target.files));
+        }
+    });
+
+    function handleMultipleFiles(files) {
+        queue = [];
+        batchList.innerHTML = '';
+        batchList.style.display = 'grid';
+        uploadStatusBox.className = 'status-box';
+        uploadStatusBox.style.display = 'none';
+
+        files.forEach((file, index) => {
+            const match = file.name.match(/\d{4,8}/);
+            const matchId = match ? match[0] : null;
+
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'batch-item';
+            itemDiv.id = `item-${index}`;
+
+            const img = document.createElement('img');
+            img.className = 'batch-thumb';
+            img.src = URL.createObjectURL(file);
+
+            const info = document.createElement('div');
+            info.className = 'batch-info';
+
+            const name = document.createElement('div');
+            name.className = 'batch-filename';
+            name.title = file.name;
+            name.textContent = file.name;
+
+            const tag = document.createElement('span');
+            tag.className = matchId ? 'batch-tag' : 'batch-tag not-found';
+            tag.textContent = matchId ? `#${matchId}` : 'Sem ID';
+
+            const status = document.createElement('div');
+            status.className = 'batch-status';
+            status.style.color = '#94a3b8';
+            status.textContent = 'Pronto para envio';
+
+            info.appendChild(name);
+            info.appendChild(tag);
+            info.appendChild(status);
+
+            itemDiv.appendChild(img);
+            itemDiv.appendChild(info);
+            batchList.appendChild(itemDiv);
+
+            queue.push({
+                file: file,
+                matchId: matchId,
+                statusEl: status,
+                itemDiv: itemDiv
+            });
+        });
+
+        submitBtn.disabled = queue.length === 0;
+        submitBtn.innerHTML = `<span>Enviar ${queue.length} Thumbnails</span>`;
+    }
+
+    submitBtn.addEventListener('click', async () => {
+        if (queue.length === 0) return;
+
+        const token = getSavedAuth();
+        if (!token) {
+            handleLogout();
+            return;
+        }
+
+        submitBtn.disabled = true;
+        let successCount = 0;
+        let errorCount = 0;
+
+        for (let i = 0; i < queue.length; i++) {
+            const item = queue[i];
+            let matchId = item.matchId;
+
+            if (!matchId) {
+                matchId = prompt(`Qual o ID da partida para o arquivo "${item.file.name}"?`);
+                if (!matchId || !matchId.trim()) {
+                    item.statusEl.style.color = '#f87171';
+                    item.statusEl.textContent = 'Ignorado (sem ID)';
+                    item.itemDiv.className = 'batch-item error';
+                    errorCount++;
+                    continue;
+                }
+                matchId = matchId.trim();
+            }
+
+            item.statusEl.style.color = '#38bdf8';
+            item.statusEl.textContent = 'Enviando...';
+
+            const formData = new FormData();
+            formData.append('thumbnail', item.file);
+            formData.append('match_id', matchId);
+
+            try {
+                const res = await fetch('/api/upload-thumbnail/', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Basic ' + token },
+                    body: formData
+                });
+
+                if (res.status === 401) {
+                    handleLogout();
+                    throw new Error('Sessão expirada. Faça login novamente.');
+                }
+
+                const data = await res.json();
+                if (data.success) {
+                    item.statusEl.style.color = '#34d399';
+                    item.statusEl.textContent = 'Salvo com sucesso!';
+                    item.itemDiv.className = 'batch-item success';
+                    successCount++;
+                } else {
+                    throw new Error(data.error || 'Erro no servidor');
+                }
+            } catch (err) {
+                item.statusEl.style.color = '#f87171';
+                item.statusEl.textContent = 'Erro: ' + err.message;
+                item.itemDiv.className = 'batch-item error';
+                errorCount++;
+            }
+        }
+
+        uploadStatusBox.className = errorCount === 0 ? 'status-box success' : 'status-box error';
+        uploadStatusBox.innerHTML = `🏁 <b>Envio em lote concluído:</b> ${successCount} salvas com sucesso, ${errorCount} erros.`;
+        submitBtn.innerHTML = '<span>Enviar Novo Lote</span>';
+        submitBtn.disabled = false;
+        submitBtn.onclick = () => location.reload();
+    });
+
+    checkExistingAuth();
+</script>
+
+</body>
+</html>

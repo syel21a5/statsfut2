@@ -41,8 +41,9 @@ class Command(BaseCommand):
                     self.stdout.write(f"  -> {match.home_team.name} x {match.away_team.name} ({sel.prediction_label}): Void (Adiado/Sem Dados)")
                     continue
 
-                # Consideramos resolvido se o jogo estiver como "Finished", "FT", ou se o placar final estiver preenchido
-                is_finished = match.status in ['FT', 'Finished', 'Concluded'] or (match.home_score is not None and match.away_score is not None)
+                # Consideramos resolvido SOMENTE se o status for realmente finalizado
+                # Jogos agendados com 0x0 padrão da API não podem ser considerados finalizados!
+                is_finished = match.status in ['FT', 'Finished', 'Concluded', 'AET', 'PEN']
                 
                 if not is_finished:
                     any_pending = True
