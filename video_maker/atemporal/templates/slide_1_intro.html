@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Over 1.5 Live Trading · Slide 1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Plus Jakarta Sans', sans-serif; }
+        body {
+            width: 1920px; height: 1080px;
+            background: #060913;
+            color: #ffffff;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 80px 120px;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(239, 68, 68, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.12) 0%, transparent 50%);
+        }
+        .badge {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #f87171;
+            padding: 10px 24px; border-radius: 9999px;
+            font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em;
+            margin-bottom: 24px;
+        }
+        h1 {
+            font-size: 72px; font-weight: 900; line-height: 1.1; text-align: center; margin-bottom: 24px;
+            letter-spacing: -0.02em;
+        }
+        h1 span.alert { color: #ef4444; }
+        h1 span.highlight { color: #10b981; }
+        p.subtitle {
+            font-size: 32px; color: #94a3b8; text-align: center; max-width: 1300px; line-height: 1.4;
+            margin-bottom: 60px;
+        }
+        .comparison-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 40px; width: 100%; max-width: 1400px;
+        }
+        .card {
+            background: rgba(15, 23, 42, 0.75);
+            border-radius: 24px; padding: 40px;
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .card.bad { border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.04); }
+        .card.good { border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.05); }
+        .card-header { font-size: 28px; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+        .card.bad .card-header { color: #f87171; }
+        .card.good .card-header { color: #34d399; }
+        .stat-line { font-size: 24px; color: #cbd5e1; margin-bottom: 16px; line-height: 1.5; }
+        .stat-line strong { color: #ffffff; }
+        .card-footer {
+            margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08);
+            font-size: 28px; font-weight: 900;
+        }
+        .card.bad .card-footer { color: #ef4444; }
+        .card.good .card-footer { color: #10b981; }
+    </style>
+</head>
+<body>
+    <div class="badge">Masterclass · Live Trading Avançado</div>
+    <h1>A Armadilha do <span class="alert">Over 1.5 Pré-Jogo</span> vs. <span class="highlight">Drip Staking</span></h1>
+    <p class="subtitle">Por que 90% dos apostadores perdem no longo prazo e como usar o Time Decay a seu favor.</p>
+
+    <div class="comparison-grid">
+        <div class="card bad">
+            <div>
+                <div class="card-header">❌ O Apostador Comum (Pré-Live)</div>
+                <div class="stat-line">• Coloca <strong>100% da Stake</strong> no minuto 0</div>
+                <div class="stat-line">• Aceita cotações esmagadas de <strong>@1.20 a @1.28</strong></div>
+                <div class="stat-line">• Assume 100% do risco sem ver a postura dos times</div>
+            </div>
+            <div class="card-footer">Lucro: R$ 25 | Risco: Total</div>
+        </div>
+
+        <div class="card good">
+            <div>
+                <div class="card-header">✅ O Trader Matemático (Drip Staking)</div>
+                <div class="stat-line">• Divide a Stake em <strong>3 partes cirúrgicas</strong></div>
+                <div class="stat-line">• Espera o <strong>Time Decay</strong> inflacionar as odds</div>
+                <div class="stat-line">• Entra com odds médias entre <strong>@1.65 e @1.85</strong></div>
+            </div>
+            <div class="card-footer">Lucro: R$ 75 | Risco: Diluído</div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cena 1 · Armadilha Pré-Jogo 4K</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Plus Jakarta Sans', sans-serif; }
+        body {
+            width: 3840px; height: 2160px;
+            background: #050811;
+            color: #ffffff;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 140px 200px;
+            overflow: hidden;
+            position: relative;
+        }
+        .bg-glow {
+            position: absolute; border-radius: 50%; filter: blur(200px); pointer-events: none;
+        }
+        .glow-1 { top: -200px; left: -200px; width: 1200px; height: 1200px; background: rgba(239, 68, 68, 0.12); }
+        .glow-2 { bottom: -200px; right: -200px; width: 1400px; height: 1400px; background: rgba(16, 185, 129, 0.12); }
+
+        .badge {
+            display: inline-flex; align-items: center; gap: 20px;
+            background: rgba(239, 68, 68, 0.15); border: 2px solid rgba(239, 68, 68, 0.4);
+            color: #f87171; padding: 18px 48px; border-radius: 9999px;
+            font-size: 38px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em;
+            margin-bottom: 40px;
+        }
+        h1 {
+            font-size: 130px; font-weight: 900; line-height: 1.1; text-align: center; margin-bottom: 40px;
+            letter-spacing: -0.03em;
+        }
+        h1 span.alert { color: #ef4444; }
+        h1 span.highlight { color: #10b981; }
+        p.subtitle {
+            font-size: 58px; color: #94a3b8; text-align: center; max-width: 2600px; line-height: 1.4;
+            margin-bottom: 110px;
+        }
+
+        .comparison-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 80px; width: 100%; max-width: 3100px;
+        }
+        .card {
+            background: rgba(15, 23, 42, 0.85);
+            border-radius: 48px; padding: 80px;
+            backdrop-filter: blur(32px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            display: flex; flex-direction: column; justify-content: space-between;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0.25;
+            transform: scale(0.96) translateY(30px);
+        }
+        .card.active {
+            opacity: 1;
+            transform: scale(1.02) translateY(0);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+        }
+        .card.bad.active {
+            border-color: rgba(239, 68, 68, 0.7);
+            background: rgba(239, 68, 68, 0.08);
+            box-shadow: 0 40px 100px rgba(239, 68, 68, 0.25);
+        }
+        .card.good.active {
+            border-color: rgba(16, 185, 129, 0.7);
+            background: rgba(16, 185, 129, 0.08);
+            box-shadow: 0 40px 100px rgba(16, 185, 129, 0.25);
+        }
+
+        .card-header { font-size: 56px; font-weight: 800; margin-bottom: 40px; display: flex; align-items: center; gap: 24px; }
+        .card.bad .card-header { color: #f87171; }
+        .card.good .card-header { color: #34d399; }
+        
+        .stat-line { font-size: 46px; color: #cbd5e1; margin-bottom: 30px; line-height: 1.5; }
+        .stat-line strong { color: #ffffff; }
+
+        .card-footer {
+            margin-top: 50px; padding-top: 40px; border-top: 2px solid rgba(255,255,255,0.1);
+            font-size: 54px; font-weight: 900;
+        }
+        .card.bad .card-footer { color: #ef4444; }
+        .card.good .card-footer { color: #10b981; }
+    </style>
+</head>
+<body>
+    <div class="bg-glow glow-1"></div>
+    <div class="bg-glow glow-2"></div>
+
+    <div class="badge">Saga do Over 1.5 · Masterclass #1</div>
+    <h1>A Armadilha da <span class="alert">Odd @1.25</span> vs. <span class="highlight">Drip Staking</span></h1>
+    <p class="subtitle">O erro que 90% dos apostadores cometem antes da bola rolar e o método matemático dos profissionais.</p>
+
+    <div class="comparison-grid">
+        <div class="card bad" id="cardBad">
+            <div>
+                <div class="card-header">❌ O Apostador Amador (Pré-Jogo)</div>
+                <div class="stat-line">• Injeta <strong>100% da Stake</strong> no minuto zero</div>
+                <div class="stat-line">• Aceita cotações esmagadas de <strong>@1.20 a @1.28</strong></div>
+                <div class="stat-line">• Risco total de banca sem saber a postura dos times</div>
+                <div class="stat-line">• Um red destrói os lucros de até <strong>5 operações ganhas</strong></div>
+            </div>
+            <div class="card-footer">Lucro: R$ 25 | Risco: Máximo e Cego</div>
+        </div>
+
+        <div class="card good" id="cardGood">
+            <div>
+                <div class="card-header">✅ O Trader Matemático (Drip Staking)</div>
+                <div class="stat-line">• Divide a Stake em <strong>3 partes cirúrgicas</strong></div>
+                <div class="stat-line">• Usa o <strong>Time Decay</strong> para inflacionar a odd naturalmente</div>
+                <div class="stat-line">• Confirma volume ofensivo e pressão no <strong>StatsFut</strong></div>
+                <div class="stat-line">• Busca odd média lucrativa entre <strong>@1.65 e @1.85</strong></div>
+            </div>
+            <div class="card-footer">Lucro: R$ 75 | Risco: Diluído e Blindado</div>
+        </div>
+    </div>
+
+    <script>
+        // Sincronização Real com o Áudio (Cena 1):
+        // 0.0s a 41.5s: Fala sobre a armadilha do apostador amador
+        // Aos 41.5s ("Por outro lado, o trader analítico..."): O foco passa para o cartão bom!
+        setTimeout(() => {
+            document.getElementById('cardBad').classList.add('active');
+        }, 800);
+
+        setTimeout(() => {
+            document.getElementById('cardBad').classList.remove('active');
+            document.getElementById('cardGood').classList.add('active');
+        }, 41500);
+    </script>
+</body>
+</html>

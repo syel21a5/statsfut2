@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cena 3 · Free Bet 4K</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Plus Jakarta Sans', sans-serif; }
+        body {
+            width: 3840px; height: 2160px;
+            background: #050811;
+            color: #ffffff;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 140px 200px;
+            overflow: hidden;
+            position: relative;
+        }
+        .bg-glow {
+            position: absolute; border-radius: 50%; filter: blur(240px); pointer-events: none;
+        }
+        .glow-1 { top: 10%; right: 15%; width: 1200px; height: 1200px; background: rgba(16, 185, 129, 0.15); }
+        .glow-2 { bottom: 10%; left: 15%; width: 1200px; height: 1200px; background: rgba(59, 130, 246, 0.15); }
+
+        .badge {
+            display: inline-flex; align-items: center; gap: 20px;
+            background: rgba(16, 185, 129, 0.15); border: 2px solid rgba(16, 185, 129, 0.4);
+            color: #34d399; padding: 18px 48px; border-radius: 9999px;
+            font-size: 38px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em;
+            margin-bottom: 40px;
+        }
+        h1 {
+            font-size: 130px; font-weight: 900; line-height: 1.1; text-align: center; margin-bottom: 30px;
+            letter-spacing: -0.03em;
+        }
+        p.subtitle {
+            font-size: 52px; color: #94a3b8; text-align: center; max-width: 2600px; line-height: 1.4;
+            margin-bottom: 90px;
+        }
+
+        .freebet-box {
+            background: rgba(15, 23, 42, 0.85);
+            border: 3px solid rgba(16, 185, 129, 0.6);
+            border-radius: 56px; padding: 90px 100px; max-width: 3100px; width: 100%;
+            box-shadow: 0 40px 120px rgba(16, 185, 129, 0.2);
+            backdrop-filter: blur(32px);
+        }
+        .scenario-title {
+            font-size: 68px; font-weight: 900; color: #10b981; margin-bottom: 60px; display: flex; align-items: center; gap: 24px;
+        }
+        .scenario-steps {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
+        }
+        .step-item {
+            background: rgba(30, 41, 59, 0.6); padding: 60px; border-radius: 36px; border: 2px solid rgba(255,255,255,0.08);
+            transition: all 0.6s ease;
+        }
+        .step-item.active {
+            border-color: #38bdf8;
+            background: rgba(56, 189, 248, 0.08);
+            transform: translateY(-8px);
+        }
+        .step-item h3 { font-size: 48px; color: #38bdf8; margin-bottom: 24px; font-weight: 800; }
+        .step-item p { font-size: 38px; color: #cbd5e1; line-height: 1.5; }
+
+        .outcome-banner {
+            margin-top: 70px; padding: 48px; border-radius: 28px; background: rgba(16, 185, 129, 0.12);
+            border: 2px solid rgba(16, 185, 129, 0.4); text-align: center; font-size: 50px; font-weight: 900; color: #ffffff;
+            box-shadow: 0 20px 60px rgba(16, 185, 129, 0.15);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow glow-1"></div>
+    <div class="bg-glow glow-2"></div>
+
+    <div class="badge">Gestão de Risco & Blindagem de Capital</div>
+    <h1>O Segredo da <span style="color:#10b981;">Free Bet</span> no Live Trading</h1>
+    <p class="subtitle">Como eliminar 100% do risco da operação assim que a rede balança pela primeira vez.</p>
+
+    <div class="freebet-box">
+        <div class="scenario-title">⚽ Gol entre os 20′ e 45′ do 1º Tempo (1x0)</div>
+        <div class="scenario-steps">
+            <div class="step-item active" id="fstep1">
+                <h3>1. Controle Emocional</h3>
+                <p>Não entre em pânico nem comemore antes da hora. Aguarde o mercado reabrir e as odds se assentarem (2 a 3 minutos).</p>
+            </div>
+            <div class="step-item" id="fstep2">
+                <h3>2. A Cobertura em Lay</h3>
+                <p>Faça uma aposta contra (Lay) no Over 1.5 usando exatamente a soma do valor que você injetou até ali.</p>
+            </div>
+        </div>
+
+        <div class="outcome-banner">
+            🛡️ Jogo acaba 1x0: Risco R$ 0,00 (Sem Perda) &nbsp;&nbsp;|&nbsp;&nbsp; 💰 Sai o 2º Gol: Lucro Líquido Máximo no Bolso!
+        </div>
+    </div>
+
+    <script>
+        // Sincronização Real com o Áudio (Cena 3):
+        // Início da cena 3 = 123.2s no áudio global
+        // - 123.2s a 139.9s (0s a 16.7s da cena): Introdução e Passo 1 (Controle Emocional)
+        // - 139.9s ("Em vez de ficar torcendo... o operador inteligente realiza uma entrada em Lay..."): Foco Passo 2 -> 16.7s da cena
+        setTimeout(() => {
+            document.getElementById('fstep1').classList.remove('active');
+            document.getElementById('fstep2').classList.add('active');
+        }, 16700);
+    </script>
+</body>
+</html>

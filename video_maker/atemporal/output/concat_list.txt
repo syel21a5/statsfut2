@@ -1,0 +1,4 @@
+file '/www/wwwroot/statsfut.com/video_maker/atemporal/output/scene_1_4k.webm'
+file '/www/wwwroot/statsfut.com/video_maker/atemporal/output/scene_2_4k.webm'
+file '/www/wwwroot/statsfut.com/video_maker/atemporal/output/scene_3_4k.webm'
+file '/www/wwwroot/statsfut.com/video_maker/atemporal/output/scene_4_4k.webm'

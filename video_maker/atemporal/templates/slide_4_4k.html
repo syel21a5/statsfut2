@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cena 4 · Chamada Blog e Plataforma 4K</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Plus Jakarta Sans', sans-serif; }
+        body {
+            width: 3840px; height: 2160px;
+            background: #050811;
+            color: #ffffff;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 140px 200px;
+            overflow: hidden;
+            position: relative;
+        }
+        .bg-glow {
+            position: absolute; border-radius: 50%; filter: blur(240px); pointer-events: none;
+        }
+        .glow-1 { top: 20%; left: 20%; width: 1400px; height: 1400px; background: rgba(16, 185, 129, 0.15); }
+
+        .badge {
+            display: inline-flex; align-items: center; gap: 20px;
+            background: rgba(16, 185, 129, 0.15); border: 2px solid rgba(16, 185, 129, 0.4);
+            color: #34d399; padding: 18px 48px; border-radius: 9999px;
+            font-size: 38px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em;
+            margin-bottom: 40px;
+        }
+        h1 {
+            font-size: 120px; font-weight: 900; line-height: 1.1; text-align: center; margin-bottom: 30px;
+            letter-spacing: -0.03em;
+        }
+        p.subtitle {
+            font-size: 52px; color: #94a3b8; text-align: center; max-width: 2600px; line-height: 1.4;
+            margin-bottom: 90px;
+        }
+
+        .cta-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 80px; width: 100%; max-width: 3200px;
+        }
+        .cta-card {
+            background: rgba(15, 23, 42, 0.85); border-radius: 48px; padding: 80px 70px;
+            border: 2px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(32px);
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .cta-card.blog {
+            border-color: rgba(59, 130, 246, 0.6); background: rgba(59, 130, 246, 0.05);
+        }
+        .cta-card.platform {
+            border-color: rgba(16, 185, 129, 0.6); background: rgba(16, 185, 129, 0.05);
+        }
+        .cta-tag { font-size: 36px; font-weight: 800; margin-bottom: 24px; text-transform: uppercase; }
+        .cta-card.blog .cta-tag { color: #60a5fa; }
+        .cta-card.platform .cta-tag { color: #34d399; }
+
+        .cta-title { font-size: 56px; font-weight: 900; margin-bottom: 24px; color: #ffffff; }
+        .cta-desc { font-size: 40px; color: #cbd5e1; line-height: 1.5; margin-bottom: 40px; }
+
+        .cta-btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 20px;
+            padding: 32px; border-radius: 24px; font-size: 42px; font-weight: 800; text-decoration: none;
+            color: #ffffff;
+        }
+        .cta-card.blog .cta-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            box-shadow: 0 20px 50px rgba(59, 130, 246, 0.4);
+        }
+        .cta-card.platform .cta-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 20px 50px rgba(16, 185, 129, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow glow-1"></div>
+
+    <div class="badge">Ecosistema StatsFut</div>
+    <h1>Aprofunde seus Conhecimentos</h1>
+    <p class="subtitle">Artigo completo no blog e ferramentas matemáticas gratuitas na plataforma.</p>
+
+    <div class="cta-grid">
+        <div class="cta-card blog">
+            <div>
+                <div class="cta-tag">📖 StatsFut Blog</div>
+                <div class="cta-title">Guia Completo da Saga do Over</div>
+                <div class="cta-desc">Leia as tabelas completas de cálculo, fórmulas de stake e os outros episódios da nossa série avançada.</div>
+            </div>
+            <div class="cta-btn">🔗 statsfut.com/blog</div>
+        </div>
+
+        <div class="cta-card platform">
+            <div>
+                <div class="cta-tag">⚡ Plataforma Oficial</div>
+                <div class="cta-title">Radar ao Vivo & Probabilidades</div>
+                <div class="cta-desc">Monitore centenas de jogos em tempo real com alertas de pressão ofensiva para dar o bote no momento certo.</div>
+            </div>
+            <div class="cta-btn">🚀 statsfut.com</div>
+        </div>
+    </div>
+</body>
+</html>
