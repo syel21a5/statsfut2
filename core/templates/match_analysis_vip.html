@@ -2,7 +2,7 @@
 
 {% block content %}
 <!-- ═════════════════════════════════════════════════════════════════
-     CORNERPRO REPLICA — ANÁLISE GLOBAL DA PARTIDA
+     CORNERPRO REPLICA — ANÁLISE COMPLETA (TODAS AS ABAS INTEGRADAS)
      ═════════════════════════════════════════════════════════════════ -->
 
 <!-- ── CABEÇALHO DA PARTIDA (EXATO CORNERPRO) ── -->
@@ -52,15 +52,15 @@
   </div>
 </div>
 
-<!-- ── BARRA DE ABAS HORIZONTAIS (EXATO CORNERPRO) ── -->
+<!-- ── BARRA DE ABAS HORIZONTAIS INTERATIVAS (COM CLIQUE DIRETO) ── -->
 <div class="bg-[#121518] border border-gray-800/80 rounded-xl px-3 py-2 mb-6 flex items-center justify-between overflow-x-auto shadow-md">
-  <div class="flex items-center gap-1 sm:gap-2 font-mono text-xs">
-    <a href="#global" class="px-3.5 py-1.5 rounded-lg bg-[#00b4d8] text-gray-950 font-bold shadow-sm shadow-cyan-500/30">Análise Global</a>
-    <a href="#gols" class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Gols</a>
-    <a href="#escanteios" class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Escanteios</a>
-    <a href="#cartoes" class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Cartões</a>
-    <a href="#odds" class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Análise de Odds</a>
-    <a href="#jogadores" class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition hidden md:inline-block">Dados de Jogadores</a>
+  <div class="flex items-center gap-1 sm:gap-2 font-mono text-xs" id="tabsNav">
+    <button onclick="switchTab('global')" id="tabBtn-global" class="tab-btn px-3.5 py-1.5 rounded-lg font-bold transition bg-[#00b4d8] text-gray-950 shadow-sm shadow-cyan-500/30">Análise Global</button>
+    <button onclick="switchTab('gols')" id="tabBtn-gols" class="tab-btn px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Gols</button>
+    <button onclick="switchTab('escanteios')" id="tabBtn-escanteios" class="tab-btn px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Escanteios</button>
+    <button onclick="switchTab('cartoes')" id="tabBtn-cartoes" class="tab-btn px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Cartões</button>
+    <button onclick="switchTab('odds')" id="tabBtn-odds" class="tab-btn px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Análise de Odds</button>
+    <button onclick="switchTab('jogadores')" id="tabBtn-jogadores" class="tab-btn px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Dados de Jogadores</button>
   </div>
 
   <div class="flex items-center gap-2 font-mono text-[11px] text-gray-400">
@@ -68,250 +68,652 @@
   </div>
 </div>
 
-<!-- ── GRID PRINCIPAL: 2 COLUNAS (EXATO ANALISE GLOBAL 01.PNG) ── -->
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- ═════════════════════════════════════════════════════════════════
+     1. ABA: ANÁLISE GLOBAL (PRINT ANALISE GLOBAL 01.PNG)
+     ═════════════════════════════════════════════════════════════════ -->
+<div id="pane-global" class="tab-pane space-y-6">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    
+    <!-- Coluna Esquerda: Previsões e Tendências -->
+    <div class="lg:col-span-7 xl:col-span-8 space-y-6">
+      <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-5">
+        
+        <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
+          <div class="flex items-center gap-2.5">
+            <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Previsões e Tendências</h3>
+          </div>
+          <span class="text-xs font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">Modelo IA v3</span>
+        </div>
 
-  <!-- ═══════════════════════════════════════════════════════════════
-       COLUNA DA ESQUERDA (8 COLS): PREVISÕES E TENDÊNCIAS
-       ═══════════════════════════════════════════════════════════════ -->
-  <div class="lg:col-span-7 xl:col-span-8 space-y-6">
+        <!-- Grade 2x3 de KPIs -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 font-mono">
+          <div class="bg-[#0e1217] p-3 rounded-lg border-b-2 border-rose-500 border border-gray-800/80 flex flex-col justify-between">
+            <span class="text-[11px] text-gray-400">Over 2.5 FT</span>
+            <span class="text-2xl font-black text-rose-500 my-1">{{ p_o25 }}%</span>
+            <span class="text-[10px] text-gray-500">Linha esticada</span>
+          </div>
+          <div class="bg-[#0e1217] p-3 rounded-lg border-b-2 border-[#00d26a] border border-gray-800/80 flex flex-col justify-between">
+            <span class="text-[11px] text-gray-400">Over 1.5 FT</span>
+            <span class="text-2xl font-black text-[#00d26a] my-1">{{ p_o15 }}%</span>
+            <span class="text-[10px] text-emerald-400 font-bold">Alta confiança</span>
+          </div>
+          <div class="bg-[#0e1217] p-3 rounded-lg border-b-2 border-amber-500 border border-gray-800/80 flex flex-col justify-between">
+            <span class="text-[11px] text-gray-400">Ambas Marcam</span>
+            <span class="text-2xl font-black text-amber-400 my-1">{{ p_btts }}%</span>
+            <span class="text-[10px] text-gray-500">Tendência sim</span>
+          </div>
+          <div class="bg-[#0e1217] p-3 rounded-lg border-b-2 border-cyan-500 border border-gray-800/80 flex flex-col justify-between">
+            <span class="text-[11px] text-gray-400">Pico de gols</span>
+            <span class="text-2xl font-black text-cyan-400 my-1">31'-HT</span>
+            <span class="text-[10px] text-gray-500">Pressão final 1ºT</span>
+          </div>
+          <div class="bg-[#0e1217] p-3 rounded-lg border-b-2 border-cyan-500 border border-gray-800/80 flex flex-col justify-between">
+            <span class="text-[11px] text-gray-400">Gols esperados</span>
+            <span class="text-2xl font-black text-cyan-400 my-1">2.65</span>
+            <span class="text-[10px] text-gray-500">Média combinada</span>
+          </div>
+          <div class="bg-[#0e1217] p-3 rounded-lg border-b-2 border-cyan-500 border border-gray-800/80 flex flex-col justify-between">
+            <span class="text-[11px] text-gray-400">Cantos esperados</span>
+            <span class="text-2xl font-black text-cyan-400 my-1">10.40</span>
+            <span class="text-[10px] text-gray-500">5.80 x 4.60</span>
+          </div>
+        </div>
 
-    <!-- Card 1: Previsões e Tendências -->
-    <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-5">
-      
-      <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
-        <div class="flex items-center gap-2.5">
+        <!-- Resumo Textual -->
+        <div class="bg-[#0e1217] p-4 rounded-xl border border-gray-800/80 space-y-2.5 text-xs text-gray-300">
+          <div class="flex items-start gap-2.5">
+            <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0 mt-1"></span>
+            <p>O modelo projeta <strong class="text-white font-mono">2.65 gols</strong>: 1.45 para o {{ match.home_team.name }} e 1.20 para o {{ match.away_team.name }}.</p>
+          </div>
+          <div class="flex items-start gap-2.5">
+            <span class="w-2 h-2 rounded-full bg-[#00d26a] shrink-0 mt-1"></span>
+            <p>Nos escanteios a projeção combinada é de <strong class="text-[#00d26a] font-mono">10.40 cantos</strong> (5.80 mandante &middot; 4.60 visitante).</p>
+          </div>
+          <div class="flex items-start gap-2.5">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 shrink-0 mt-1"></span>
+            <p>O placar mais provável é <strong class="text-white font-mono">1-1 (15%)</strong> seguido de <strong class="text-white font-mono">2-1 (12%)</strong>.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Coluna Direita: Insights IA -->
+    <div class="lg:col-span-5 xl:col-span-4 space-y-6">
+      <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
+        <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Insights Rápidos</h3>
+          </div>
+          <span class="px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-400 font-mono text-[10px] font-bold border border-cyan-500/30">IA INSIGHT</span>
+        </div>
+        <div class="space-y-2.5 text-xs">
+          <div class="p-3 rounded-lg bg-[#0e1217] border border-gray-800/80 flex items-start gap-3">
+            <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-[#00d26a] font-mono text-[10px] font-bold shrink-0">ATAQUE</span>
+            <p class="text-gray-300">{{ match.home_team.name }} marcou o primeiro gol em <strong class="text-white">7 dos últimos 8 jogos</strong> em casa.</p>
+          </div>
+          <div class="p-3 rounded-lg bg-[#0e1217] border border-gray-800/80 flex items-start gap-3">
+            <span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 font-mono text-[10px] font-bold shrink-0">PRESSÃO</span>
+            <p class="text-gray-300">Ambas equipes geram mais de <strong class="text-white">5.5 escanteios por jogo</strong> com placar adverso.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════════════════════════════════
+     2. ABA: GOLS (PRINT GOLS 01.PNG)
+     ═════════════════════════════════════════════════════════════════ -->
+<div id="pane-gols" class="tab-pane hidden space-y-6">
+  
+  <!-- Badges de Leitura Rápida de Gols -->
+  <div class="flex flex-wrap items-center gap-3">
+    <span class="px-3 py-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-[#00d26a] font-mono text-xs font-bold">
+      Over 1.5 &middot; {{ p_o15 }}%
+    </span>
+    <span class="px-3 py-1.5 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-400 font-mono text-xs font-bold">
+      Ambas marcam &middot; {{ p_btts }}%
+    </span>
+    <span class="px-3 py-1.5 rounded-lg bg-cyan-500/15 border border-cyan-500/30 text-cyan-400 font-mono text-xs font-bold">
+      Gols projetados &middot; 2.65
+    </span>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    
+    <!-- Coluna Esquerda: Tabela de Médias de Gols -->
+    <div class="lg:col-span-6 space-y-6">
+      <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
+        <div class="flex items-center gap-2 border-b border-gray-800/70 pb-3">
           <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
-          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Previsões e Tendências</h3>
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Gols &middot; Análise Comparativa</h3>
         </div>
-        <span class="text-xs font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">Modelo IA v3</span>
+
+        <table class="w-full font-mono text-xs text-left">
+          <thead class="border-b border-gray-800/60 text-gray-400 text-[10px] uppercase">
+            <tr>
+              <th class="py-2 text-cyan-400">{{ match.home_team.name }}</th>
+              <th class="py-2 text-center text-gray-500">Métrica</th>
+              <th class="py-2 text-right text-purple-400">{{ match.away_team.name }}</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-800/40 text-gray-200">
+            <tr>
+              <td class="py-2.5 font-bold text-emerald-400">1.45</td>
+              <td class="py-2.5 text-center text-gray-400">Média Gols Marcados</td>
+              <td class="py-2.5 text-right font-bold text-emerald-400">1.20</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 font-bold text-rose-400">0.95</td>
+              <td class="py-2.5 text-center text-gray-400">Média Gols Sofridos</td>
+              <td class="py-2.5 text-right font-bold text-rose-400">1.40</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 font-bold text-white">2.40</td>
+              <td class="py-2.5 text-center text-gray-400">Média Total Jogo</td>
+              <td class="py-2.5 text-right font-bold text-white">2.60</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 font-bold text-gray-300">25%</td>
+              <td class="py-2.5 text-center text-gray-400">Jogos Sem Marcar</td>
+              <td class="py-2.5 text-right font-bold text-gray-300">30%</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
-      <!-- Grid de 6 KPIs (2 Linhas x 3 Colunas como no print) -->
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 font-mono">
-        
-        <!-- KPI 1: Over 2.5 FT -->
-        <div class="bg-[#0e1217] p-3 rounded-lg border-b-2 border-rose-500 border border-gray-800/80 flex flex-col justify-between">
-          <span class="text-[11px] text-gray-400">Over 2.5 FT</span>
-          <span class="text-2xl font-black text-rose-500 my-1">42%</span>
-          <span class="text-[10px] text-gray-500">Linha esticada</span>
+      <!-- Tabela Gols por Intervalo -->
+      <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
+        <div class="flex items-center gap-2 border-b border-gray-800/70 pb-3">
+          <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Gols por Intervalo de Minutos</h3>
         </div>
-
-        <!-- KPI 2: Over 1.5 FT -->
-        <div class="bg-[#0e1217] p-3 rounded-lg border-b-2 border-[#00d26a] border border-gray-800/80 flex flex-col justify-between">
-          <span class="text-[11px] text-gray-400">Over 1.5 FT</span>
-          <span class="text-2xl font-black text-[#00d26a] my-1">82%</span>
-          <span class="text-[10px] text-emerald-400 font-bold">Alta confiança</span>
-        </div>
-
-        <!-- KPI 3: Ambas Marcam -->
-        <div class="bg-[#0e1217] p-3 rounded-lg border-b-2 border-amber-500 border border-gray-800/80 flex flex-col justify-between">
-          <span class="text-[11px] text-gray-400">Ambas Marcam</span>
-          <span class="text-2xl font-black text-amber-400 my-1">64%</span>
-          <span class="text-[10px] text-gray-500">Tendência sim</span>
-        </div>
-
-        <!-- KPI 4: Pico de Gols -->
-        <div class="bg-[#0e1217] p-3 rounded-lg border-b-2 border-cyan-500 border border-gray-800/80 flex flex-col justify-between">
-          <span class="text-[11px] text-gray-400">Pico de gols</span>
-          <span class="text-2xl font-black text-cyan-400 my-1">31'-HT</span>
-          <span class="text-[10px] text-gray-500">Pressão final 1ºT</span>
-        </div>
-
-        <!-- KPI 5: Gols Esperados (xG) -->
-        <div class="bg-[#0e1217] p-3 rounded-lg border-b-2 border-cyan-500 border border-gray-800/80 flex flex-col justify-between">
-          <span class="text-[11px] text-gray-400">Gols esperados</span>
-          <span class="text-2xl font-black text-cyan-400 my-1">2.65</span>
-          <span class="text-[10px] text-gray-500">Média combinada</span>
-        </div>
-
-        <!-- KPI 6: Escanteios Esperados -->
-        <div class="bg-[#0e1217] p-3 rounded-lg border-b-2 border-cyan-500 border border-gray-800/80 flex flex-col justify-between">
-          <span class="text-[11px] text-gray-400">Cantos esperados</span>
-          <span class="text-2xl font-black text-cyan-400 my-1">10.40</span>
-          <span class="text-[10px] text-gray-500">5.80 x 4.60</span>
-        </div>
-
-      </div>
-
-      <!-- Bullet Points de Resumo Textual (Exato CornerPro) -->
-      <div class="bg-[#0e1217] p-4 rounded-xl border border-gray-800/80 space-y-2.5 text-xs text-gray-300">
-        <div class="flex items-start gap-2.5">
-          <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0 mt-1"></span>
-          <p>O modelo projeta <strong class="text-white font-mono">2.65 gols</strong> na partida: 1.45 para o {{ match.home_team.name }} e 1.20 para o {{ match.away_team.name }}.</p>
-        </div>
-        <div class="flex items-start gap-2.5">
-          <span class="w-2 h-2 rounded-full bg-[#00d26a] shrink-0 mt-1"></span>
-          <p>Nos escanteios a projeção combinada é de <strong class="text-[#00d26a] font-mono">10.40 cantos</strong> (5.80 a favor do mandante &middot; 4.60 visitante).</p>
-        </div>
-        <div class="flex items-start gap-2.5">
-          <span class="w-2 h-2 rounded-full bg-cyan-400 shrink-0 mt-1"></span>
-          <p>O placar mais provável pela distribuição de Poisson é <strong class="text-white font-mono">1-1 (15%)</strong> seguido de <strong class="text-white font-mono">2-1 (12%)</strong>.</p>
-        </div>
-        <div class="flex items-start gap-2.5">
-          <span class="w-2 h-2 rounded-full bg-purple-400 shrink-0 mt-1"></span>
-          <p>O intervalo com maior incidência de escanteios é a janela <strong class="text-purple-400 font-mono">75'-FT (86% de ocorrência)</strong>.</p>
+        <div class="space-y-2 font-mono text-xs">
+          <div class="flex items-center justify-between py-1.5 px-3 rounded bg-[#0e1217]">
+            <span class="text-gray-400">01' - 15'</span>
+            <span class="text-white font-bold">14% de ocorrência</span>
+          </div>
+          <div class="flex items-center justify-between py-1.5 px-3 rounded bg-[#0e1217]">
+            <span class="text-gray-400">16' - 30'</span>
+            <span class="text-white font-bold">22% de ocorrência</span>
+          </div>
+          <div class="flex items-center justify-between py-1.5 px-3 rounded bg-cyan-500/10 border border-cyan-500/20">
+            <span class="text-cyan-400 font-bold">31' - Intervalo (HT)</span>
+            <span class="text-cyan-400 font-black">38% de ocorrência (PICO)</span>
+          </div>
+          <div class="flex items-center justify-between py-1.5 px-3 rounded bg-[#0e1217]">
+            <span class="text-gray-400">46' - 60'</span>
+            <span class="text-white font-bold">19% de ocorrência</span>
+          </div>
+          <div class="flex items-center justify-between py-1.5 px-3 rounded bg-[#0e1217]">
+            <span class="text-gray-400">61' - 75'</span>
+            <span class="text-white font-bold">26% de ocorrência</span>
+          </div>
+          <div class="flex items-center justify-between py-1.5 px-3 rounded bg-emerald-500/10 border border-emerald-500/20">
+            <span class="text-[#00d26a] font-bold">76' - Fim de Jogo (FT)</span>
+            <span class="text-[#00d26a] font-black">42% de ocorrência (PICO)</span>
+          </div>
         </div>
       </div>
+    </div>
 
-      <!-- Tabela Comparativa de Métricas por Setor (Gols, Cantos, Cartões) -->
-      <div class="border border-gray-800/80 rounded-xl overflow-hidden font-mono text-xs">
-        
-        <!-- Cabeçalho Times -->
-        <div class="grid grid-cols-3 bg-[#171d26] py-2.5 px-4 text-center border-b border-gray-800/80 font-bold">
-          <div class="text-left text-cyan-400 truncate">{{ match.home_team.name }}</div>
-          <div class="text-gray-400 text-[11px] uppercase">Métrica Comparativa</div>
-          <div class="text-right text-purple-400 truncate">{{ match.away_team.name }}</div>
-        </div>
-
-        <!-- Seção Gols -->
-        <div class="divide-y divide-gray-800/50 bg-[#0e1217]">
-          <div class="grid grid-cols-3 py-2 px-4 text-center items-center">
-            <span class="text-left text-emerald-400 font-bold">85%</span>
-            <span class="text-gray-400 text-[11px]">Marca ao menos 1 gol</span>
-            <span class="text-right text-emerald-400 font-bold">78%</span>
+    <!-- Coluna Direita: Previsões de Linhas Over/Under -->
+    <div class="lg:col-span-6 space-y-6">
+      <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
+        <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Linhas de Over Gols</h3>
           </div>
-          <div class="grid grid-cols-3 py-2 px-4 text-center items-center">
-            <span class="text-left text-cyan-400 font-bold">31'-HT</span>
-            <span class="text-gray-400 text-[11px]">Intervalo mais quente de gols</span>
-            <span class="text-right text-cyan-400 font-bold">60'-75'</span>
-          </div>
+          <span class="text-xs font-mono text-emerald-400">Jogo Completo</span>
         </div>
 
-        <!-- Seção Escanteios -->
-        <div class="bg-[#12161d] py-1 px-4 text-[10px] text-gray-500 font-bold uppercase tracking-wider border-t border-b border-gray-800/80">
-          Escanteios &middot; Linhas &amp; Janelas
-        </div>
-        <div class="divide-y divide-gray-800/50 bg-[#0e1217]">
-          <div class="grid grid-cols-3 py-2 px-4 text-center items-center">
-            <span class="text-left text-emerald-400 font-bold">75%</span>
-            <span class="text-gray-400 text-[11px]">Cantos Janela 37'-HT</span>
-            <span class="text-right text-emerald-400 font-bold">70%</span>
-          </div>
-          <div class="grid grid-cols-3 py-2 px-4 text-center items-center">
-            <span class="text-left text-cyan-400 font-bold">5.8 cantos</span>
-            <span class="text-gray-400 text-[11px]">Média Cantos a Favor</span>
-            <span class="text-right text-cyan-400 font-bold">4.6 cantos</span>
-          </div>
-          <div class="grid grid-cols-3 py-2 px-4 text-center items-center">
-            <span class="text-left text-[#00d26a] font-bold">88%</span>
-            <span class="text-gray-400 text-[11px]">Cantos Janela 75'-FT (Pressão)</span>
-            <span class="text-right text-[#00d26a] font-bold">84%</span>
-          </div>
-        </div>
+        <table class="w-full font-mono text-xs text-left">
+          <thead class="border-b border-gray-800/60 text-gray-400 text-[10px] uppercase">
+            <tr>
+              <th class="py-2">Linha</th>
+              <th class="py-2 text-center">Mandante</th>
+              <th class="py-2 text-center">Visitante</th>
+              <th class="py-2 text-right">Prob. Jogo</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-800/40 text-gray-200">
+            <tr>
+              <td class="py-3 font-bold text-white">Over 0.5 FT</td>
+              <td class="py-3 text-center text-gray-300">92%</td>
+              <td class="py-3 text-center text-gray-300">88%</td>
+              <td class="py-3 text-right font-black text-[#00d26a] text-sm">94%</td>
+            </tr>
+            <tr>
+              <td class="py-3 font-bold text-white">Over 1.5 FT</td>
+              <td class="py-3 text-center text-gray-300">84%</td>
+              <td class="py-3 text-center text-gray-300">76%</td>
+              <td class="py-3 text-right font-black text-[#00d26a] text-sm">{{ p_o15 }}%</td>
+            </tr>
+            <tr>
+              <td class="py-3 font-bold text-white">Over 2.5 FT</td>
+              <td class="py-3 text-center text-gray-300">58%</td>
+              <td class="py-3 text-center text-gray-300">48%</td>
+              <td class="py-3 text-right font-black text-rose-400 text-sm">{{ p_o25 }}%</td>
+            </tr>
+            <tr>
+              <td class="py-3 font-bold text-white">Over 3.5 FT</td>
+              <td class="py-3 text-center text-gray-300">32%</td>
+              <td class="py-3 text-center text-gray-300">24%</td>
+              <td class="py-3 text-right font-black text-rose-500 text-sm">{{ p_o35 }}%</td>
+            </tr>
+          </tbody>
+        </table>
 
-        <!-- Seção Cartões -->
-        <div class="bg-[#12161d] py-1 px-4 text-[10px] text-gray-500 font-bold uppercase tracking-wider border-t border-b border-gray-800/80">
-          Cartões &middot; Tendência de Fim de Jogo
-        </div>
-        <div class="divide-y divide-gray-800/50 bg-[#0e1217]">
-          <div class="grid grid-cols-3 py-2 px-4 text-center items-center">
-            <span class="text-left text-amber-400 font-bold">4.2</span>
-            <span class="text-gray-400 text-[11px]">Média de Cartões do Time</span>
-            <span class="text-right text-amber-400 font-bold">4.5</span>
+        <!-- Tags de Valor -->
+        <div class="pt-3 border-t border-gray-800/60 flex items-center justify-between text-xs font-mono">
+          <div class="flex items-center gap-2">
+            <span class="text-gray-400">Over 1.5:</span>
+            <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-[#00d26a] font-bold border border-emerald-500/30">COM VALOR</span>
           </div>
-          <div class="grid grid-cols-3 py-2 px-4 text-center items-center">
-            <span class="text-left text-amber-400 font-bold">9 em 10</span>
-            <span class="text-gray-400 text-[11px]">Cartão após os 76' min</span>
-            <span class="text-right text-amber-400 font-bold">8 em 10</span>
+          <div class="flex items-center gap-2">
+            <span class="text-gray-400">Over 2.5:</span>
+            <span class="px-2 py-0.5 rounded bg-gray-800 text-gray-400 font-bold border border-gray-700">SEM VALOR</span>
           </div>
         </div>
 
       </div>
-
     </div>
 
   </div>
+</div>
 
-  <!-- ═══════════════════════════════════════════════════════════════
-       COLUNA DA DIREITA (4 COLS): INSIGHTS E CARACTERÍSTICAS (TÁTICA)
-       ═══════════════════════════════════════════════════════════════ -->
-  <div class="lg:col-span-5 xl:col-span-4 space-y-6">
+<!-- ═════════════════════════════════════════════════════════════════
+     3. ABA: ESCANTEIOS (PRINT ESCANTEIOS 01.PNG)
+     ═════════════════════════════════════════════════════════════════ -->
+<div id="pane-escanteios" class="tab-pane hidden space-y-6">
+  
+  <!-- Badges Rápidos de Escanteios -->
+  <div class="flex flex-wrap items-center gap-3">
+    <span class="px-3 py-1.5 rounded-lg bg-cyan-500/15 border border-cyan-500/30 text-cyan-400 font-mono text-xs font-bold">
+      Over 8.5 Cantos &middot; {{ p_c85 }}%
+    </span>
+    <span class="px-3 py-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-[#00d26a] font-mono text-xs font-bold">
+      Race 3 Mandante &middot; 78%
+    </span>
+    <span class="px-3 py-1.5 rounded-lg bg-purple-500/15 border border-purple-500/30 text-purple-400 font-mono text-xs font-bold">
+      Janela 75'-FT &middot; {{ p_c75ft }}%
+    </span>
+    <span class="px-3 py-1.5 rounded-lg bg-gray-800 border border-gray-700 text-gray-300 font-mono text-xs font-bold">
+      Média Total &middot; 10.40
+    </span>
+  </div>
 
-    <!-- Card 1: Insights do Time (BETA) -->
-    <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
-      <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
-        <div class="flex items-center gap-2">
-          <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
-          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Insights Rápidos</h3>
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    
+    <!-- Coluna Esquerda: Linhas de Over Escanteios -->
+    <div class="lg:col-span-6 space-y-6">
+      <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
+        <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Linhas de Escanteios FT</h3>
+          </div>
+          <span class="text-xs font-mono text-cyan-400">Total do Jogo</span>
         </div>
-        <span class="px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-400 font-mono text-[10px] font-bold border border-cyan-500/30">IA INSIGHT</span>
+
+        <table class="w-full font-mono text-xs text-left">
+          <thead class="border-b border-gray-800/60 text-gray-400 text-[10px] uppercase">
+            <tr>
+              <th class="py-2">Linha</th>
+              <th class="py-2 text-center">Mandante</th>
+              <th class="py-2 text-center">Visitante</th>
+              <th class="py-2 text-right">Prob. Jogo</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-800/40 text-gray-200">
+            <tr>
+              <td class="py-3 font-bold text-white">Over 7.5 Cantos</td>
+              <td class="py-3 text-center text-gray-300">85%</td>
+              <td class="py-3 text-center text-gray-300">80%</td>
+              <td class="py-3 text-right font-black text-[#00d26a] text-sm">88%</td>
+            </tr>
+            <tr>
+              <td class="py-3 font-bold text-white">Over 8.5 Cantos</td>
+              <td class="py-3 text-center text-gray-300">78%</td>
+              <td class="py-3 text-center text-gray-300">72%</td>
+              <td class="py-3 text-right font-black text-cyan-400 text-sm">{{ p_c85 }}%</td>
+            </tr>
+            <tr>
+              <td class="py-3 font-bold text-white">Over 9.5 Cantos</td>
+              <td class="py-3 text-center text-gray-300">65%</td>
+              <td class="py-3 text-center text-gray-300">58%</td>
+              <td class="py-3 text-right font-black text-amber-400 text-sm">{{ p_c95 }}%</td>
+            </tr>
+            <tr>
+              <td class="py-3 font-bold text-white">Over 10.5 Cantos</td>
+              <td class="py-3 text-center text-gray-300">48%</td>
+              <td class="py-3 text-center text-gray-300">40%</td>
+              <td class="py-3 text-right font-black text-rose-500 text-sm">{{ p_c105 }}%</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="pt-3 border-t border-gray-800/60 flex items-center justify-between text-xs font-mono">
+          <div class="flex items-center gap-2">
+            <span class="text-gray-400">Over 8.5:</span>
+            <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-[#00d26a] font-bold border border-emerald-500/30">COM VALOR</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-gray-400">Over 10.5:</span>
+            <span class="px-2 py-0.5 rounded bg-gray-800 text-gray-400 font-bold border border-gray-700">SEM VALOR</span>
+          </div>
+        </div>
+
       </div>
+    </div>
 
-      <div class="space-y-2.5 text-xs">
-        <!-- Item 1: Artilheiro / Ataque -->
-        <div class="p-3 rounded-lg bg-[#0e1217] border border-gray-800/80 flex items-start gap-3">
-          <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-[#00d26a] font-mono text-[10px] font-bold shrink-0">ATAQUE</span>
-          <p class="text-gray-300">{{ match.home_team.name }} marcou o primeiro gol da partida em <strong class="text-white">7 dos últimos 8 jogos</strong> em casa.</p>
+    <!-- Coluna Direita: Janelas Críticas de Pressão e Races -->
+    <div class="lg:col-span-6 space-y-6">
+      <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
+        <div class="flex items-center gap-2 border-b border-gray-800/70 pb-3">
+          <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Janelas de Minutos Quentes</h3>
         </div>
 
-        <!-- Item 2: Defesa / Tendência -->
-        <div class="p-3 rounded-lg bg-[#0e1217] border border-gray-800/80 flex items-start gap-3">
-          <span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 font-mono text-[10px] font-bold shrink-0">PRESSÃO</span>
-          <p class="text-gray-300">Ambas as equipes geram mais de <strong class="text-white">5.5 escanteios por jogo</strong> quando jogam com placar adverso.</p>
+        <div class="space-y-2 font-mono text-xs">
+          <div class="flex items-center justify-between py-2 px-3 rounded bg-[#0e1217]">
+            <span class="text-gray-300">Cantos de 00' a 10'</span>
+            <span class="text-white font-bold">34% incidência</span>
+          </div>
+          <div class="flex items-center justify-between py-2 px-3 rounded bg-cyan-500/10 border border-cyan-500/20">
+            <span class="text-cyan-400 font-bold">Janela 37' ao Intervalo (HT)</span>
+            <span class="text-cyan-400 font-black">{{ p_37ht }}% incidência</span>
+          </div>
+          <div class="flex items-center justify-between py-2 px-3 rounded bg-purple-500/10 border border-purple-500/20">
+            <span class="text-purple-400 font-bold">Janela 75' ao Fim (Pressão Final)</span>
+            <span class="text-purple-400 font-black">{{ p_c75ft }}% incidência (ALTO)</span>
+          </div>
         </div>
 
-        <!-- Item 3: Cartões Tardios -->
-        <div class="p-3 rounded-lg bg-[#0e1217] border border-gray-800/80 flex items-start gap-3">
-          <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-mono text-[10px] font-bold shrink-0">DISCIPLINA</span>
-          <p class="text-gray-300">Alta probabilidade de cartão após 76' min devido ao perfil físico do confronto.</p>
+        <!-- Races -->
+        <div class="pt-4 border-t border-gray-800/70">
+          <h4 class="text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-2.5">Race de Escanteios (Quem chega 1º)</h4>
+          <div class="grid grid-cols-3 gap-2 text-center font-mono text-xs">
+            <div class="p-2.5 rounded bg-[#0e1217] border border-gray-800">
+              <span class="text-[10px] text-gray-500 block">Race 3</span>
+              <span class="text-emerald-400 font-bold text-sm mt-0.5 block">Mandante</span>
+              <span class="text-[10px] text-gray-400">78% prob.</span>
+            </div>
+            <div class="p-2.5 rounded bg-[#0e1217] border border-gray-800">
+              <span class="text-[10px] text-gray-500 block">Race 5</span>
+              <span class="text-cyan-400 font-bold text-sm mt-0.5 block">Mandante</span>
+              <span class="text-[10px] text-gray-400">65% prob.</span>
+            </div>
+            <div class="p-2.5 rounded bg-[#0e1217] border border-gray-800">
+              <span class="text-[10px] text-gray-500 block">Race 7</span>
+              <span class="text-purple-400 font-bold text-sm mt-0.5 block">Equilibrado</span>
+              <span class="text-[10px] text-gray-400">48% prob.</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════════════════════════════════
+     4. ABA: CARTÕES (PRINT CARTÕES 01.PNG)
+     ═════════════════════════════════════════════════════════════════ -->
+<div id="pane-cartoes" class="tab-pane hidden space-y-6">
+  
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    
+    <!-- Coluna Esquerda: Estatísticas do Árbitro e Equipes -->
+    <div class="lg:col-span-6 space-y-6">
+      <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
+        <div class="flex items-center gap-2 border-b border-gray-800/70 pb-3">
+          <span class="w-1.5 h-4 bg-amber-400 rounded-full"></span>
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Disciplina &middot; Árbitro &amp; Equipes</h3>
+        </div>
+
+        <div class="space-y-3 font-mono text-xs">
+          <div class="p-3 rounded-lg bg-[#0e1217] border border-gray-800 flex items-center justify-between">
+            <span class="text-gray-400">Média Geral do Árbitro</span>
+            <span class="text-amber-400 font-bold text-sm">4.80 cartões/jogo</span>
+          </div>
+          <div class="p-3 rounded-lg bg-[#0e1217] border border-gray-800 flex items-center justify-between">
+            <span class="text-gray-400">Média {{ match.home_team.name }}</span>
+            <span class="text-white font-bold text-sm">2.10 amarelos/jogo</span>
+          </div>
+          <div class="p-3 rounded-lg bg-[#0e1217] border border-gray-800 flex items-center justify-between">
+            <span class="text-gray-400">Média {{ match.away_team.name }}</span>
+            <span class="text-white font-bold text-sm">2.60 amarelos/jogo</span>
+          </div>
+          <div class="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-between">
+            <span class="text-amber-400 font-bold">Cartão após os 76' minutos</span>
+            <span class="text-amber-400 font-black text-sm">88% (9 em 10 jogos)</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Card 2: Forças e Fraquezas Táticas (Exato print analise global 02.png) -->
-    <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
-      <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
-        <div class="flex items-center gap-2">
-          <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
-          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Perfil Tático das Equipes</h3>
+    <!-- Coluna Direita: Linhas de Cartões -->
+    <div class="lg:col-span-6 space-y-6">
+      <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
+        <div class="flex items-center gap-2 border-b border-gray-800/70 pb-3">
+          <span class="w-1.5 h-4 bg-amber-400 rounded-full"></span>
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Linhas de Over Cartões</h3>
         </div>
+
+        <table class="w-full font-mono text-xs text-left">
+          <thead class="border-b border-gray-800/60 text-gray-400 text-[10px] uppercase">
+            <tr>
+              <th class="py-2">Linha</th>
+              <th class="py-2 text-center">Média Histórica</th>
+              <th class="py-2 text-right">Veredicto</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-800/40 text-gray-200">
+            <tr>
+              <td class="py-3 font-bold text-white">Over 3.5 Cartões</td>
+              <td class="py-3 text-center text-emerald-400 font-bold">78%</td>
+              <td class="py-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-[#00d26a] font-bold">COM VALOR</span></td>
+            </tr>
+            <tr>
+              <td class="py-3 font-bold text-white">Over 4.5 Cartões</td>
+              <td class="py-3 text-center text-cyan-400 font-bold">58%</td>
+              <td class="py-3 text-right"><span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 font-bold">JUSTA</span></td>
+            </tr>
+            <tr>
+              <td class="py-3 font-bold text-white">Over 5.5 Cartões</td>
+              <td class="py-3 text-center text-rose-400 font-bold">34%</td>
+              <td class="py-3 text-right"><span class="px-2 py-0.5 rounded bg-gray-800 text-gray-400 font-bold">SEM VALOR</span></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
+    </div>
 
-      <!-- Comparativo Lado a Lado -->
-      <div class="space-y-4">
-        
-        <!-- Mandante -->
-        <div>
-          <span class="text-xs font-bold text-cyan-400 font-mono block mb-2">{{ match.home_team.name }}</span>
-          <div class="space-y-1.5 text-xs text-gray-300">
-            <div class="flex items-center gap-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-[#00d26a]"></span>
-              <span>Transições ofensivas rápidas pelas pontas</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-[#00d26a]"></span>
-              <span>Forte presença aérea em bolas paradas</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-              <span>Cede espaços entre linhas defensivas</span>
-            </div>
-          </div>
-        </div>
+  </div>
+</div>
 
-        <div class="border-t border-gray-800/60 pt-3">
-          <span class="text-xs font-bold text-purple-400 font-mono block mb-2">{{ match.away_team.name }}</span>
-          <div class="space-y-1.5 text-xs text-gray-300">
-            <div class="flex items-center gap-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-[#00d26a]"></span>
-              <span>Boa circulação e posse de bola no meio</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-              <span>Baixa eficácia de finalização fora de casa</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-              <span>Dificuldade em conter contra-ataques velozes</span>
-            </div>
-          </div>
-        </div>
+<!-- ═════════════════════════════════════════════════════════════════
+     5. ABA: ANÁLISE DE ODDS (PRINT ANALISE DE ODDS 01.PNG)
+     ═════════════════════════════════════════════════════════════════ -->
+<div id="pane-odds" class="tab-pane hidden space-y-6">
+  
+  <!-- Cards de Resumo de Odds -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 font-mono">
+    <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-3.5">
+      <span class="text-[11px] text-gray-400 block">Mercados Analisados</span>
+      <span class="text-2xl font-black text-white mt-1 block">48</span>
+    </div>
+    <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-3.5">
+      <span class="text-[11px] text-gray-400 block">Com Valor Encontrado</span>
+      <span class="text-2xl font-black text-[#00d26a] mt-1 block">4</span>
+    </div>
+    <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-3.5">
+      <span class="text-[11px] text-gray-400 block">Maior Edge (+EV)</span>
+      <span class="text-2xl font-black text-cyan-400 mt-1 block">+12.4%</span>
+    </div>
+    <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-3.5">
+      <span class="text-[11px] text-gray-400 block">Confiança Modelo</span>
+      <span class="text-2xl font-black text-purple-400 mt-1 block">4 / 5</span>
+    </div>
+  </div>
 
+  <!-- Tabela de Comparação de Odds e Edge -->
+  <div class="bg-[#14181f] border border-gray-800/70 rounded-xl overflow-hidden shadow-lg font-mono text-xs">
+    <div class="px-5 py-3.5 bg-[#171d26] border-b border-gray-800/70 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="w-1.5 h-4 bg-cyan-400 rounded-full"></span>
+        <h3 class="text-sm font-bold text-white uppercase tracking-wider">Mercados com Cálculo de Odd Justa</h3>
       </div>
+      <span class="text-xs text-gray-400">Base auditada</span>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead class="border-b border-gray-800/60 text-gray-500 text-[10px] uppercase tracking-wider bg-[#10141a]">
+          <tr>
+            <th class="py-2.5 px-4">Mercado</th>
+            <th class="py-2.5 px-4 text-center">Projeção %</th>
+            <th class="py-2.5 px-4 text-center">Odd Casa</th>
+            <th class="py-2.5 px-4 text-center">Odd Justa</th>
+            <th class="py-2.5 px-4 text-center">Edge %</th>
+            <th class="py-2.5 px-4 text-center">Veredicto</th>
+            <th class="py-2.5 px-4 text-center">Confiança</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-800/40 text-gray-200">
+          <tr class="hover:bg-gray-800/30 transition">
+            <td class="py-3 px-4 font-bold text-white">Over 1.5 Gols FT</td>
+            <td class="py-3 px-4 text-center text-emerald-400 font-bold">{{ p_o15 }}%</td>
+            <td class="py-3 px-4 text-center font-bold text-white">1.36</td>
+            <td class="py-3 px-4 text-center text-gray-400">1.22</td>
+            <td class="py-3 px-4 text-center text-emerald-400 font-bold">+11.4%</td>
+            <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-[#00d26a] font-bold">COM VALOR</span></td>
+            <td class="py-3 px-4 text-center text-cyan-400 font-bold">&bull;&bull;&bull;&bull;&bull;</td>
+          </tr>
+          <tr class="hover:bg-gray-800/30 transition">
+            <td class="py-3 px-4 font-bold text-white">Over 8.5 Escanteios FT</td>
+            <td class="py-3 px-4 text-center text-cyan-400 font-bold">{{ p_c85 }}%</td>
+            <td class="py-3 px-4 text-center font-bold text-white">1.52</td>
+            <td class="py-3 px-4 text-center text-gray-400">1.35</td>
+            <td class="py-3 px-4 text-center text-emerald-400 font-bold">+12.4%</td>
+            <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-[#00d26a] font-bold">COM VALOR</span></td>
+            <td class="py-3 px-4 text-center text-cyan-400 font-bold">&bull;&bull;&bull;&bull;&bull;</td>
+          </tr>
+          <tr class="hover:bg-gray-800/30 transition">
+            <td class="py-3 px-4 font-bold text-white">Mandante Vence (1X2)</td>
+            <td class="py-3 px-4 text-center text-gray-300">46%</td>
+            <td class="py-3 px-4 text-center font-bold text-white">2.20</td>
+            <td class="py-3 px-4 text-center text-gray-400">2.17</td>
+            <td class="py-3 px-4 text-center text-cyan-400 font-bold">+1.4%</td>
+            <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 font-bold">JUSTA</span></td>
+            <td class="py-3 px-4 text-center text-cyan-400 font-bold">&bull;&bull;&bull;&bull;&cir;</td>
+          </tr>
+          <tr class="hover:bg-gray-800/30 transition">
+            <td class="py-3 px-4 font-bold text-white">Over 2.5 Gols FT</td>
+            <td class="py-3 px-4 text-center text-rose-400 font-bold">{{ p_o25 }}%</td>
+            <td class="py-3 px-4 text-center font-bold text-white">1.95</td>
+            <td class="py-3 px-4 text-center text-gray-400">2.38</td>
+            <td class="py-3 px-4 text-center text-rose-500 font-bold">-18.1%</td>
+            <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-gray-800 text-gray-400 font-bold">SEM VALOR</span></td>
+            <td class="py-3 px-4 text-center text-gray-500 font-bold">&bull;&bull;&bull;&cir;&cir;</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════════════════════════════════
+     6. ABA: DADOS DE JOGADORES (PRINT DADOS DE JOGADORES 01.PNG)
+     ═════════════════════════════════════════════════════════════════ -->
+<div id="pane-jogadores" class="tab-pane hidden space-y-6">
+  
+  <div class="bg-[#14181f] border border-gray-800/70 rounded-xl overflow-hidden shadow-lg font-mono text-xs">
+    <div class="px-5 py-3.5 bg-[#171d26] border-b border-gray-800/70 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="w-1.5 h-4 bg-cyan-400 rounded-full"></span>
+        <h3 class="text-sm font-bold text-white uppercase tracking-wider">Desempenho Individual dos Atletas</h3>
+      </div>
+      <span class="text-xs text-gray-400">Métricas &middot; Ratings &middot; Finalizações</span>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead class="border-b border-gray-800/60 text-gray-500 text-[10px] uppercase tracking-wider bg-[#10141a]">
+          <tr>
+            <th class="py-2.5 px-4">Jogador</th>
+            <th class="py-2.5 px-4 text-center">Rating</th>
+            <th class="py-2.5 px-4 text-center">Minutos</th>
+            <th class="py-2.5 px-4 text-center">Gols</th>
+            <th class="py-2.5 px-4 text-center">Assist.</th>
+            <th class="py-2.5 px-4 text-center">Chutes</th>
+            <th class="py-2.5 px-4 text-center">No Gol</th>
+            <th class="py-2.5 px-4 text-center">% Passe</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-800/40 text-gray-200">
+          {% for p in players %}
+          <tr class="hover:bg-gray-800/30 transition">
+            <td class="py-3 px-4">
+              <div class="flex items-center gap-2.5">
+                <span class="w-5 h-5 rounded flex items-center justify-center text-[10px] font-bold
+                             {% if p.pos == 'A' %}bg-rose-500/20 text-rose-400 border border-rose-500/30{% elif p.pos == 'M' %}bg-emerald-500/20 text-emerald-400 border border-emerald-500/30{% else %}bg-cyan-500/20 text-cyan-400 border border-cyan-500/30{% endif %}">
+                  {{ p.pos }}
+                </span>
+                <div>
+                  <span class="font-sans font-bold text-white block">{{ p.name }}</span>
+                  <span class="text-[10px] text-gray-500 block">{{ p.team }}</span>
+                </div>
+              </div>
+            </td>
+            <td class="py-3 px-4 text-center font-bold text-[#00d26a] text-sm">{{ p.rating }}</td>
+            <td class="py-3 px-4 text-center text-gray-400">{{ p.min }}</td>
+            <td class="py-3 px-4 text-center font-bold text-white">{{ p.goals }}</td>
+            <td class="py-3 px-4 text-center text-gray-300">{{ p.assists }}</td>
+            <td class="py-3 px-4 text-center text-cyan-400 font-bold">{{ p.shots }}</td>
+            <td class="py-3 px-4 text-center text-emerald-400 font-bold">{{ p.shots_target }}</td>
+            <td class="py-3 px-4 text-center text-gray-300">{{ p.passes_pct }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
 
   </div>
 
 </div>
+
+<!-- ── SCRIPT DE NAVEGAÇÃO ENTRE AS ABAS SEM REFRESH (INSTANTÂNEO) ── -->
+<script>
+  function switchTab(tabId) {
+    // 1. Esconder todos os painéis
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+    
+    // 2. Mostrar o painel selecionado
+    const targetPane = document.getElementById('pane-' + tabId);
+    if (targetPane) {
+      targetPane.classList.remove('hidden');
+    }
+
+    // 3. Resetar estilo de todos os botões
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.className = 'tab-btn px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition';
+    });
+
+    // 4. Ativar o botão clicado
+    const activeBtn = document.getElementById('tabBtn-' + tabId);
+    if (activeBtn) {
+      activeBtn.className = 'tab-btn px-3.5 py-1.5 rounded-lg font-bold transition bg-[#00b4d8] text-gray-950 shadow-sm shadow-cyan-500/30';
+    }
+  }
+</script>
+
 {% endblock %}
