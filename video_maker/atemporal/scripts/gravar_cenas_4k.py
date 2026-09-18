@@ -9,9 +9,9 @@ OUTPUT_DIR = "/www/wwwroot/statsfut.com/video_maker/atemporal/output"
 TEMPLATES_DIR = "/www/wwwroot/statsfut.com/video_maker/atemporal/templates"
 AUDIO_PATH = "/www/wwwroot/statsfut.com/video_maker/atemporal/audios/audio_4k_over15.mp3"
 
-# Resolução 1080p Full HD para gravação ultrarrápida e leve
-VIEWPORT_WIDTH = 1920
-VIEWPORT_HEIGHT = 1080
+# Resolução 4K Nativa para casar com os templates HTML (3840x2160)
+VIEWPORT_WIDTH = 3840
+VIEWPORT_HEIGHT = 2160
 
 async def record_scene(browser, url, duration, output_path):
     print(f"--> Gravando cena 4K ({duration}s): {url}")
