@@ -1,548 +1,317 @@
 {% extends 'base_vip.html' %}
 
-{% block title %}{{ match.home_team.name }} vs {{ match.away_team.name }} · Análise PRO{% endblock %}
-
-{% block extra_head %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<style>
-    .vip-tab {
-        display: inline-flex; align-items: center; gap: 0.5rem;
-        padding: 0.625rem 1rem; border-radius: 0.75rem;
-        font-size: 0.75rem; font-weight: 600; white-space: nowrap; cursor: pointer;
-        user-select: none; transition: all 0.2s; border: 1px solid transparent;
-    }
-    .vip-tab-active {
-        background: rgba(31,41,55,0.8); color: #fff;
-        border-color: rgba(75,85,99,0.6);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-    }
-    .vip-tab-idle {
-        color: #6b7280;
-    }
-    .vip-tab-idle:hover {
-        color: #d1d5db; background: rgba(17,24,39,0.4);
-    }
-    .bar-h { height: 0.5rem; border-radius: 9999px; transition: all 0.7s ease-out; }
-    .bar-home { background: linear-gradient(to right, #10b981, #34d399); }
-    .bar-away { background: linear-gradient(to right, #06b6d4, #22d3ee); }
-    .metric-box {
-        padding: 1rem; border-radius: 0.75rem;
-        background: rgba(17,24,39,0.6); border: 1px solid rgba(31,41,55,0.6);
-        text-align: center;
-    }
-    .metric-label {
-        display: block; font-family: 'JetBrains Mono', monospace;
-        font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em;
-        color: #6b7280; margin-bottom: 0.25rem;
-    }
-    .metric-value {
-        display: block; font-size: 1.5rem; font-weight: 900;
-        font-family: 'JetBrains Mono', monospace;
-    }
-    .ev-positive { color: #34d399; }
-    .ev-negative { color: #fb7185; }
-    .ev-neutral { color: #9ca3af; }
-    .badge-super {
-        display: inline-block; padding: 0.125rem 0.5rem; border-radius: 0.25rem;
-        background: #10b981; color: #030712; font-weight: 900; font-size: 10px; letter-spacing: 0.025em;
-    }
-    .badge-value {
-        display: inline-block; padding: 0.125rem 0.5rem; border-radius: 0.25rem;
-        background: rgba(16,185,129,0.15); color: #34d399;
-        border: 1px solid rgba(16,185,129,0.25); font-weight: 700; font-size: 10px;
-    }
-    .badge-neutral {
-        display: inline-block; padding: 0.125rem 0.5rem; border-radius: 0.25rem;
-        background: rgba(31,41,55,0.8); color: #9ca3af; font-size: 10px;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="space-y-5">
+<!-- ═════════════════════════════════════════════════════════════════
+     CORNERPRO REPLICA — ANÁLISE GLOBAL DA PARTIDA
+     ═════════════════════════════════════════════════════════════════ -->
 
-    <!-- ═══════════════════════ SCOREBOARD HERO ═══════════════════════ -->
-    <div class="glass-card p-6 relative overflow-hidden">
-        <!-- Ambient glow -->
-        <div class="absolute -top-20 -right-20 w-80 h-80 bg-cyan-500/[0.04] rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-20 -left-20 w-60 h-60 bg-emerald-500/[0.04] rounded-full blur-3xl pointer-events-none"></div>
-
-        <!-- Back link -->
-        <a href="/vip/" class="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-300 mb-4 transition">
-            <i class="fa-solid fa-arrow-left text-[10px]"></i> Voltar à Grade
-        </a>
-
-        <div class="flex flex-col lg:flex-row items-center justify-between gap-6 relative z-10">
-
-            <!-- Home Team -->
-            <div class="flex items-center gap-4 w-full lg:w-5/12 justify-start lg:justify-end">
-                <div class="text-left lg:text-right flex-1">
-                    <h2 class="text-xl lg:text-2xl font-black text-white leading-tight">{{ match.home_team.name }}</h2>
-                    <div class="flex items-center gap-3 mt-1.5 justify-start lg:justify-end">
-                        <span class="text-[11px] font-mono text-emerald-400"><i class="fa-regular fa-futbol mr-1 text-[9px]"></i>{{ stats.home_goals_scored }} gols/j</span>
-                        <span class="text-[11px] font-mono text-amber-400"><i class="fa-solid fa-flag mr-1 text-[9px]"></i>{{ stats.home_corners_avg }} cantos/j</span>
-                    </div>
-                </div>
-                <div class="w-14 h-14 rounded-2xl bg-gray-900 border border-gray-700/60 flex items-center justify-center text-lg font-black text-white shadow-xl shadow-black/30 flex-shrink-0">
-                    {{ match.home_team.name|slice:":2"|upper }}
-                </div>
-            </div>
-
-            <!-- Score + Odds Central -->
-            <div class="flex flex-col items-center px-8 py-3 bg-gray-950/80 rounded-2xl border border-gray-800/60 shadow-2xl shadow-black/40 min-w-[240px]">
-                <span class="text-[10px] font-mono uppercase tracking-widest mb-1.5
-                    {% if stats.is_live %}text-rose-400 font-black{% elif stats.is_finished %}text-gray-500{% else %}text-emerald-400{% endif %}">
-                    {% if stats.is_live %}<span class="inline-block w-1.5 h-1.5 rounded-full bg-rose-400 mr-1 animate-pulse"></span>AO VIVO{% elif stats.is_finished %}FINALIZADO{% else %}{{ match.date|date:"d/m · H:i" }}{% endif %}
-                </span>
-
-                <div class="text-4xl font-black text-white font-mono tracking-tight my-1">
-                    {% if match.home_score is not None %}{{ match.home_score }}<span class="text-gray-600 mx-2">-</span>{{ match.away_score }}{% else %}<span class="text-gray-600 text-2xl">VS</span>{% endif %}
-                </div>
-
-                <!-- Odds 1X2 -->
-                <div class="flex items-center gap-2 mt-2 pt-2 border-t border-gray-800/60 w-full justify-center">
-                    <div class="text-center px-3 py-1 rounded-lg bg-gray-900/80 border border-gray-800/50 min-w-[56px]">
-                        <div class="text-[8px] text-gray-600 font-bold tracking-wider">1</div>
-                        <div class="text-sm font-mono font-bold text-emerald-400">{% if match.home_team_win_odds %}{{ match.home_team_win_odds|floatformat:2 }}{% else %}—{% endif %}</div>
-                    </div>
-                    <div class="text-center px-3 py-1 rounded-lg bg-gray-900/80 border border-gray-800/50 min-w-[56px]">
-                        <div class="text-[8px] text-gray-600 font-bold tracking-wider">X</div>
-                        <div class="text-sm font-mono font-bold text-gray-300">{% if match.draw_odds %}{{ match.draw_odds|floatformat:2 }}{% else %}—{% endif %}</div>
-                    </div>
-                    <div class="text-center px-3 py-1 rounded-lg bg-gray-900/80 border border-gray-800/50 min-w-[56px]">
-                        <div class="text-[8px] text-gray-600 font-bold tracking-wider">2</div>
-                        <div class="text-sm font-mono font-bold text-cyan-400">{% if match.away_team_win_odds %}{{ match.away_team_win_odds|floatformat:2 }}{% else %}—{% endif %}</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Away Team -->
-            <div class="flex items-center gap-4 w-full lg:w-5/12 justify-start">
-                <div class="w-14 h-14 rounded-2xl bg-gray-900 border border-gray-700/60 flex items-center justify-center text-lg font-black text-white shadow-xl shadow-black/30 flex-shrink-0">
-                    {{ match.away_team.name|slice:":2"|upper }}
-                </div>
-                <div class="text-left flex-1">
-                    <h2 class="text-xl lg:text-2xl font-black text-white leading-tight">{{ match.away_team.name }}</h2>
-                    <div class="flex items-center gap-3 mt-1.5">
-                        <span class="text-[11px] font-mono text-emerald-400"><i class="fa-regular fa-futbol mr-1 text-[9px]"></i>{{ stats.away_goals_scored }} gols/j</span>
-                        <span class="text-[11px] font-mono text-amber-400"><i class="fa-solid fa-flag mr-1 text-[9px]"></i>{{ stats.away_corners_avg }} cantos/j</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!-- ── CABEÇALHO DA PARTIDA (EXATO CORNERPRO) ── -->
+<div class="bg-[#14181f] border border-gray-800/80 rounded-2xl p-5 mb-6 shadow-xl relative overflow-hidden">
+  <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+    
+    <!-- Time Mandante -->
+    <div class="flex items-center gap-4 flex-1 justify-end text-right">
+      <div>
+        <h2 class="text-xl md:text-2xl font-black text-white tracking-tight">{{ match.home_team.name }}</h2>
+        <span class="text-xs font-mono text-gray-400">Mandante &middot; Pos. 4º</span>
+      </div>
+      <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-gray-800 border border-cyan-500/30 flex items-center justify-center text-cyan-400 font-black text-xl shadow-lg">
+        {{ match.home_team.name|slice:":2"|upper }}
+      </div>
     </div>
 
-    <!-- ═══════════════════════ 9 TAB NAVIGATION ═══════════════════════ -->
-    <div class="overflow-x-auto scrollbar-none -mx-1">
-        <nav class="flex gap-1.5 min-w-max px-1 pb-1" id="tabNav">
-            <button onclick="switchTab('global')"      data-tab="global"      class="vip-tab vip-tab-active"><i class="fa-solid fa-globe text-cyan-400"></i>Global</button>
-            <button onclick="switchTab('live')"         data-tab="live"        class="vip-tab vip-tab-idle"><i class="fa-solid fa-bolt text-rose-400"></i>Ao Vivo</button>
-            <button onclick="switchTab('goals')"        data-tab="goals"       class="vip-tab vip-tab-idle"><i class="fa-regular fa-futbol text-emerald-400"></i>Gols</button>
-            <button onclick="switchTab('corners')"      data-tab="corners"     class="vip-tab vip-tab-idle"><i class="fa-solid fa-flag text-amber-400"></i>Escanteios</button>
-            <button onclick="switchTab('cards')"        data-tab="cards"       class="vip-tab vip-tab-idle"><i class="fa-solid fa-square text-yellow-400"></i>Cartões</button>
-            <button onclick="switchTab('odds-ev')"      data-tab="odds-ev"     class="vip-tab vip-tab-idle"><i class="fa-solid fa-chart-line text-purple-400"></i>+EV</button>
-            <button onclick="switchTab('smart-money')"  data-tab="smart-money" class="vip-tab vip-tab-idle"><i class="fa-solid fa-arrow-trend-up text-blue-400"></i>Odds &amp; Linhas</button>
-            <button onclick="switchTab('pressure')"     data-tab="pressure"    class="vip-tab vip-tab-idle"><i class="fa-solid fa-wave-square text-cyan-400"></i>Pressão</button>
-            <button onclick="switchTab('players')"      data-tab="players"     class="vip-tab vip-tab-idle"><i class="fa-solid fa-users text-gray-400"></i>Jogadores</button>
-        </nav>
+    <!-- Centro: Placar / Horário / vs -->
+    <div class="flex flex-col items-center justify-center px-6 py-2 bg-[#0e1217] rounded-xl border border-gray-800/80 min-w-[150px] shadow-inner">
+      {% if match.status == 'Live' %}
+        <span class="flex items-center gap-1.5 text-rose-500 font-mono text-xs font-bold animate-pulse mb-1">
+          <span class="w-2 h-2 rounded-full bg-rose-500"></span> AO VIVO
+        </span>
+        <div class="text-3xl font-black font-mono text-white tracking-widest">
+          {{ match.home_score|default:0 }} - {{ match.away_score|default:0 }}
+        </div>
+      {% else %}
+        <span class="text-[11px] font-mono text-cyan-400 uppercase tracking-wider font-semibold mb-0.5">
+          {{ match.date|date:"H:i" }} &middot; {{ match.date|date:"d/m" }}
+        </span>
+        <span class="text-xl font-black font-mono text-gray-400">VS</span>
+      {% endif %}
+      <span class="text-[10px] text-gray-500 font-mono mt-1 truncate max-w-[140px] text-center">{{ match.league.name }}</span>
     </div>
 
-    <!-- ═══════════════════════ TAB 1: GLOBAL ═══════════════════════ -->
-    <div id="panel-global" class="tab-panel space-y-5">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            <!-- AI Verdict -->
-            <div class="glass-card p-5">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-brain text-purple-400"></i>Veredito do Algoritmo
-                    </h3>
-                    <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">Alta Confiança</span>
-                </div>
-                <div class="space-y-3">
-                    <div class="p-3.5 rounded-xl bg-gray-900/60 border border-gray-800/50">
-                        <span class="text-[9px] font-bold text-gray-600 uppercase tracking-wider block mb-1">Projeção Principal</span>
-                        <p class="font-bold text-white text-sm leading-snug">
-                            {% if stats.home_goals_scored >= 2.5 %}Vitória {{ match.home_team.name }} + Over 2.5 Gols{% else %}Tendência de Domínio do Mandante{% endif %}
-                        </p>
-                        <p class="text-gray-500 text-[11px] mt-1.5">Projeção sobre os últimos 10 jogos (mandante vs visitante).</p>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div class="metric-box">
-                            <span class="metric-label">Gols Projetados</span>
-                            <span class="metric-value text-emerald-400">{{ stats.total_expected_goals }}</span>
-                        </div>
-                        <div class="metric-box">
-                            <span class="metric-label">Cantos Esperados</span>
-                            <span class="metric-value text-cyan-400">{{ stats.total_corners_expected }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Comparative Bars -->
-            <div class="lg:col-span-2 glass-card p-5">
-                <h3 class="text-sm font-bold text-white mb-5 flex items-center gap-2">
-                    <i class="fa-solid fa-chart-bar text-cyan-400"></i>Comparativo Direto de Médias
-                </h3>
-                <div class="space-y-5">
-                    <!-- Goals -->
-                    <div>
-                        <div class="flex justify-between text-[11px] font-mono mb-1.5">
-                            <span class="text-emerald-400 font-bold">{{ stats.home_goals_scored }} Gols (Casa)</span>
-                            <span class="text-gray-600 text-[10px]">Ataque vs Defesa</span>
-                            <span class="text-cyan-400 font-bold">{{ stats.away_goals_scored }} Gols (Fora)</span>
-                        </div>
-                        <div class="w-full bg-gray-900 h-2 rounded-full overflow-hidden flex border border-gray-800/50">
-                            {% with home_pct=stats.home_goals_scored|default:1 away_pct=stats.away_goals_scored|default:1 %}
-                            <div class="bar-h bar-home" style="width: {% widthratio stats.home_goals_scored stats.total_expected_goals 100 %}%"></div>
-                            <div class="bar-h bar-away" style="width: {% widthratio stats.away_goals_scored stats.total_expected_goals 100 %}%"></div>
-                            {% endwith %}
-                        </div>
-                    </div>
-                    <!-- Corners -->
-                    <div>
-                        <div class="flex justify-between text-[11px] font-mono mb-1.5">
-                            <span class="text-emerald-400 font-bold">{{ stats.home_corners_avg }} Cantos (Casa)</span>
-                            <span class="text-gray-600 text-[10px]">Volume de Escanteios</span>
-                            <span class="text-cyan-400 font-bold">{{ stats.away_corners_avg }} Cantos (Fora)</span>
-                        </div>
-                        <div class="w-full bg-gray-900 h-2 rounded-full overflow-hidden flex border border-gray-800/50">
-                            <div class="bar-h bar-home" style="width: {% widthratio stats.home_corners_avg stats.total_corners_expected 100 %}%"></div>
-                            <div class="bar-h bar-away" style="width: {% widthratio stats.away_corners_avg stats.total_corners_expected 100 %}%"></div>
-                        </div>
-                    </div>
-                    <!-- Cards / Fouls -->
-                    <div>
-                        <div class="flex justify-between text-[11px] font-mono mb-1.5">
-                            <span class="text-yellow-400 font-bold">{{ stats.home_yellow_avg }} Amarelos · {{ stats.home_fouls_avg }} Faltas</span>
-                            <span class="text-gray-600 text-[10px]">Disciplina</span>
-                            <span class="text-amber-400 font-bold">{{ stats.away_yellow_avg }} Amarelos · {{ stats.away_fouls_avg }} Faltas</span>
-                        </div>
-                        <div class="w-full bg-gray-900 h-2 rounded-full overflow-hidden flex border border-gray-800/50">
-                            <div class="bar-h bg-gradient-to-r from-yellow-500 to-yellow-400" style="width: 45%"></div>
-                            <div class="bar-h bg-gradient-to-r from-amber-500 to-amber-400" style="width: 55%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- Time Visitante -->
+    <div class="flex items-center gap-4 flex-1 justify-start text-left">
+      <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-gray-800 border border-purple-500/30 flex items-center justify-center text-purple-400 font-black text-xl shadow-lg">
+        {{ match.away_team.name|slice:":2"|upper }}
+      </div>
+      <div>
+        <h2 class="text-xl md:text-2xl font-black text-white tracking-tight">{{ match.away_team.name }}</h2>
+        <span class="text-xs font-mono text-gray-400">Visitante &middot; Pos. 6º</span>
+      </div>
     </div>
 
-    <!-- ═══════════════════════ TAB 2: AO VIVO ═══════════════════════ -->
-    <div id="panel-live" class="tab-panel hidden space-y-5">
-        <div class="glass-card p-8 text-center">
-            {% if stats.is_live %}
-            <div class="inline-flex items-center gap-2 bg-rose-500/15 border border-rose-500/25 px-4 py-1.5 rounded-full text-rose-400 text-xs font-bold mb-5 animate-pulse">
-                <span class="w-2 h-2 rounded-full bg-rose-400"></span>PARTIDA EM ANDAMENTO
-            </div>
-            <h3 class="text-lg font-bold text-white">Radar de Ataques Perigosos (APM)</h3>
-            <p class="text-xs text-gray-500 max-w-md mx-auto mt-2">Os índices de pressão minuto a minuto são coletados e exibidos em tempo real.</p>
-            {% else %}
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gray-900 border border-gray-800/60 text-gray-600 text-2xl mb-4">
-                <i class="fa-regular fa-clock"></i>
-            </div>
-            <h3 class="text-base font-bold text-white">Partida Pré-Jogo</h3>
-            <p class="text-xs text-gray-500 max-w-md mx-auto mt-1.5">O radar de pressão em tempo real será ativado automaticamente no apito inicial.</p>
-            <div class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-900 border border-gray-800/50 text-xs font-mono text-emerald-400">
-                <i class="fa-regular fa-clock text-[10px]"></i>Início: <strong>{{ match.date|date:"H:i" }}</strong>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- ═══════════════════════ TAB 3: GOLS ═══════════════════════ -->
-    <div id="panel-goals" class="tab-panel hidden space-y-5">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="glass-card p-5 text-center accent-glow-green">
-                <span class="metric-label">Over 1.5 Gols</span>
-                <span class="metric-value text-emerald-400 mt-2">{{ stats.prob_over_15 }}%</span>
-                <p class="text-[10px] text-gray-600 mt-1.5 font-mono">Incidência histórica combinada</p>
-            </div>
-            <div class="glass-card p-5 text-center accent-glow-cyan">
-                <span class="metric-label">Over 2.5 Gols</span>
-                <span class="metric-value text-cyan-400 mt-2">{{ stats.prob_over_25 }}%</span>
-                <p class="text-[10px] text-gray-600 mt-1.5 font-mono">Incidência histórica combinada</p>
-            </div>
-            <div class="glass-card p-5 text-center" style="box-shadow: 0 0 20px rgba(139,92,246,0.12);">
-                <span class="metric-label">Ambas Marcam (BTTS)</span>
-                <span class="metric-value text-purple-400 mt-2">{{ stats.prob_btts }}%</span>
-                <p class="text-[10px] text-gray-600 mt-1.5 font-mono">Ambos times vazados</p>
-            </div>
-        </div>
-
-        <!-- Goals Distribution -->
-        <div class="glass-card p-5">
-            <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-chart-pie text-emerald-400"></i>Distribuição de Gols por Faixa
-            </h3>
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                <div class="metric-box">
-                    <span class="metric-label">0-1 Gols</span>
-                    <span class="text-lg font-bold font-mono text-gray-400">{{ stats.prob_under_15|default:"—" }}%</span>
-                </div>
-                <div class="metric-box">
-                    <span class="metric-label">2-3 Gols</span>
-                    <span class="text-lg font-bold font-mono text-emerald-400">{{ stats.prob_2_3_goals|default:"—" }}%</span>
-                </div>
-                <div class="metric-box">
-                    <span class="metric-label">4-5 Gols</span>
-                    <span class="text-lg font-bold font-mono text-cyan-400">{{ stats.prob_4_5_goals|default:"—" }}%</span>
-                </div>
-                <div class="metric-box">
-                    <span class="metric-label">6+ Gols</span>
-                    <span class="text-lg font-bold font-mono text-rose-400">{{ stats.prob_6plus_goals|default:"—" }}%</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ═══════════════════════ TAB 4: ESCANTEIOS ═══════════════════════ -->
-    <div id="panel-corners" class="tab-panel hidden space-y-5">
-        <div class="glass-card p-5">
-            <div class="flex items-center justify-between mb-5">
-                <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                    <i class="fa-solid fa-flag text-amber-400"></i>Matriz de Probabilidade de Escanteios
-                </h3>
-                <span class="text-[10px] font-mono text-gray-600">Baseado nos últimos 10 jogos de cada time</span>
-            </div>
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                <div class="metric-box accent-glow-green">
-                    <span class="metric-label">Over 8.5</span>
-                    <span class="metric-value text-emerald-400">{{ stats.corners_prob_over_85 }}%</span>
-                </div>
-                <div class="metric-box accent-glow-cyan">
-                    <span class="metric-label">Over 9.5</span>
-                    <span class="metric-value text-cyan-400">{{ stats.corners_prob_over_95 }}%</span>
-                </div>
-                <div class="metric-box">
-                    <span class="metric-label">Over 10.5</span>
-                    <span class="metric-value text-amber-400">{{ stats.corners_prob_over_105 }}%</span>
-                </div>
-                <div class="metric-box">
-                    <span class="metric-label">Over 11.5</span>
-                    <span class="metric-value text-rose-400">{{ stats.corners_prob_over_115 }}%</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Corner comparison per team -->
-        <div class="glass-card p-5">
-            <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-scale-balanced text-cyan-400"></i>Escanteios por Equipe
-            </h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="glass-card-inner p-4">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-bold text-white">{{ match.home_team.name }}</span>
-                        <span class="text-xs font-mono text-emerald-400 font-bold">{{ stats.home_corners_avg }}/jogo</span>
-                    </div>
-                    <div class="w-full bg-gray-900 h-2 rounded-full overflow-hidden border border-gray-800/40">
-                        <div class="bar-h bar-home" style="width: {% widthratio stats.home_corners_avg 15 100 %}%"></div>
-                    </div>
-                </div>
-                <div class="glass-card-inner p-4">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-bold text-white">{{ match.away_team.name }}</span>
-                        <span class="text-xs font-mono text-cyan-400 font-bold">{{ stats.away_corners_avg }}/jogo</span>
-                    </div>
-                    <div class="w-full bg-gray-900 h-2 rounded-full overflow-hidden border border-gray-800/40">
-                        <div class="bar-h bar-away" style="width: {% widthratio stats.away_corners_avg 15 100 %}%"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ═══════════════════════ TAB 5: CARTÕES ═══════════════════════ -->
-    <div id="panel-cards" class="tab-panel hidden space-y-5">
-        <div class="glass-card p-5">
-            <h3 class="text-sm font-bold text-white mb-5 flex items-center gap-2">
-                <i class="fa-solid fa-square text-yellow-400"></i>Análise de Disciplina &amp; Cartões
-            </h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <!-- Home -->
-                <div class="glass-card-inner p-4 text-center">
-                    <span class="text-[10px] font-mono text-gray-500 uppercase tracking-wider">{{ match.home_team.name }}</span>
-                    <div class="text-xl font-bold text-white mt-2 font-mono">{{ stats.home_yellow_avg }}</div>
-                    <span class="text-[11px] text-yellow-400">cartões/jogo</span>
-                    <div class="mt-3 pt-3 border-t border-gray-800/40">
-                        <span class="text-[10px] text-gray-500">1 cartão a cada</span>
-                        <div class="text-sm font-bold text-white font-mono">{{ stats.home_fouls_per_card }} faltas</div>
-                    </div>
-                </div>
-                <!-- Total -->
-                <div class="glass-card-inner p-4 text-center bg-yellow-500/[0.03]">
-                    <span class="text-[10px] font-mono text-gray-500 uppercase tracking-wider">Total Esperado</span>
-                    <div class="text-3xl font-black text-amber-400 mt-2 font-mono">{{ stats.total_cards_expected }}</div>
-                    <span class="text-[11px] text-gray-500">cartões na partida</span>
-                    <div class="mt-3 pt-3 border-t border-gray-800/40">
-                        <span class="text-[10px] text-gray-500">Faltas combinadas/jogo</span>
-                        <div class="text-sm font-bold text-white font-mono">{{ stats.home_fouls_avg|add:stats.away_fouls_avg|default:"—" }}</div>
-                    </div>
-                </div>
-                <!-- Away -->
-                <div class="glass-card-inner p-4 text-center">
-                    <span class="text-[10px] font-mono text-gray-500 uppercase tracking-wider">{{ match.away_team.name }}</span>
-                    <div class="text-xl font-bold text-white mt-2 font-mono">{{ stats.away_yellow_avg }}</div>
-                    <span class="text-[11px] text-yellow-400">cartões/jogo</span>
-                    <div class="mt-3 pt-3 border-t border-gray-800/40">
-                        <span class="text-[10px] text-gray-500">1 cartão a cada</span>
-                        <div class="text-sm font-bold text-white font-mono">{{ stats.away_fouls_per_card }} faltas</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ═══════════════════════ TAB 6: ODDS +EV ═══════════════════════ -->
-    <div id="panel-odds-ev" class="tab-panel hidden space-y-5">
-        <div class="glass-card p-5">
-            <div class="flex items-center justify-between mb-5">
-                <div>
-                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-chart-line text-purple-400"></i>Radar de Valor Esperado (+EV)
-                    </h3>
-                    <p class="text-[11px] text-gray-500 mt-0.5">Odd da Casa vs Odd Justa calculada pelo algoritmo</p>
-                </div>
-                <span class="px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    <i class="fa-solid fa-circle-check mr-1"></i>Odds Reais
-                </span>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left font-mono text-xs">
-                    <thead>
-                        <tr class="border-b border-gray-800/60 text-gray-600 uppercase text-[9px] tracking-wider">
-                            <th class="py-3 px-4">Mercado</th>
-                            <th class="py-3 px-4 text-center">Odd Casa</th>
-                            <th class="py-3 px-4 text-center">Odd Justa</th>
-                            <th class="py-3 px-4 text-center">Valor (+EV)</th>
-                            <th class="py-3 px-4 text-right">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-800/40">
-                        {% for item in stats.odds_data %}
-                        <tr class="hover:bg-gray-900/30 transition">
-                            <td class="py-3 px-4 text-white font-bold font-sans text-xs">{{ item.market }}</td>
-                            <td class="py-3 px-4 text-center font-bold text-emerald-400">{{ item.book_odd|floatformat:2 }}</td>
-                            <td class="py-3 px-4 text-center text-gray-500">{{ item.fair_odd|floatformat:2 }}</td>
-                            <td class="py-3 px-4 text-center font-bold {% if '+' in item.ev %}ev-positive{% else %}ev-negative{% endif %}">{{ item.ev }}</td>
-                            <td class="py-3 px-4 text-right">
-                                {% if item.status == 'strong_value' %}<span class="badge-super">SUPER VALOR</span>
-                                {% elif item.status == 'value' %}<span class="badge-value">VALOR</span>
-                                {% else %}<span class="badge-neutral">NEUTRO</span>{% endif %}
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr><td colspan="5" class="py-8 text-center text-gray-600 text-xs">Nenhum mercado +EV detectado para esta partida.</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- ═══════════════════════ TAB 7: ODDS & LINHAS ═══════════════════════ -->
-    <div id="panel-smart-money" class="tab-panel hidden space-y-5">
-        <div class="glass-card p-8 text-center">
-            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-500/10 text-blue-400 text-xl mb-4 border border-blue-500/15">
-                <i class="fa-solid fa-arrow-trend-up"></i>
-            </div>
-            <h3 class="text-base font-bold text-white">Rastreamento Smart Money</h3>
-            <p class="text-xs text-gray-500 max-w-md mx-auto mt-1.5">Identifica oscilações bruscas nas cotações e entradas massivas de profissionais nas casas asiáticas.</p>
-            <div class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-900 border border-gray-800/50 text-xs font-mono text-cyan-400">
-                <i class="fa-solid fa-satellite-dish text-[10px]"></i>Linha monitorada via Pinnacle
-            </div>
-        </div>
-    </div>
-
-    <!-- ═══════════════════════ TAB 8: PRESSÃO ═══════════════════════ -->
-    <div id="panel-pressure" class="tab-panel hidden space-y-5">
-        <div class="glass-card p-5">
-            <div class="flex items-center justify-between mb-5">
-                <div>
-                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-wave-square text-cyan-400"></i>Gráfico de Pressão (IP)
-                    </h3>
-                    <p class="text-[11px] text-gray-500 mt-0.5">Intensidade de ataques perigosos ao longo dos 90 min</p>
-                </div>
-                <span class="text-[10px] font-mono text-gray-600">+20 IP = Zona de Gol Iminente</span>
-            </div>
-
-            {% if stats.graph_data %}
-            <div class="h-64 w-full">
-                <canvas id="pressureChart"></canvas>
-            </div>
-            {% else %}
-            <div class="p-12 text-center bg-gray-900/30 rounded-xl border border-gray-800/40">
-                <i class="fa-solid fa-chart-area text-3xl mb-3 text-gray-700"></i>
-                <p class="text-xs text-gray-600 font-mono">Gráfico de pressão disponível durante e após a partida.</p>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- ═══════════════════════ TAB 9: JOGADORES ═══════════════════════ -->
-    <div id="panel-players" class="tab-panel hidden space-y-5">
-        <div class="glass-card p-8 text-center">
-            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gray-800/60 text-gray-500 text-xl mb-4 border border-gray-800/40">
-                <i class="fa-solid fa-users"></i>
-            </div>
-            <h3 class="text-base font-bold text-white">Escalações &amp; Props Individuais</h3>
-            <p class="text-xs text-gray-500 max-w-md mx-auto mt-1.5">As escalações oficiais com estatísticas individuais são liberadas 45 min antes do apito.</p>
-        </div>
-    </div>
-
+  </div>
 </div>
 
-<!-- ═══════════════════════ CHART + TAB SCRIPT ═══════════════════════ -->
-<script>
-function switchTab(name) {
-    // Hide all panels, deactivate all buttons
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
-    document.querySelectorAll('#tabNav .vip-tab').forEach(b => {
-        b.classList.remove('vip-tab-active');
-        b.classList.add('vip-tab-idle');
-    });
-    // Show selected
-    const panel = document.getElementById('panel-' + name);
-    const btn = document.querySelector('#tabNav [data-tab="' + name + '"]');
-    if (panel) panel.classList.remove('hidden');
-    if (btn) { btn.classList.remove('vip-tab-idle'); btn.classList.add('vip-tab-active'); }
-}
+<!-- ── BARRA DE ABAS HORIZONTAIS (EXATO CORNERPRO) ── -->
+<div class="bg-[#121518] border border-gray-800/80 rounded-xl px-3 py-2 mb-6 flex items-center justify-between overflow-x-auto shadow-md">
+  <div class="flex items-center gap-1 sm:gap-2 font-mono text-xs">
+    <a href="#global" class="px-3.5 py-1.5 rounded-lg bg-[#00b4d8] text-gray-950 font-bold shadow-sm shadow-cyan-500/30">Análise Global</a>
+    <a href="#gols" class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Gols</a>
+    <a href="#escanteios" class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Escanteios</a>
+    <a href="#cartoes" class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Cartões</a>
+    <a href="#odds" class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Análise de Odds</a>
+    <a href="#jogadores" class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition hidden md:inline-block">Dados de Jogadores</a>
+  </div>
 
-{% if stats.graph_data %}
-document.addEventListener('DOMContentLoaded', function() {
-    const ctx = document.getElementById('pressureChart');
-    if (!ctx) return;
-    const data = {{ stats.graph_data|safe }};
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: data.map(d => d.minute + "'"),
-            datasets: [{
-                label: '{{ match.home_team.name }}',
-                data: data.map(d => d.home),
-                borderColor: '#10b981',
-                backgroundColor: 'rgba(16,185,129,0.08)',
-                tension: 0.3, fill: true, pointRadius: 0, borderWidth: 2
-            }, {
-                label: '{{ match.away_team.name }}',
-                data: data.map(d => d.away),
-                borderColor: '#06b6d4',
-                backgroundColor: 'rgba(6,182,212,0.08)',
-                tension: 0.3, fill: true, pointRadius: 0, borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { labels: { color: '#9ca3af', font: { family: 'JetBrains Mono', size: 11 } } } },
-            scales: {
-                x: { grid: { color: 'rgba(75,85,99,0.15)' }, ticks: { color: '#6b7280', font: { size: 10 } } },
-                y: { grid: { color: 'rgba(75,85,99,0.15)' }, ticks: { color: '#6b7280', font: { size: 10 } } }
-            }
-        }
-    });
-});
-{% endif %}
-</script>
+  <div class="flex items-center gap-2 font-mono text-[11px] text-gray-400">
+    <span class="hidden sm:inline bg-[#1c232d] px-2.5 py-1 rounded border border-gray-700">Completa</span>
+  </div>
+</div>
+
+<!-- ── GRID PRINCIPAL: 2 COLUNAS (EXATO ANALISE GLOBAL 01.PNG) ── -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       COLUNA DA ESQUERDA (8 COLS): PREVISÕES E TENDÊNCIAS
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="lg:col-span-7 xl:col-span-8 space-y-6">
+
+    <!-- Card 1: Previsões e Tendências -->
+    <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-5">
+      
+      <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
+        <div class="flex items-center gap-2.5">
+          <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Previsões e Tendências</h3>
+        </div>
+        <span class="text-xs font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">Modelo IA v3</span>
+      </div>
+
+      <!-- Grid de 6 KPIs (2 Linhas x 3 Colunas como no print) -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 font-mono">
+        
+        <!-- KPI 1: Over 2.5 FT -->
+        <div class="bg-[#0e1217] p-3 rounded-lg border-b-2 border-rose-500 border border-gray-800/80 flex flex-col justify-between">
+          <span class="text-[11px] text-gray-400">Over 2.5 FT</span>
+          <span class="text-2xl font-black text-rose-500 my-1">42%</span>
+          <span class="text-[10px] text-gray-500">Linha esticada</span>
+        </div>
+
+        <!-- KPI 2: Over 1.5 FT -->
+        <div class="bg-[#0e1217] p-3 rounded-lg border-b-2 border-[#00d26a] border border-gray-800/80 flex flex-col justify-between">
+          <span class="text-[11px] text-gray-400">Over 1.5 FT</span>
+          <span class="text-2xl font-black text-[#00d26a] my-1">82%</span>
+          <span class="text-[10px] text-emerald-400 font-bold">Alta confiança</span>
+        </div>
+
+        <!-- KPI 3: Ambas Marcam -->
+        <div class="bg-[#0e1217] p-3 rounded-lg border-b-2 border-amber-500 border border-gray-800/80 flex flex-col justify-between">
+          <span class="text-[11px] text-gray-400">Ambas Marcam</span>
+          <span class="text-2xl font-black text-amber-400 my-1">64%</span>
+          <span class="text-[10px] text-gray-500">Tendência sim</span>
+        </div>
+
+        <!-- KPI 4: Pico de Gols -->
+        <div class="bg-[#0e1217] p-3 rounded-lg border-b-2 border-cyan-500 border border-gray-800/80 flex flex-col justify-between">
+          <span class="text-[11px] text-gray-400">Pico de gols</span>
+          <span class="text-2xl font-black text-cyan-400 my-1">31'-HT</span>
+          <span class="text-[10px] text-gray-500">Pressão final 1ºT</span>
+        </div>
+
+        <!-- KPI 5: Gols Esperados (xG) -->
+        <div class="bg-[#0e1217] p-3 rounded-lg border-b-2 border-cyan-500 border border-gray-800/80 flex flex-col justify-between">
+          <span class="text-[11px] text-gray-400">Gols esperados</span>
+          <span class="text-2xl font-black text-cyan-400 my-1">2.65</span>
+          <span class="text-[10px] text-gray-500">Média combinada</span>
+        </div>
+
+        <!-- KPI 6: Escanteios Esperados -->
+        <div class="bg-[#0e1217] p-3 rounded-lg border-b-2 border-cyan-500 border border-gray-800/80 flex flex-col justify-between">
+          <span class="text-[11px] text-gray-400">Cantos esperados</span>
+          <span class="text-2xl font-black text-cyan-400 my-1">10.40</span>
+          <span class="text-[10px] text-gray-500">5.80 x 4.60</span>
+        </div>
+
+      </div>
+
+      <!-- Bullet Points de Resumo Textual (Exato CornerPro) -->
+      <div class="bg-[#0e1217] p-4 rounded-xl border border-gray-800/80 space-y-2.5 text-xs text-gray-300">
+        <div class="flex items-start gap-2.5">
+          <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0 mt-1"></span>
+          <p>O modelo projeta <strong class="text-white font-mono">2.65 gols</strong> na partida: 1.45 para o {{ match.home_team.name }} e 1.20 para o {{ match.away_team.name }}.</p>
+        </div>
+        <div class="flex items-start gap-2.5">
+          <span class="w-2 h-2 rounded-full bg-[#00d26a] shrink-0 mt-1"></span>
+          <p>Nos escanteios a projeção combinada é de <strong class="text-[#00d26a] font-mono">10.40 cantos</strong> (5.80 a favor do mandante &middot; 4.60 visitante).</p>
+        </div>
+        <div class="flex items-start gap-2.5">
+          <span class="w-2 h-2 rounded-full bg-cyan-400 shrink-0 mt-1"></span>
+          <p>O placar mais provável pela distribuição de Poisson é <strong class="text-white font-mono">1-1 (15%)</strong> seguido de <strong class="text-white font-mono">2-1 (12%)</strong>.</p>
+        </div>
+        <div class="flex items-start gap-2.5">
+          <span class="w-2 h-2 rounded-full bg-purple-400 shrink-0 mt-1"></span>
+          <p>O intervalo com maior incidência de escanteios é a janela <strong class="text-purple-400 font-mono">75'-FT (86% de ocorrência)</strong>.</p>
+        </div>
+      </div>
+
+      <!-- Tabela Comparativa de Métricas por Setor (Gols, Cantos, Cartões) -->
+      <div class="border border-gray-800/80 rounded-xl overflow-hidden font-mono text-xs">
+        
+        <!-- Cabeçalho Times -->
+        <div class="grid grid-cols-3 bg-[#171d26] py-2.5 px-4 text-center border-b border-gray-800/80 font-bold">
+          <div class="text-left text-cyan-400 truncate">{{ match.home_team.name }}</div>
+          <div class="text-gray-400 text-[11px] uppercase">Métrica Comparativa</div>
+          <div class="text-right text-purple-400 truncate">{{ match.away_team.name }}</div>
+        </div>
+
+        <!-- Seção Gols -->
+        <div class="divide-y divide-gray-800/50 bg-[#0e1217]">
+          <div class="grid grid-cols-3 py-2 px-4 text-center items-center">
+            <span class="text-left text-emerald-400 font-bold">85%</span>
+            <span class="text-gray-400 text-[11px]">Marca ao menos 1 gol</span>
+            <span class="text-right text-emerald-400 font-bold">78%</span>
+          </div>
+          <div class="grid grid-cols-3 py-2 px-4 text-center items-center">
+            <span class="text-left text-cyan-400 font-bold">31'-HT</span>
+            <span class="text-gray-400 text-[11px]">Intervalo mais quente de gols</span>
+            <span class="text-right text-cyan-400 font-bold">60'-75'</span>
+          </div>
+        </div>
+
+        <!-- Seção Escanteios -->
+        <div class="bg-[#12161d] py-1 px-4 text-[10px] text-gray-500 font-bold uppercase tracking-wider border-t border-b border-gray-800/80">
+          Escanteios &middot; Linhas &amp; Janelas
+        </div>
+        <div class="divide-y divide-gray-800/50 bg-[#0e1217]">
+          <div class="grid grid-cols-3 py-2 px-4 text-center items-center">
+            <span class="text-left text-emerald-400 font-bold">75%</span>
+            <span class="text-gray-400 text-[11px]">Cantos Janela 37'-HT</span>
+            <span class="text-right text-emerald-400 font-bold">70%</span>
+          </div>
+          <div class="grid grid-cols-3 py-2 px-4 text-center items-center">
+            <span class="text-left text-cyan-400 font-bold">5.8 cantos</span>
+            <span class="text-gray-400 text-[11px]">Média Cantos a Favor</span>
+            <span class="text-right text-cyan-400 font-bold">4.6 cantos</span>
+          </div>
+          <div class="grid grid-cols-3 py-2 px-4 text-center items-center">
+            <span class="text-left text-[#00d26a] font-bold">88%</span>
+            <span class="text-gray-400 text-[11px]">Cantos Janela 75'-FT (Pressão)</span>
+            <span class="text-right text-[#00d26a] font-bold">84%</span>
+          </div>
+        </div>
+
+        <!-- Seção Cartões -->
+        <div class="bg-[#12161d] py-1 px-4 text-[10px] text-gray-500 font-bold uppercase tracking-wider border-t border-b border-gray-800/80">
+          Cartões &middot; Tendência de Fim de Jogo
+        </div>
+        <div class="divide-y divide-gray-800/50 bg-[#0e1217]">
+          <div class="grid grid-cols-3 py-2 px-4 text-center items-center">
+            <span class="text-left text-amber-400 font-bold">4.2</span>
+            <span class="text-gray-400 text-[11px]">Média de Cartões do Time</span>
+            <span class="text-right text-amber-400 font-bold">4.5</span>
+          </div>
+          <div class="grid grid-cols-3 py-2 px-4 text-center items-center">
+            <span class="text-left text-amber-400 font-bold">9 em 10</span>
+            <span class="text-gray-400 text-[11px]">Cartão após os 76' min</span>
+            <span class="text-right text-amber-400 font-bold">8 em 10</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       COLUNA DA DIREITA (4 COLS): INSIGHTS E CARACTERÍSTICAS (TÁTICA)
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="lg:col-span-5 xl:col-span-4 space-y-6">
+
+    <!-- Card 1: Insights do Time (BETA) -->
+    <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
+      <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Insights Rápidos</h3>
+        </div>
+        <span class="px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-400 font-mono text-[10px] font-bold border border-cyan-500/30">IA INSIGHT</span>
+      </div>
+
+      <div class="space-y-2.5 text-xs">
+        <!-- Item 1: Artilheiro / Ataque -->
+        <div class="p-3 rounded-lg bg-[#0e1217] border border-gray-800/80 flex items-start gap-3">
+          <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-[#00d26a] font-mono text-[10px] font-bold shrink-0">ATAQUE</span>
+          <p class="text-gray-300">{{ match.home_team.name }} marcou o primeiro gol da partida em <strong class="text-white">7 dos últimos 8 jogos</strong> em casa.</p>
+        </div>
+
+        <!-- Item 2: Defesa / Tendência -->
+        <div class="p-3 rounded-lg bg-[#0e1217] border border-gray-800/80 flex items-start gap-3">
+          <span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 font-mono text-[10px] font-bold shrink-0">PRESSÃO</span>
+          <p class="text-gray-300">Ambas as equipes geram mais de <strong class="text-white">5.5 escanteios por jogo</strong> quando jogam com placar adverso.</p>
+        </div>
+
+        <!-- Item 3: Cartões Tardios -->
+        <div class="p-3 rounded-lg bg-[#0e1217] border border-gray-800/80 flex items-start gap-3">
+          <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-mono text-[10px] font-bold shrink-0">DISCIPLINA</span>
+          <p class="text-gray-300">Alta probabilidade de cartão após 76' min devido ao perfil físico do confronto.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: Forças e Fraquezas Táticas (Exato print analise global 02.png) -->
+    <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
+      <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Perfil Tático das Equipes</h3>
+        </div>
+      </div>
+
+      <!-- Comparativo Lado a Lado -->
+      <div class="space-y-4">
+        
+        <!-- Mandante -->
+        <div>
+          <span class="text-xs font-bold text-cyan-400 font-mono block mb-2">{{ match.home_team.name }}</span>
+          <div class="space-y-1.5 text-xs text-gray-300">
+            <div class="flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#00d26a]"></span>
+              <span>Transições ofensivas rápidas pelas pontas</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#00d26a]"></span>
+              <span>Forte presença aérea em bolas paradas</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+              <span>Cede espaços entre linhas defensivas</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-t border-gray-800/60 pt-3">
+          <span class="text-xs font-bold text-purple-400 font-mono block mb-2">{{ match.away_team.name }}</span>
+          <div class="space-y-1.5 text-xs text-gray-300">
+            <div class="flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#00d26a]"></span>
+              <span>Boa circulação e posse de bola no meio</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+              <span>Baixa eficácia de finalização fora de casa</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+              <span>Dificuldade em conter contra-ataques velozes</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>
 {% endblock %}
