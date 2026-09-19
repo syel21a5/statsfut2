@@ -130,35 +130,26 @@
           </button>
 
           <!-- Menu Suspenso -->
-          <div id="marketsDropdownMenu" class="hidden absolute left-0 mt-2 w-48 bg-[#14181f] border border-gray-800 rounded-xl shadow-2xl py-1.5 z-50 font-mono text-xs divide-y divide-gray-800/60">
+          <div id="marketsDropdownMenu" class="hidden absolute left-0 mt-2 w-52 bg-[#14181f] border border-gray-800 rounded-xl shadow-2xl py-1.5 z-50 font-mono text-xs divide-y divide-gray-800/60">
             <div class="py-1">
-              <a href="{{ lang_prefix }}/vip/jogos/?market=gols" class="flex items-center justify-between px-3 py-2 text-gray-300 hover:bg-gray-800/80 hover:text-cyan-400 transition {% if selected_market == 'gols' %}bg-cyan-500/10 text-cyan-400 font-bold{% endif %}">
-                <span class="flex items-center gap-2">
-                  <i class="fa-solid fa-futbol text-[11px] text-emerald-400"></i>
-                  <span>Goals Market</span>
-                </span>
-                <span class="text-[10px] text-gray-500">Over/Under</span>
+              <a href="{{ lang_prefix }}/vip/jogos/?market=gols" class="flex items-center gap-2.5 px-3.5 py-2 text-gray-300 hover:bg-gray-800/80 hover:text-cyan-400 transition whitespace-nowrap {% if selected_market == 'gols' %}bg-cyan-500/10 text-cyan-400 font-bold{% endif %}">
+                <i class="fa-solid fa-futbol text-[12px] text-emerald-400 w-4 text-center"></i>
+                <span>Goals Market</span>
               </a>
 
-              <a href="{{ lang_prefix }}/vip/jogos/?market=cantos" class="flex items-center justify-between px-3 py-2 text-gray-300 hover:bg-gray-800/80 hover:text-cyan-400 transition {% if selected_market == 'cantos' %}bg-cyan-500/10 text-cyan-400 font-bold{% endif %}">
-                <span class="flex items-center gap-2">
-                  <i class="fa-solid fa-flag text-[11px] text-cyan-400"></i>
-                  <span>Corners Market</span>
-                </span>
-                <span class="text-[10px] text-gray-500">8.5 - 11.5</span>
+              <a href="{{ lang_prefix }}/vip/jogos/?market=cantos" class="flex items-center gap-2.5 px-3.5 py-2 text-gray-300 hover:bg-gray-800/80 hover:text-cyan-400 transition whitespace-nowrap {% if selected_market == 'cantos' %}bg-cyan-500/10 text-cyan-400 font-bold{% endif %}">
+                <i class="fa-solid fa-flag text-[12px] text-cyan-400 w-4 text-center"></i>
+                <span>Corners Market</span>
               </a>
 
-              <a href="{{ lang_prefix }}/vip/jogos/?market=lays" class="flex items-center justify-between px-3 py-2 text-gray-300 hover:bg-gray-800/80 hover:text-cyan-400 transition {% if selected_market == 'lays' %}bg-cyan-500/10 text-cyan-400 font-bold{% endif %}">
-                <span class="flex items-center gap-2">
-                  <i class="fa-solid fa-ban text-[11px] text-rose-400"></i>
-                  <span>Lay Markets</span>
-                </span>
-                <span class="text-[10px] text-gray-500">Contra Zebra</span>
+              <a href="{{ lang_prefix }}/vip/jogos/?market=lays" class="flex items-center gap-2.5 px-3.5 py-2 text-gray-300 hover:bg-gray-800/80 hover:text-cyan-400 transition whitespace-nowrap {% if selected_market == 'lays' %}bg-cyan-500/10 text-cyan-400 font-bold{% endif %}">
+                <i class="fa-solid fa-ban text-[12px] text-rose-400 w-4 text-center"></i>
+                <span>Lay Markets</span>
               </a>
             </div>
 
             <div class="pt-1">
-              <a href="{{ lang_prefix }}/vip/jogos/?market=all" class="flex items-center justify-between px-3 py-1.5 text-gray-400 hover:bg-gray-800/80 hover:text-white transition text-[11px]">
+              <a href="{{ lang_prefix }}/vip/jogos/?market=all" class="flex items-center justify-between px-3.5 py-2 text-gray-400 hover:bg-gray-800/80 hover:text-white transition text-[11px] whitespace-nowrap">
                 <span>View All Markets</span>
                 <i class="fa-solid fa-arrow-right text-[9px]"></i>
               </a>
