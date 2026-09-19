@@ -298,13 +298,13 @@
           <div class="my-2 space-y-1.5">
             <div class="flex items-center gap-2">
               {% if pick.match.home_team.logo_url %}
-                <img src="{{ pick.match.home_team.logo_url }}" alt="{{ pick.match.home_team.name }}" class="w-4 h-4 object-contain shrink-0" onerror="this.style.display='none'">
+                <img src="https://statsfut.com{{ pick.match.home_team.logo_url }}" alt="{{ pick.match.home_team.name }}" class="w-4 h-4 object-contain shrink-0" onerror="this.style.display='none'">
               {% endif %}
               <div class="text-xs font-bold text-white truncate">{{ pick.match.home_team.name }}</div>
             </div>
             <div class="flex items-center gap-2">
               {% if pick.match.away_team.logo_url %}
-                <img src="{{ pick.match.away_team.logo_url }}" alt="{{ pick.match.away_team.name }}" class="w-4 h-4 object-contain shrink-0" onerror="this.style.display='none'">
+                <img src="https://statsfut.com{{ pick.match.away_team.logo_url }}" alt="{{ pick.match.away_team.name }}" class="w-4 h-4 object-contain shrink-0" onerror="this.style.display='none'">
               {% endif %}
               <div class="text-xs font-bold text-white truncate">{{ pick.match.away_team.name }}</div>
             </div>
@@ -399,7 +399,7 @@
                 <a href="/vip/analise/{{ m.id }}/" class="hover:text-cyan-400 transition inline-flex items-center gap-2 flex-wrap">
                   <span class="inline-flex items-center gap-1.5">
                     {% if m.home_team.logo_url %}
-                      <img src="{{ m.home_team.logo_url }}" alt="{{ m.home_team.name }}" class="w-4 h-4 object-contain inline-block shrink-0" onerror="this.style.display='none'">
+                      <img src="https://statsfut.com{{ m.home_team.logo_url }}" alt="{{ m.home_team.name }}" class="w-4 h-4 object-contain inline-block shrink-0" onerror="this.style.display='none'">
                     {% endif %}
                     <span>{{ m.home_team.name }}</span>
                   </span>
@@ -408,7 +408,7 @@
 
                   <span class="inline-flex items-center gap-1.5">
                     {% if m.away_team.logo_url %}
-                      <img src="{{ m.away_team.logo_url }}" alt="{{ m.away_team.name }}" class="w-4 h-4 object-contain inline-block shrink-0" onerror="this.style.display='none'">
+                      <img src="https://statsfut.com{{ m.away_team.logo_url }}" alt="{{ m.away_team.name }}" class="w-4 h-4 object-contain inline-block shrink-0" onerror="this.style.display='none'">
                     {% endif %}
                     <span>{{ m.away_team.name }}</span>
                   </span>
