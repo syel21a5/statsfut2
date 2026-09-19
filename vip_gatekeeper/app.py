@@ -337,9 +337,16 @@ class VIPProxyHandler(http.server.BaseHTTPRequestHandler):
                 content = e.read()
 
             self.send_response(status_code)
+            has_cache_header = False
             for h, v in headers_list:
                 if h.lower() not in ['transfer-encoding', 'content-length', 'connection']:
+                    if h.lower() == 'cache-control':
+                        has_cache_header = True
                     self.send_header(h, v)
+            if not has_cache_header:
+                self.send_header("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0")
+                self.send_header("Pragma", "no-cache")
+                self.send_header("Expires", "0")
             self.send_header('Content-Length', str(len(content)))
             self.end_headers()
             self.wfile.write(content)
