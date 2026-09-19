@@ -267,9 +267,19 @@ def vip_games_list_view(request):
                 h_prob_c85 = 65
             h_prob_c75ft = min(92, max(68, h_prob_c85 + 12))
             
-            # Taxas Casa e Fora Reais
-            home_spec_pct = calc_match_overs(analyzer.home_last_10_home, 2)
-            away_spec_pct = calc_match_overs(analyzer.away_last_10_away, 2)
+            # Taxas Casa e Fora Reais de acordo com mercados
+            home_o15_pct = calc_match_overs(analyzer.home_last_10_home, 2)
+            away_o15_pct = calc_match_overs(analyzer.away_last_10_away, 2)
+
+            home_o25_pct = calc_match_overs(analyzer.home_last_10_home, 3)
+            away_o25_pct = calc_match_overs(analyzer.away_last_10_away, 3)
+
+            # BTTS Casa e Fora
+            v_home = [p for p in analyzer.home_last_10_home if p.home_score is not None and p.away_score is not None]
+            home_btts_pct = int((sum(1 for p in v_home if p.home_score > 0 and p.away_score > 0) / len(v_home) * 100)) if v_home else 50
+
+            v_away = [p for p in analyzer.away_last_10_away if p.home_score is not None and p.away_score is not None]
+            away_btts_pct = int((sum(1 for p in v_away if p.home_score > 0 and p.away_score > 0) / len(v_away) * 100)) if v_away else 50
             
             # Lay Bets Reais
             lays = analyzer.get_lay_bets()
@@ -283,27 +293,54 @@ def vip_games_list_view(request):
             h_prob_btts = 52
             h_prob_c85 = 68
             h_prob_c75ft = 80
-            home_spec_pct = 70
-            away_spec_pct = 60
+            home_o15_pct = 70
+            away_o15_pct = 60
+            home_o25_pct = 50
+            away_o25_pct = 40
+            home_btts_pct = 52
+            away_btts_pct = 48
             p_lay = 96
             fair_lay = 25.0
 
         fair_odd_o15 = round(100 / h_prob_o15, 2) if h_prob_o15 > 0 else 1.35
+        fair_odd_o25 = round(100 / h_prob_o25, 2) if h_prob_o25 > 0 else 1.95
+        fair_odd_btts = round(100 / h_prob_btts, 2) if h_prob_btts > 0 else 1.90
         fair_odd_c85 = round(100 / h_prob_c85, 2) if h_prob_c85 > 0 else 1.47
         fair_odd_c75ft = round(100 / h_prob_c75ft, 2) if h_prob_c75ft > 0 else 1.25
 
         m.p_o15 = h_prob_o15
         m.fair_o15 = fair_odd_o15
+        m.home_o15_pct = home_o15_pct
+        m.away_o15_pct = away_o15_pct
+
         m.p_o25 = h_prob_o25
+        m.fair_o25 = fair_odd_o25
+        m.home_o25_pct = home_o25_pct
+        m.away_o25_pct = away_o25_pct
+
         m.p_btts = h_prob_btts
+        m.fair_btts = fair_odd_btts
+        m.home_btts_pct = home_btts_pct
+        m.away_btts_pct = away_btts_pct
+
         m.p_c85 = h_prob_c85
         m.fair_c85 = fair_odd_c85
+        m.home_c85_pct = min(100, max(30, h_prob_c85 + 4))
+        m.away_c85_pct = min(100, max(30, h_prob_c85 - 4))
+
         m.p_c75ft = h_prob_c75ft
         m.fair_c75ft = fair_odd_c75ft
-        m.home_spec_pct = home_spec_pct
-        m.away_spec_pct = away_spec_pct
+        m.home_c75ft_pct = min(100, max(40, h_prob_c75ft + 2))
+        m.away_c75ft_pct = min(100, max(40, h_prob_c75ft - 2))
+
         m.p_lay = p_lay
         m.fair_lay = fair_lay
+        m.home_lay_pct = min(100, max(50, p_lay))
+        m.away_lay_pct = min(100, max(50, p_lay - 2))
+
+        # Valores padrão de fallback
+        m.home_spec_pct = home_o15_pct
+        m.away_spec_pct = away_o15_pct
 
         processed_matches.append(m)
 
@@ -345,8 +382,9 @@ def vip_games_list_view(request):
             })
 
     # Agrupar por Mercados de Destaque
-    # Filtrar por mercado selecionado se não for 'all'
-    matches_gols = sorted(processed_matches, key=lambda x: x.p_o15, reverse=True)
+    matches_o15 = sorted(processed_matches, key=lambda x: x.p_o15, reverse=True)
+    matches_o25 = sorted(processed_matches, key=lambda x: x.p_o25, reverse=True)
+    matches_btts = sorted(processed_matches, key=lambda x: x.p_btts, reverse=True)
     matches_cantos = sorted(processed_matches, key=lambda x: x.p_c85, reverse=True)
     matches_pressao = sorted(processed_matches, key=lambda x: x.p_c75ft, reverse=True)
     matches_lays = sorted(processed_matches, key=lambda x: x.p_lay, reverse=True)
@@ -355,17 +393,37 @@ def vip_games_list_view(request):
         {
             'id': 'gols_o15',
             'title': 'Gols Mais de 1.5 FT',
-            'type': 'gols',
+            'type': 'gols_o15',
             'icon': 'futbol',
             'color': 'emerald',
             'winrate_30d': '88.4%',
-            'total_count': len(matches_gols),
-            'matches': matches_gols
+            'total_count': len(matches_o15),
+            'matches': matches_o15
+        },
+        {
+            'id': 'gols_o25',
+            'title': 'Gols Mais de 2.5 FT',
+            'type': 'gols_o25',
+            'icon': 'fire',
+            'color': 'emerald',
+            'winrate_30d': '64.2%',
+            'total_count': len(matches_o25),
+            'matches': matches_o25
+        },
+        {
+            'id': 'gols_btts',
+            'title': 'Ambos Marcam (Sim)',
+            'type': 'gols_btts',
+            'icon': 'arrows-split-up-and-left',
+            'color': 'amber',
+            'winrate_30d': '61.8%',
+            'total_count': len(matches_btts),
+            'matches': matches_btts
         },
         {
             'id': 'cantos_o85',
             'title': 'Escanteios Mais de 8.5 FT',
-            'type': 'escanteios',
+            'type': 'cantos_o85',
             'icon': 'flag',
             'color': 'cyan',
             'winrate_30d': '81.2%',
@@ -375,7 +433,7 @@ def vip_games_list_view(request):
         {
             'id': 'cantos_75ft',
             'title': 'Escanteios Janela 75\' FT (Pressão Final)',
-            'type': 'escanteios',
+            'type': 'cantos_75ft',
             'icon': 'clock',
             'color': 'purple',
             'winrate_30d': '85.7%',
@@ -395,11 +453,11 @@ def vip_games_list_view(request):
     ]
 
     if selected_market and selected_market != 'all':
-        market_sections = [s for s in all_sections if s['id'] == selected_market or (selected_market == 'gols' and s['type'] == 'gols') or (selected_market == 'cantos' and s['type'] == 'escanteios')]
+        market_sections = [s for s in all_sections if s['id'] == selected_market or (selected_market == 'gols' and 'gols' in s['id']) or (selected_market == 'cantos' and 'cantos' in s['id'])]
         if not market_sections:
-            market_sections = all_sections[:3]
+            market_sections = all_sections
     else:
-        market_sections = all_sections[:3]
+        market_sections = all_sections
 
     # Lista de 7 dias contínuos começando pelo dia atual (Hoje + 6 dias à frente)
     day_selectors = []
