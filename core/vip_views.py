@@ -562,6 +562,7 @@ def vip_games_list_view(request):
             'is_today': delta == 0,
             'is_yesterday': delta == -1,
             'is_tomorrow': delta == 1,
+            'is_active': (delta == 0 and status_filter in ['today', None, '']) or (status_filter == d.strftime('%Y-%m-%d')) or (delta == 1 and status_filter == 'tomorrow'),
             'match_count': day_match_count,
             'has_matches': day_match_count > 0,
         })

@@ -32,24 +32,22 @@
       <!-- Carrossel de 7 Dias com Micro-Contador e Destaque Neon -->
       <div class="grid grid-cols-7 gap-1">
         {% for d in day_selectors %}
-        {% with is_active=(d.is_today and current_status == 'today') or (current_status == d.date_str) or (d.is_tomorrow and current_status == 'tomorrow') %}
         <a href="?status={% if d.is_today %}today{% elif d.is_tomorrow %}tomorrow{% else %}{{ d.date_str }}{% endif %}{% if selected_market %}&market={{ selected_market }}{% endif %}"
            class="flex flex-col items-center justify-between py-2 px-0.5 rounded-lg text-center transition-all duration-150 relative group
-                  {% if is_active %}bg-gradient-to-b from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/30 font-bold scale-[1.03] z-10 border border-cyan-300/40{% else %}bg-[#0e1217] text-gray-400 hover:text-gray-100 hover:bg-gray-800/80 border border-gray-800/40{% endif %}">
-          <span class="text-[8px] font-mono tracking-tighter uppercase {% if is_active %}text-cyan-100 font-extrabold{% else %}text-gray-500 group-hover:text-gray-400{% endif %}">{{ d.weekday }}</span>
-          <span class="text-xs font-black leading-tight mt-0.5 {% if is_active %}text-white{% endif %}">{{ d.day_num }}</span>
+                  {% if d.is_active %}bg-gradient-to-b from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/30 font-bold scale-[1.03] z-10 border border-cyan-300/40{% else %}bg-[#0e1217] text-gray-400 hover:text-gray-100 hover:bg-gray-800/80 border border-gray-800/40{% endif %}">
+          <span class="text-[8px] font-mono tracking-tighter uppercase {% if d.is_active %}text-cyan-100 font-extrabold{% else %}text-gray-500 group-hover:text-gray-400{% endif %}">{{ d.weekday }}</span>
+          <span class="text-xs font-black leading-tight mt-0.5 {% if d.is_active %}text-white{% endif %}">{{ d.day_num }}</span>
           
           <!-- Micro-Badge de Jogos do Dia -->
           {% if d.has_matches %}
             <span class="mt-1 text-[8px] font-mono font-bold px-1 rounded-full leading-none py-0.5
-                         {% if is_active %}bg-gray-950/70 text-cyan-300{% else %}bg-gray-800/90 text-gray-400 group-hover:text-emerald-400{% endif %}">
+                         {% if d.is_active %}bg-gray-950/70 text-cyan-300{% else %}bg-gray-800/90 text-gray-400 group-hover:text-emerald-400{% endif %}">
               {{ d.match_count }}
             </span>
           {% else %}
-            <span class="mt-1 w-1.5 h-1.5 rounded-full {% if is_active %}bg-white{% else %}bg-gray-800{% endif %}"></span>
+            <span class="mt-1 w-1.5 h-1.5 rounded-full {% if d.is_active %}bg-white{% else %}bg-gray-800{% endif %}"></span>
           {% endif %}
         </a>
-        {% endwith %}
         {% endfor %}
       </div>
 
