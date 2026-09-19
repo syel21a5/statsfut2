@@ -501,17 +501,18 @@ def vip_games_list_view(request):
             if m.p_lay >= 92:
                 top_picks.append({'match': m, 'market_name': 'Lay Correct Score', 'badge_color': 'rose', 'prob': m.p_lay, 'fair_odd': m.fair_lay})
         else:
-            # Todos os mercados (Diversificado)
-            if m.p_o15 >= 75:
+            # Todos os mercados (Diversificado) - Régua de Elite
+            if m.p_o15 >= 85:
                 top_picks.append({'match': m, 'market_name': 'Over 1.5 Goals FT', 'badge_color': 'emerald', 'prob': m.p_o15, 'fair_odd': m.fair_o15})
-            elif m.p_c85 >= 65:
+            elif m.p_c85 >= 80:
                 top_picks.append({'match': m, 'market_name': 'Corners Over 8.5 FT', 'badge_color': 'cyan', 'prob': m.p_c85, 'fair_odd': m.fair_c85})
-            elif m.p_btts >= 55:
+            elif m.p_btts >= 75:
                 top_picks.append({'match': m, 'market_name': 'Both Teams to Score (BTTS)', 'badge_color': 'amber', 'prob': m.p_btts, 'fair_odd': m.fair_btts})
 
     top_picks_sorted = sorted(top_picks, key=lambda x: x['prob'], reverse=True)[:5]
     if not top_picks_sorted and processed_matches:
-        for m in processed_matches[:5]:
+        valid_fallbacks = [m for m in processed_matches if m.p_o15 >= 80]
+        for m in valid_fallbacks[:5]:
             top_picks_sorted.append({
                 'match': m,
                 'market_name': 'Over 1.5 Goals FT',
@@ -520,15 +521,15 @@ def vip_games_list_view(request):
                 'fair_odd': m.fair_o15
             })
 
-    # Agrupar por Mercados de Destaque
-    matches_o15 = sorted(processed_matches, key=lambda x: x.p_o15, reverse=True)
-    matches_o25 = sorted(processed_matches, key=lambda x: x.p_o25, reverse=True)
-    matches_btts = sorted(processed_matches, key=lambda x: x.p_btts, reverse=True)
-    matches_u35 = sorted(processed_matches, key=lambda x: x.p_u35, reverse=True)
-    matches_c75 = sorted(processed_matches, key=lambda x: x.p_c75, reverse=True)
-    matches_cantos = sorted(processed_matches, key=lambda x: x.p_c85, reverse=True)
-    matches_pressao = sorted(processed_matches, key=lambda x: x.p_c75ft, reverse=True)
-    matches_lays = sorted(processed_matches, key=lambda x: x.p_lay, reverse=True)
+    # Agrupar por Mercados de Destaque com Filtros Estritos de Alta Assertividade (VIP Elite)
+    matches_o15 = sorted([m for m in processed_matches if m.p_o15 >= 85], key=lambda x: x.p_o15, reverse=True)
+    matches_o25 = sorted([m for m in processed_matches if m.p_o25 >= 75], key=lambda x: x.p_o25, reverse=True)
+    matches_btts = sorted([m for m in processed_matches if m.p_btts >= 75], key=lambda x: x.p_btts, reverse=True)
+    matches_u35 = sorted([m for m in processed_matches if m.p_u35 >= 85], key=lambda x: x.p_u35, reverse=True)
+    matches_c75 = sorted([m for m in processed_matches if m.p_c75 >= 85], key=lambda x: x.p_c75, reverse=True)
+    matches_cantos = sorted([m for m in processed_matches if m.p_c85 >= 80], key=lambda x: x.p_c85, reverse=True)
+    matches_pressao = sorted([m for m in processed_matches if m.p_c75ft >= 75], key=lambda x: x.p_c75ft, reverse=True)
+    matches_lays = sorted([m for m in processed_matches if m.p_lay >= 90], key=lambda x: x.p_lay, reverse=True)
 
     all_sections = [
         {
