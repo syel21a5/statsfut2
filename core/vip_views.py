@@ -216,6 +216,7 @@ def vip_games_list_view(request):
     # 1. Filtro Temporal
     live_count = Match.objects.filter(status__iexact='Live').count()
     is_historical_day = False
+    is_future_day = False
     query_date = now.date()
 
     if status_filter == 'today':
@@ -225,6 +226,7 @@ def vip_games_list_view(request):
     elif status_filter == 'tomorrow':
         tom_date = (now + timedelta(days=1)).date()
         query_date = tom_date
+        is_future_day = True
         start_d = datetime.combine(tom_date, datetime.min.time(), tzinfo=pytz.UTC)
         end_d = datetime.combine(tom_date, datetime.max.time(), tzinfo=pytz.UTC)
         qs = qs.filter(date__range=(start_d, end_d)).order_by('date')
@@ -243,6 +245,8 @@ def vip_games_list_view(request):
             qs = qs.filter(date__range=(start_d, end_d)).order_by('date')
             if parsed_d < now.date():
                 is_historical_day = True
+            elif parsed_d > now.date():
+                is_future_day = True
         except ValueError:
             qs = qs.order_by('date')
 
@@ -593,6 +597,9 @@ def vip_games_list_view(request):
         end_q = datetime.combine(query_date, datetime.max.time(), tzinfo=pytz.UTC)
         fin_today = list(Match.objects.filter(status__in=['Finished', 'FT'], home_score__isnull=False, away_score__isnull=False, date__range=(start_q, end_q)))
         day_period_label = f"Em {query_date.strftime('%d/%m')}"
+    elif is_future_day:
+        fin_today = list(Match.objects.filter(status__in=['Finished', 'FT'], home_score__isnull=False, away_score__isnull=False, date__gte=now - timedelta(hours=24)))
+        day_period_label = "Amanhã" if status_filter == 'tomorrow' or query_date == (now + timedelta(days=1)).date() else f"Em {query_date.strftime('%d/%m')}"
     else:
         fin_today = list(Match.objects.filter(status__in=['Finished', 'FT'], home_score__isnull=False, away_score__isnull=False, date__gte=now - timedelta(hours=24)))
         day_period_label = "Hoje"
@@ -760,6 +767,7 @@ def vip_games_list_view(request):
         'live_count': live_count,
         'stats_kpi': stats_kpi,
         'is_historical_day': is_historical_day,
+        'is_future_day': is_future_day,
         'total_count': len(processed_matches),
         'server_date': date_badge_label
     })
