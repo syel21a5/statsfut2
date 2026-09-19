@@ -207,6 +207,9 @@ def get_match_full_stats(match):
 def vip_games_list_view(request):
     status_filter = request.GET.get('status', 'today')
     selected_market = request.GET.get('market', 'all')
+    # Fuso Horário de Referência para Agrupamento de Rodada: América/São Paulo (Horário de Brasília)
+    tz_br = pytz.timezone('America/Sao_Paulo')
+    now_br = timezone.now().astimezone(tz_br)
     now = timezone.now()
     
     qs = Match.objects.select_related('home_team', 'away_team', 'league').filter(
@@ -218,26 +221,28 @@ def vip_games_list_view(request):
     live_count = Match.objects.filter(status__iexact='Live').count()
     is_historical_day = False
     is_future_day = False
-    query_date = now.date()
+    query_date = now_br.date()
+
+    def get_utc_range_for_br_date(d_target):
+        start_br_dt = tz_br.localize(datetime.combine(d_target, datetime.min.time()))
+        end_br_dt = tz_br.localize(datetime.combine(d_target, datetime.max.time()))
+        return start_br_dt.astimezone(pytz.UTC), end_br_dt.astimezone(pytz.UTC)
 
     if status_filter == 'today':
-        start_d = datetime.combine(now.date(), datetime.min.time(), tzinfo=pytz.UTC)
-        end_d = datetime.combine(now.date(), datetime.max.time(), tzinfo=pytz.UTC)
-        qs = qs.filter(date__range=(start_d, end_d)).order_by('date')
+        start_utc, end_utc = get_utc_range_for_br_date(now_br.date())
+        qs = qs.filter(date__range=(start_utc, end_utc)).order_by('date')
     elif status_filter == 'tomorrow':
-        tom_date = (now + timedelta(days=1)).date()
+        tom_date = (now_br + timedelta(days=1)).date()
         query_date = tom_date
         is_future_day = True
-        start_d = datetime.combine(tom_date, datetime.min.time(), tzinfo=pytz.UTC)
-        end_d = datetime.combine(tom_date, datetime.max.time(), tzinfo=pytz.UTC)
-        qs = qs.filter(date__range=(start_d, end_d)).order_by('date')
+        start_utc, end_utc = get_utc_range_for_br_date(tom_date)
+        qs = qs.filter(date__range=(start_utc, end_utc)).order_by('date')
     elif status_filter in ['yesterday', 'ontem']:
-        yesterday_date = (now - timedelta(days=1)).date()
+        yesterday_date = (now_br - timedelta(days=1)).date()
         query_date = yesterday_date
         is_historical_day = True
-        start_d = datetime.combine(yesterday_date, datetime.min.time(), tzinfo=pytz.UTC)
-        end_d = datetime.combine(yesterday_date, datetime.max.time(), tzinfo=pytz.UTC)
-        qs = qs.filter(date__range=(start_d, end_d)).order_by('date')
+        start_utc, end_utc = get_utc_range_for_br_date(yesterday_date)
+        qs = qs.filter(date__range=(start_utc, end_utc)).order_by('date')
     elif status_filter == 'finished':
         # Partidas encerradas recentemente (últimas 24 horas)
         qs = qs.filter(status__in=['Finished', 'FT'], date__gte=now - timedelta(hours=24)).order_by('-date')
@@ -248,12 +253,11 @@ def vip_games_list_view(request):
         try:
             parsed_d = datetime.strptime(status_filter, '%Y-%m-%d').date()
             query_date = parsed_d
-            start_d = datetime.combine(parsed_d, datetime.min.time(), tzinfo=pytz.UTC)
-            end_d = datetime.combine(parsed_d, datetime.max.time(), tzinfo=pytz.UTC)
-            qs = qs.filter(date__range=(start_d, end_d)).order_by('date')
-            if parsed_d < now.date():
+            start_utc, end_utc = get_utc_range_for_br_date(parsed_d)
+            qs = qs.filter(date__range=(start_utc, end_utc)).order_by('date')
+            if parsed_d < now_br.date():
                 is_historical_day = True
-            elif parsed_d > now.date():
+            elif parsed_d > now_br.date():
                 is_future_day = True
         except ValueError:
             qs = qs.order_by('date')
@@ -595,10 +599,9 @@ def vip_games_list_view(request):
         (1, 'AMANHÃ', 'tomorrow'),
     ]
     for delta, label, param_val in pillar_configs:
-        d = now + timedelta(days=delta)
-        d_start = datetime.combine(d.date(), datetime.min.time(), tzinfo=pytz.UTC)
-        d_end = datetime.combine(d.date(), datetime.max.time(), tzinfo=pytz.UTC)
-        day_match_count = Match.objects.filter(date__range=(d_start, d_end)).count()
+        d = now_br + timedelta(days=delta)
+        d_start_utc, d_end_utc = get_utc_range_for_br_date(d.date())
+        day_match_count = Match.objects.filter(date__range=(d_start_utc, d_end_utc)).count()
 
         is_act = False
         if delta == 0 and status_filter in ['today', None, '']:
