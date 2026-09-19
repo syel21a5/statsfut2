@@ -251,7 +251,7 @@ def vip_games_list_view(request):
             qs = qs.order_by('date')
 
     total_day_matches = qs.count()
-    raw_matches = list(qs[:250])
+    raw_matches = list(qs[:70])
     
     # Fallback se não encontrar partidas ao vivo no status exato, traz as mais recentes em andamento
     if status_filter == 'live' and not raw_matches:
