@@ -339,7 +339,7 @@
             <tr class="match-row hover:bg-gray-800/30 transition-colors {% if forloop.counter > 5 %}hidden row-extra-{{ sec.id }}{% endif %}"
                 data-teams="{{ m.home_team.name|lower }} {{ m.away_team.name|lower }}"
                 data-league="{{ m.league.name|lower }}"
-                data-prob="{% if sec.type == 'gols' %}{{ m.p_o15 }}{% elif sec.id == 'cantos_75ft' %}{{ m.p_c75ft }}{% else %}{{ m.p_c85 }}{% endif %}">
+                data-prob="{% if sec.id == 'gols_o15' %}{{ m.p_o15 }}{% elif sec.id == 'gols_o25' %}{{ m.p_o25 }}{% elif sec.id == 'gols_btts' %}{{ m.p_btts }}{% elif sec.id == 'gols_u35' %}{{ m.p_u35 }}{% elif sec.id == 'cantos_o75' %}{{ m.p_c75 }}{% elif sec.id == 'cantos_o85' %}{{ m.p_c85 }}{% elif sec.id == 'cantos_75ft' %}{{ m.p_c75ft }}{% else %}{{ m.p_lay }}{% endif %}">
               
               <!-- Hora -->
               <td class="py-3 px-4 font-mono text-gray-300 text-[11px] whitespace-nowrap">
