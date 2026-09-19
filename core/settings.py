@@ -42,7 +42,7 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', '*').split(',') if host.strip()]
 
-CSRF_TRUSTED_ORIGINS = [url.strip() for url in os.getenv('CSRF_TRUSTED_ORIGINS', 'https://statsfut.com,https://www.statsfut.com,https://statsfut2.statsfut.com').split(',') if url.strip()]
+CSRF_TRUSTED_ORIGINS = [url.strip() for url in os.getenv('CSRF_TRUSTED_ORIGINS', 'https://statsfut.com,https://www.statsfut.com,https://statsfut2.statsfut.com,https://vip.statsfut.com,http://vip.statsfut.com').split(',') if url.strip()]
 
 # E-mail Configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

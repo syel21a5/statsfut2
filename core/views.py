@@ -4,6 +4,9 @@ from django.http import HttpResponseRedirect
 from django.utils import translation
 
 
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
 def custom_set_language(request):
     """
     Custom set_language view that correctly translates URLs when 
