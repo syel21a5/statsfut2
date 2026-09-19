@@ -107,16 +107,16 @@
                 <div class="p-2.5 rounded-xl bg-black/40 border border-gray-800/80">
                   <div class="flex justify-between items-center text-[11px] mb-1.5">
                     <span class="text-gray-300 font-bold flex items-center gap-1.5">
-                      <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                      <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
                       5m Pressure
                     </span>
                     <div>
                       {% if p5.status == 'dados_indisponiveis' %}
                         <span class="text-gray-500 text-[10px]">Aguardando...</span>
                       {% else %}
-                        <span class="text-cyan-400 font-bold">{{ p5.home_pressure }}%</span>
+                        <span class="text-emerald-400 font-bold">{{ p5.home_pressure }}%</span>
                         <span class="text-gray-600 mx-1">vs</span>
-                        <span class="text-purple-400 font-bold">{{ p5.away_pressure }}%</span>
+                        <span class="text-rose-400 font-bold">{{ p5.away_pressure }}%</span>
                       {% endif %}
                     </div>
                   </div>
@@ -124,12 +124,12 @@
                     {% if p5.status == 'dados_indisponiveis' %}
                       <div class="w-full bg-gray-800/50"></div>
                     {% else %}
-                      <div style="width: {{ p5.home_pressure }}%;" class="bg-gradient-to-r from-cyan-600 to-cyan-400 h-full transition-all duration-500 shadow-sm shadow-cyan-500/50"></div>
-                      <div style="width: {{ p5.away_pressure }}%;" class="bg-gradient-to-r from-purple-600 to-purple-400 h-full transition-all duration-500 shadow-sm shadow-purple-500/50"></div>
+                      <div style="width: {{ p5.home_pressure }}%;" class="bg-gradient-to-r from-emerald-600 to-emerald-400 h-full transition-all duration-500 shadow-sm shadow-emerald-500/50"></div>
+                      <div style="width: {{ p5.away_pressure }}%;" class="bg-gradient-to-r from-rose-600 to-rose-400 h-full transition-all duration-500 shadow-sm shadow-rose-500/50"></div>
                     {% endif %}
                   </div>
                   <div class="mt-1.5 text-right">
-                    <span class="text-[9px] px-1.5 py-0.5 rounded {% if 'Home' in p5.status or 'Casa' in p5.status %}bg-cyan-500/10 text-cyan-400 border border-cyan-500/20{% elif 'Away' in p5.status or 'Fora' in p5.status %}bg-purple-500/10 text-purple-400 border border-purple-500/20{% else %}text-gray-500{% endif %}">
+                    <span class="text-[9px] px-1.5 py-0.5 rounded {% if 'Home' in p5.status or 'Casa' in p5.status %}bg-emerald-500/10 text-emerald-400 border border-emerald-500/20{% elif 'Away' in p5.status or 'Fora' in p5.status %}bg-rose-500/10 text-rose-400 border border-rose-500/20{% else %}text-gray-500{% endif %}">
                       {{ p5.status }}
                     </span>
                   </div>
@@ -139,16 +139,16 @@
                 <div class="p-2.5 rounded-xl bg-black/40 border border-gray-800/80">
                   <div class="flex justify-between items-center text-[11px] mb-1.5">
                     <span class="text-gray-300 font-bold flex items-center gap-1.5">
-                      <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+                      <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
                       15m Trend
                     </span>
                     <div>
                       {% if p15.status == 'dados_indisponiveis' %}
                         <span class="text-gray-500 text-[10px]">Aguardando...</span>
                       {% else %}
-                        <span class="text-cyan-400 font-bold">{{ p15.home_pressure }}%</span>
+                        <span class="text-emerald-400 font-bold">{{ p15.home_pressure }}%</span>
                         <span class="text-gray-600 mx-1">vs</span>
-                        <span class="text-purple-400 font-bold">{{ p15.away_pressure }}%</span>
+                        <span class="text-rose-400 font-bold">{{ p15.away_pressure }}%</span>
                       {% endif %}
                     </div>
                   </div>
@@ -156,12 +156,12 @@
                     {% if p15.status == 'dados_indisponiveis' %}
                       <div class="w-full bg-gray-800/50"></div>
                     {% else %}
-                      <div style="width: {{ p15.home_pressure }}%;" class="bg-gradient-to-r from-cyan-600 to-cyan-400 h-full transition-all duration-500"></div>
-                      <div style="width: {{ p15.away_pressure }}%;" class="bg-gradient-to-r from-purple-600 to-purple-400 h-full transition-all duration-500"></div>
+                      <div style="width: {{ p15.home_pressure }}%;" class="bg-gradient-to-r from-emerald-600 to-emerald-400 h-full transition-all duration-500 shadow-sm shadow-emerald-500/50"></div>
+                      <div style="width: {{ p15.away_pressure }}%;" class="bg-gradient-to-r from-rose-600 to-rose-400 h-full transition-all duration-500 shadow-sm shadow-rose-500/50"></div>
                     {% endif %}
                   </div>
                   <div class="mt-1.5 text-right">
-                    <span class="text-[9px] px-1.5 py-0.5 rounded {% if 'Home' in p15.status or 'Casa' in p15.status %}bg-cyan-500/10 text-cyan-400 border border-cyan-500/20{% elif 'Away' in p15.status or 'Fora' in p15.status %}bg-purple-500/10 text-purple-400 border border-purple-500/20{% else %}text-gray-500{% endif %}">
+                    <span class="text-[9px] px-1.5 py-0.5 rounded {% if 'Home' in p15.status or 'Casa' in p15.status %}bg-emerald-500/10 text-emerald-400 border border-emerald-500/20{% elif 'Away' in p15.status or 'Fora' in p15.status %}bg-rose-500/10 text-rose-400 border border-rose-500/20{% else %}text-gray-500{% endif %}">
                       {{ p15.status }}
                     </span>
                   </div>
@@ -180,12 +180,12 @@
                       MOMENTUM TIMELINE (LAST 30 MIN)
                     </span>
                     <div class="flex items-center gap-3">
-                      <span class="flex items-center gap-1 text-cyan-400">
-                        <span class="w-1.5 h-1.5 rounded-sm bg-cyan-400"></span>
+                      <span class="flex items-center gap-1 text-emerald-400">
+                        <span class="w-1.5 h-1.5 rounded-sm bg-emerald-400"></span>
                         {{ m.home_team.name }}
                       </span>
-                      <span class="flex items-center gap-1 text-purple-400">
-                        <span class="w-1.5 h-1.5 rounded-sm bg-purple-400"></span>
+                      <span class="flex items-center gap-1 text-rose-400">
+                        <span class="w-1.5 h-1.5 rounded-sm bg-rose-400"></span>
                         {{ m.away_team.name }}
                       </span>
                     </div>
@@ -205,16 +205,16 @@
                           </div>
 
                           {% if pt.is_home %}
-                            <!-- Barra Mandante (Para Cima da Linha Zero em Ciano) -->
+                            <!-- Barra Mandante (Para Cima da Linha Zero em Verde) -->
                             <div class="w-full flex flex-col justify-end items-center h-1/2">
-                              <div style="height: {{ pt.height_pct }}%;" class="w-full max-w-[6px] bg-gradient-to-t from-cyan-600 to-cyan-400 rounded-t-sm shadow-sm shadow-cyan-500/40 transition-all"></div>
+                              <div style="height: {{ pt.height_pct }}%;" class="w-full max-w-[6px] bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-sm shadow-sm shadow-emerald-500/40 transition-all"></div>
                             </div>
                             <div class="w-full h-1/2"></div>
                           {% else %}
-                            <!-- Barra Visitante (Para Baixo da Linha Zero em Roxo) -->
+                            <!-- Barra Visitante (Para Baixo da Linha Zero em Vermelho) -->
                             <div class="w-full h-1/2"></div>
                             <div class="w-full flex flex-col justify-start items-center h-1/2">
-                              <div style="height: {{ pt.height_pct }}%;" class="w-full max-w-[6px] bg-gradient-to-b from-purple-600 to-purple-400 rounded-b-sm shadow-sm shadow-purple-500/40 transition-all"></div>
+                              <div style="height: {{ pt.height_pct }}%;" class="w-full max-w-[6px] bg-gradient-to-b from-rose-600 to-rose-400 rounded-b-sm shadow-sm shadow-rose-500/40 transition-all"></div>
                             </div>
                           {% endif %}
                         </div>

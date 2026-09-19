@@ -61,16 +61,16 @@
     <div class="p-5 border-b border-gray-800/80">
         <div class="flex justify-between items-center mb-3.5">
             <h6 class="font-mono uppercase font-bold text-gray-400 text-xs tracking-wider flex items-center gap-2">
-                <i class="fa-solid fa-chart-line text-cyan-400"></i>
+                <i class="fa-solid fa-chart-line text-emerald-400"></i>
                 LIVE ATTACK MOMENTUM (PRESSURE TIMELINE)
             </h6>
             <div class="flex items-center gap-3 font-mono text-[10px]">
-                <span class="flex items-center gap-1 text-cyan-400">
-                    <span class="w-2 h-2 rounded-sm bg-cyan-400 inline-block"></span>
+                <span class="flex items-center gap-1 text-emerald-400">
+                    <span class="w-2 h-2 rounded-sm bg-emerald-400 inline-block"></span>
                     {{ match.home_team.name }}
                 </span>
-                <span class="flex items-center gap-1 text-purple-400">
-                    <span class="w-2 h-2 rounded-sm bg-purple-400 inline-block"></span>
+                <span class="flex items-center gap-1 text-rose-400">
+                    <span class="w-2 h-2 rounded-sm bg-rose-400 inline-block"></span>
                     {{ match.away_team.name }}
                 </span>
             </div>
@@ -105,16 +105,16 @@
                             </div>
 
                             {% if pt.is_home %}
-                                <!-- Barra Mandante (Para Cima da Linha Central) -->
+                                <!-- Barra Mandante (Para Cima da Linha Central em Verde) -->
                                 <div class="w-full flex flex-col justify-end items-center h-1/2">
-                                    <div style="height: {{ pt.height_pct }}%;" class="w-full max-w-[5px] bg-gradient-to-t from-cyan-600 to-cyan-400 rounded-t-sm"></div>
+                                    <div style="height: {{ pt.height_pct }}%;" class="w-full max-w-[5px] bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-sm shadow-sm shadow-emerald-500/30"></div>
                                 </div>
                                 <div class="w-full h-1/2"></div>
                             {% else %}
-                                <!-- Barra Visitante (Para Baixo da Linha Central) -->
+                                <!-- Barra Visitante (Para Baixo da Linha Central em Vermelho) -->
                                 <div class="w-full h-1/2"></div>
                                 <div class="w-full flex flex-col justify-start items-center h-1/2">
-                                    <div style="height: {{ pt.height_pct }}%;" class="w-full max-w-[5px] bg-gradient-to-b from-purple-600 to-purple-400 rounded-b-sm"></div>
+                                    <div style="height: {{ pt.height_pct }}%;" class="w-full max-w-[5px] bg-gradient-to-b from-rose-600 to-rose-400 rounded-b-sm shadow-sm shadow-rose-500/30"></div>
                                 </div>
                             {% endif %}
                         </div>
@@ -150,16 +150,16 @@
                             </div>
 
                             {% if pt.is_home %}
-                                <!-- Barra Mandante (Para Cima da Linha Central) -->
+                                <!-- Barra Mandante (Para Cima da Linha Central em Verde) -->
                                 <div class="w-full flex flex-col justify-end items-center h-1/2">
-                                    <div style="height: {{ pt.height_pct }}%;" class="w-full max-w-[5px] bg-gradient-to-t from-cyan-600 to-cyan-400 rounded-t-sm"></div>
+                                    <div style="height: {{ pt.height_pct }}%;" class="w-full max-w-[5px] bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-sm shadow-sm shadow-emerald-500/30"></div>
                                 </div>
                                 <div class="w-full h-1/2"></div>
                             {% else %}
-                                <!-- Barra Visitante (Para Baixo da Linha Central) -->
+                                <!-- Barra Visitante (Para Baixo da Linha Central em Vermelho) -->
                                 <div class="w-full h-1/2"></div>
                                 <div class="w-full flex flex-col justify-start items-center h-1/2">
-                                    <div style="height: {{ pt.height_pct }}%;" class="w-full max-w-[5px] bg-gradient-to-b from-purple-600 to-purple-400 rounded-b-sm"></div>
+                                    <div style="height: {{ pt.height_pct }}%;" class="w-full max-w-[5px] bg-gradient-to-b from-rose-600 to-rose-400 rounded-b-sm shadow-sm shadow-rose-500/30"></div>
                                 </div>
                             {% endif %}
                         </div>
@@ -182,17 +182,17 @@
                 <div class="flex justify-between items-center text-xs mb-2">
                     <span class="font-semibold text-gray-200">{{ label }}</span>
                     <div class="flex items-center gap-2">
-                        <span class="font-bold text-cyan-400">{{ pr.home_pressure }}%</span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold {% if 'Home' in pr.status or 'Casa' in pr.status %}bg-cyan-500/20 text-cyan-300 border border-cyan-500/40{% elif 'Away' in pr.status or 'Fora' in pr.status %}bg-purple-500/20 text-purple-300 border border-purple-500/40{% else %}bg-gray-800 text-gray-400 border border-gray-700{% endif %}">
+                        <span class="font-bold text-emerald-400">{{ pr.home_pressure }}%</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold {% if 'Home' in pr.status or 'Casa' in pr.status %}bg-emerald-500/20 text-emerald-300 border border-emerald-500/40{% elif 'Away' in pr.status or 'Fora' in pr.status %}bg-rose-500/20 text-rose-300 border border-rose-500/40{% else %}bg-gray-800 text-gray-400 border border-gray-700{% endif %}">
                             {{ pr.status }}
                         </span>
-                        <span class="font-bold text-purple-400">{{ pr.away_pressure }}%</span>
+                        <span class="font-bold text-rose-400">{{ pr.away_pressure }}%</span>
                     </div>
                 </div>
                 <!-- Barra Bifocal Neon -->
                 <div class="w-full h-2.5 bg-gray-900 rounded-full overflow-hidden flex border border-gray-800">
-                    <div style="width: {{ pr.home_pressure }}%;" class="bg-gradient-to-r from-cyan-600 to-cyan-400 h-full transition-all duration-500"></div>
-                    <div style="width: {{ pr.away_pressure }}%;" class="bg-gradient-to-r from-purple-600 to-purple-400 h-full transition-all duration-500"></div>
+                    <div style="width: {{ pr.home_pressure }}%;" class="bg-gradient-to-r from-emerald-600 to-emerald-400 h-full transition-all duration-500 shadow-sm shadow-emerald-500/30"></div>
+                    <div style="width: {{ pr.away_pressure }}%;" class="bg-gradient-to-r from-rose-600 to-rose-400 h-full transition-all duration-500 shadow-sm shadow-rose-500/30"></div>
                 </div>
             </div>
             {% endfor %}
