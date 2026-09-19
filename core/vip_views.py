@@ -504,7 +504,7 @@ def vip_games_list_view(request):
     all_sections = [
         {
             'id': 'gols_o15',
-            'title': 'Gols Mais de 1.5 FT',
+            'title': 'Over 1.5 Goals FT',
             'type': 'gols_o15',
             'icon': 'futbol',
             'color': 'emerald',
@@ -514,7 +514,7 @@ def vip_games_list_view(request):
         },
         {
             'id': 'gols_o25',
-            'title': 'Gols Mais de 2.5 FT',
+            'title': 'Over 2.5 Goals FT',
             'type': 'gols_o25',
             'icon': 'fire',
             'color': 'emerald',
@@ -524,7 +524,7 @@ def vip_games_list_view(request):
         },
         {
             'id': 'gols_btts',
-            'title': 'Ambos Marcam (Sim)',
+            'title': 'Both Teams to Score (BTTS)',
             'type': 'gols_btts',
             'icon': 'arrows-split-up-and-left',
             'color': 'amber',
@@ -534,7 +534,7 @@ def vip_games_list_view(request):
         },
         {
             'id': 'gols_u35',
-            'title': 'Gols Menos de 3.5 FT (Proteção)',
+            'title': 'Under 3.5 Goals FT (Safety)',
             'type': 'gols_u35',
             'icon': 'shield-halved',
             'color': 'blue',
@@ -544,7 +544,7 @@ def vip_games_list_view(request):
         },
         {
             'id': 'cantos_o75',
-            'title': 'Escanteios Mais de 7.5 FT',
+            'title': 'Corners Over 7.5 FT',
             'type': 'cantos_o75',
             'icon': 'shield-halved',
             'color': 'cyan',
@@ -554,7 +554,7 @@ def vip_games_list_view(request):
         },
         {
             'id': 'cantos_o85',
-            'title': 'Escanteios Mais de 8.5 FT',
+            'title': 'Corners Over 8.5 FT',
             'type': 'cantos_o85',
             'icon': 'flag',
             'color': 'cyan',
@@ -564,7 +564,7 @@ def vip_games_list_view(request):
         },
         {
             'id': 'cantos_75ft',
-            'title': 'Cantos Finais (Pressão 75\'+)',
+            'title': 'Late Corners (Pressure 75\'+)',
             'type': 'cantos_75ft',
             'icon': 'clock',
             'color': 'purple',
@@ -574,7 +574,7 @@ def vip_games_list_view(request):
         },
         {
             'id': 'lays',
-            'title': 'Lay Placar Improvável (Exchange 95%+)',
+            'title': 'Lay Correct Score (Exchange 95%+)',
             'type': 'lays',
             'icon': 'bolt',
             'color': 'rose',
@@ -630,13 +630,13 @@ def vip_games_list_view(request):
         start_q = datetime.combine(query_date, datetime.min.time(), tzinfo=pytz.UTC)
         end_q = datetime.combine(query_date, datetime.max.time(), tzinfo=pytz.UTC)
         fin_today = list(Match.objects.filter(status__in=['Finished', 'FT'], home_score__isnull=False, away_score__isnull=False, date__range=(start_q, end_q)))
-        day_period_label = f"Em {query_date.strftime('%d/%m')}"
+        day_period_label = f"On {query_date.strftime('%d/%m')}"
     elif is_future_day:
         fin_today = list(Match.objects.filter(status__in=['Finished', 'FT'], home_score__isnull=False, away_score__isnull=False, date__gte=now - timedelta(hours=24)))
-        day_period_label = "Amanhã" if status_filter == 'tomorrow' or query_date == (now + timedelta(days=1)).date() else f"Em {query_date.strftime('%d/%m')}"
+        day_period_label = "Tomorrow" if status_filter == 'tomorrow' or query_date == (now + timedelta(days=1)).date() else f"On {query_date.strftime('%d/%m')}"
     else:
         fin_today = list(Match.objects.filter(status__in=['Finished', 'FT'], home_score__isnull=False, away_score__isnull=False, date__gte=now - timedelta(hours=24)))
-        day_period_label = "Hoje"
+        day_period_label = "Today"
 
     fin_7d = list(Match.objects.filter(status__in=['Finished', 'FT'], home_score__isnull=False, away_score__isnull=False, date__gte=now - timedelta(days=7)).only('home_score', 'away_score'))
     fin_30d = list(Match.objects.filter(status__in=['Finished', 'FT'], home_score__isnull=False, away_score__isnull=False, date__gte=now - timedelta(days=30)).only('home_score', 'away_score'))
@@ -693,7 +693,7 @@ def vip_games_list_view(request):
         greens_30d = sum(1 for m in fin_30d if m.home_score > 0 and m.away_score > 0)
         winrate_30d = round((greens_30d / n_30d) * 100, 1)
 
-        market_label = "Ambos Marcam"
+        market_label = "Both Teams to Score"
         kpi_count = sum(1 for m in processed_matches if m.p_btts >= 50)
         avg_odd = "1.92"
         roi = "+9.5%"
@@ -721,7 +721,7 @@ def vip_games_list_view(request):
         winrate_today = 88.9
         winrate_7d = 89.2
         winrate_30d = 88.9
-        market_label = "Cantos +7.5 FT"
+        market_label = "Corners Over 7.5 FT"
         kpi_count = sum(1 for m in processed_matches if m.p_c75 >= 75)
         avg_odd = "1.36"
         roi = "+14.8%"
@@ -732,7 +732,7 @@ def vip_games_list_view(request):
         winrate_today = 81.0
         winrate_7d = 81.5
         winrate_30d = 81.2
-        market_label = "Cantos +8.5 FT"
+        market_label = "Corners Over 8.5 FT"
         kpi_count = sum(1 for m in processed_matches if m.p_c85 >= 65)
         avg_odd = "1.48"
         roi = "+13.1%"
@@ -743,7 +743,7 @@ def vip_games_list_view(request):
         winrate_today = 85.0
         winrate_7d = 86.1
         winrate_30d = 85.7
-        market_label = "Cantos Finais (75'+)"
+        market_label = "Late Corners (75'+)"
         kpi_count = sum(1 for m in processed_matches if m.p_c75ft >= 75)
         avg_odd = "1.55"
         roi = "+16.4%"
@@ -754,7 +754,7 @@ def vip_games_list_view(request):
         winrate_today = 96.0
         winrate_7d = 96.8
         winrate_30d = 96.4
-        market_label = "Lay Placar Improvável"
+        market_label = "Lay Correct Score"
         kpi_count = sum(1 for m in processed_matches if m.p_lay >= 92)
         avg_odd = "1.06"
         roi = "+18.2%"
@@ -769,7 +769,7 @@ def vip_games_list_view(request):
         greens_30d = sum(1 for m in fin_30d if (m.home_score + m.away_score) >= 2)
         winrate_30d = round((greens_30d / n_30d) * 100, 1) if n_30d > 0 else 71.8
 
-        market_label = "Todos os Mercados"
+        market_label = "All Markets"
         kpi_count = total_day_matches if total_day_matches > 0 else len(processed_matches)
         avg_odd = "1.52"
         roi = "+12.4%"

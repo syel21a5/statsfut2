@@ -15,10 +15,10 @@
       <div class="flex items-center justify-between mb-3 px-1">
         <div class="flex items-center gap-1.5">
           <i class="fa-solid fa-calendar-days text-cyan-400 text-xs"></i>
-          <span class="text-[11px] font-mono font-bold text-gray-300 uppercase tracking-wider">Data / Rodada</span>
+          <span class="text-[11px] font-mono font-bold text-gray-300 uppercase tracking-wider">Date / Round</span>
         </div>
-        <a href="?status=today{% if selected_market %}&market={{ selected_market }}{% endif %}" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/20 transition" title="Ir para Hoje">
-          HOJE
+        <a href="?status=today{% if selected_market %}&market={{ selected_market }}{% endif %}" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/20 transition" title="Go to Today">
+          TODAY
         </a>
       </div>
       
@@ -28,7 +28,7 @@
         <a href="?status={{ d.param_val }}{% if selected_market %}&market={{ selected_market }}{% endif %}"
            class="flex flex-col items-center justify-between py-2.5 px-1 rounded-xl text-center transition-all duration-200 relative group
                   {% if d.is_active %}bg-gradient-to-b from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/25 font-bold scale-[1.02] z-10 border border-cyan-300/40{% else %}bg-[#0e1217] text-gray-400 hover:text-gray-100 hover:bg-gray-800/80 border border-gray-800/60{% endif %}">
-          <span class="text-[10px] font-mono tracking-tight uppercase {% if d.is_active %}text-cyan-100 font-black{% else %}text-gray-500 group-hover:text-gray-300{% endif %}">{{ d.weekday }}</span>
+          <span class="text-[10px] font-mono tracking-tight uppercase {% if d.is_active %}text-cyan-100 font-black{% else %}text-gray-500 group-hover:text-gray-300{% endif %}">{% if d.weekday == 'ONTEM' %}YESTERDAY{% elif d.weekday == 'HOJE' %}TODAY{% elif d.weekday == 'AMANHÃ' %}TOMORROW{% else %}{{ d.weekday }}{% endif %}</span>
           <span class="text-xs font-black leading-tight my-1 {% if d.is_active %}text-white{% endif %}">{{ d.day_num }}</span>
           
           <!-- Badge com Contagem de Jogos -->
@@ -49,15 +49,15 @@
     <!-- (B) Bloco MERCADOS com Contadores -->
     <div class="bg-[#14181f] border border-gray-800/60 rounded-xl p-3.5 shadow-lg space-y-3">
       <div class="flex items-center justify-between px-1 text-[11px] font-mono uppercase tracking-wider text-gray-400">
-        <span class="font-bold">Mercado</span>
-        <span class="text-[10px]">Previsões</span>
+        <span class="font-bold">Markets</span>
+        <span class="text-[10px]">Forecasts</span>
       </div>
 
       <!-- Item Todos -->
       <a href="?market=all{% if current_status %}&status={{ current_status }}{% endif %}" class="flex items-center justify-between px-3 py-2 rounded-lg {% if not selected_market or selected_market == 'all' %}bg-[#1c232d] text-white border border-cyan-500/40 font-bold{% else %}text-gray-400 hover:text-white hover:bg-gray-800/50{% endif %} font-medium text-xs">
         <div class="flex items-center gap-2">
           <i class="fa-solid fa-layer-group text-cyan-400 text-xs"></i>
-          <span>Todos os mercados</span>
+          <span>All markets</span>
         </div>
         <span class="bg-[#00b4d8] text-gray-950 font-bold font-mono text-[10px] px-2 py-0.5 rounded-full">{{ total_count }}</span>
       </a>
@@ -66,7 +66,7 @@
       <div class="pt-1">
         <div class="text-[10px] font-mono font-bold text-gray-500 uppercase tracking-wider px-1 mb-1.5 flex items-center gap-1.5">
           <i class="fa-solid fa-futbol text-emerald-400 text-[10px]"></i>
-          <span>Gols</span>
+          <span>Goals</span>
         </div>
         <div class="space-y-1">
           <a href="?market=gols_o15{% if current_status %}&status={{ current_status }}{% endif %}" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs {% if selected_market == 'gols_o15' %}bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40{% else %}text-gray-300 hover:text-white hover:bg-gray-800/50{% endif %} transition">
@@ -78,7 +78,7 @@
             <span class="font-mono text-gray-400 text-[11px]">62%</span>
           </a>
           <a href="?market=gols_btts{% if current_status %}&status={{ current_status }}{% endif %}" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs {% if selected_market == 'gols_btts' %}bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40{% else %}text-gray-300 hover:text-white hover:bg-gray-800/50{% endif %} transition">
-            <span>Ambos marcam</span>
+            <span>Both Teams to Score</span>
             <span class="font-mono text-amber-400 text-[11px] font-bold">59%</span>
           </a>
           <a href="?market=gols_u35{% if current_status %}&status={{ current_status }}{% endif %}" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs {% if selected_market == 'gols_u35' %}bg-blue-500/20 text-blue-300 font-bold border border-blue-500/40{% else %}text-gray-300 hover:text-white hover:bg-gray-800/50{% endif %} transition">
@@ -92,7 +92,7 @@
       <div class="pt-1 border-t border-gray-800/50">
         <div class="text-[10px] font-mono font-bold text-gray-500 uppercase tracking-wider px-1 mb-1.5 flex items-center gap-1.5">
           <i class="fa-solid fa-flag text-cyan-400 text-[10px]"></i>
-          <span>Escanteios</span>
+          <span>Corners</span>
         </div>
         <div class="space-y-1">
           <a href="?market=cantos_o75{% if current_status %}&status={{ current_status }}{% endif %}" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs {% if selected_market == 'cantos_o75' %}bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40{% else %}text-gray-300 hover:text-white hover:bg-gray-800/50{% endif %} transition">
@@ -104,7 +104,7 @@
             <span class="font-mono text-cyan-400 text-[11px] font-bold">81%</span>
           </a>
           <a href="?market=cantos_75ft{% if current_status %}&status={{ current_status }}{% endif %}" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs {% if selected_market == 'cantos_75ft' %}bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40{% else %}text-gray-300 hover:text-white hover:bg-gray-800/50{% endif %} transition">
-            <span>Cantos Finais (75'+)</span>
+            <span>Late Corners (75'+)</span>
             <span class="font-mono text-purple-400 text-[11px] font-bold">85%</span>
           </a>
         </div>
@@ -114,11 +114,11 @@
       <div class="pt-1 border-t border-gray-800/50">
         <div class="text-[10px] font-mono font-bold text-gray-500 uppercase tracking-wider px-1 mb-1.5 flex items-center gap-1.5">
           <i class="fa-solid fa-trophy text-amber-400 text-[10px]"></i>
-          <span>Resultado / Lay</span>
+          <span>Result / Lay</span>
         </div>
         <div class="space-y-1">
           <a href="?market=lays{% if current_status %}&status={{ current_status }}{% endif %}" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs {% if selected_market == 'lays' %}bg-rose-500/20 text-rose-300 font-bold border border-rose-500/40{% else %}text-gray-300 hover:text-white hover:bg-gray-800/50{% endif %} transition">
-            <span>Lay Placar (95%+)</span>
+            <span>Lay Correct Score (95%+)</span>
             <span class="font-mono text-emerald-400 text-[11px] font-bold">96.8%</span>
           </a>
         </div>
@@ -137,11 +137,11 @@
       <div class="bg-[#14181f] border border-gray-800/60 rounded-xl p-3.5 flex flex-col justify-between shadow-lg relative overflow-hidden">
         <div>
           <div class="flex items-center justify-between">
-            <span class="text-[11px] font-medium text-gray-400 block">Jogos do Mercado</span>
+            <span class="text-[11px] font-medium text-gray-400 block">Market Games</span>
             <span class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 whitespace-nowrap">{{ stats_kpi.market_label }}</span>
           </div>
           <span class="text-2xl font-black text-white font-mono mt-1.5 block">{{ stats_kpi.kpi_count }}</span>
-          <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">{% if is_future_day %}Tips para {{ stats_kpi.day_period_label }}{% elif is_historical_day %}Auditados no banco{% else %}Disponíveis hoje{% endif %}</span>
+          <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">{% if is_future_day %}Tips for {{ stats_kpi.day_period_label }}{% elif is_historical_day %}Audited in database{% else %}Available today{% endif %}</span>
         </div>
         <div class="w-full bg-gray-800 h-1 rounded-full mt-3 overflow-hidden">
           <div class="bg-[#00b4d8] h-full w-3/4"></div>
@@ -152,11 +152,11 @@
       <div class="bg-[#14181f] border border-gray-800/60 rounded-xl p-3.5 flex flex-col justify-between shadow-lg relative overflow-hidden">
         <div>
           <div class="flex items-center justify-between">
-            <span class="text-[11px] font-medium text-gray-400 block">Acerto {{ stats_kpi.day_period_label }}</span>
-            <span class="text-[9px] font-mono text-gray-500">{% if is_historical_day %}Histórico{% else %}24h{% endif %}</span>
+            <span class="text-[11px] font-medium text-gray-400 block">Winrate {{ stats_kpi.day_period_label }}</span>
+            <span class="text-[9px] font-mono text-gray-500">{% if is_historical_day %}History{% else %}24h{% endif %}</span>
           </div>
           <span class="text-2xl font-black text-[#00d26a] font-mono mt-1.5 block">{{ stats_kpi.winrate_today }}%</span>
-          <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">{{ stats_kpi.greens_today }} / {{ stats_kpi.resolved_today }} resolvidos</span>
+          <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">{{ stats_kpi.greens_today }} / {{ stats_kpi.resolved_today }} settled</span>
         </div>
         <div class="w-full bg-gray-800 h-1 rounded-full mt-3 overflow-hidden">
           <div class="bg-[#00d26a] h-full" style="width: {{ stats_kpi.winrate_today }}%;"></div>
@@ -167,11 +167,11 @@
       <div class="bg-[#14181f] border border-gray-800/60 rounded-xl p-3.5 flex flex-col justify-between shadow-lg relative overflow-hidden">
         <div>
           <div class="flex items-center justify-between">
-            <span class="text-[11px] font-medium text-gray-400 block">Acerto 7 dias</span>
-            <span class="text-[9px] font-mono text-cyan-400 font-bold">Média</span>
+            <span class="text-[11px] font-medium text-gray-400 block">7-Day Winrate</span>
+            <span class="text-[9px] font-mono text-cyan-400 font-bold">Average</span>
           </div>
           <span class="text-2xl font-black text-white font-mono mt-1.5 block">{{ stats_kpi.winrate_7d }}%</span>
-          <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">Histórico consolidado</span>
+          <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">Consolidated history</span>
         </div>
         <div class="w-full bg-gray-800 h-1 rounded-full mt-3 overflow-hidden">
           <div class="bg-cyan-500 h-full" style="width: {{ stats_kpi.winrate_7d }}%;"></div>
@@ -182,11 +182,11 @@
       <div class="bg-[#14181f] border border-gray-800/60 rounded-xl p-3.5 flex flex-col justify-between shadow-lg relative overflow-hidden">
         <div>
           <div class="flex items-center justify-between">
-            <span class="text-[11px] font-medium text-gray-400 block">Acerto 30 dias</span>
-            <span class="text-[9px] font-mono text-purple-400 font-bold">Amostra</span>
+            <span class="text-[11px] font-medium text-gray-400 block">30-Day Winrate</span>
+            <span class="text-[9px] font-mono text-purple-400 font-bold">Sample</span>
           </div>
           <span class="text-2xl font-black text-white font-mono mt-1.5 block">{{ stats_kpi.winrate_30d }}%</span>
-          <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">Neste mercado</span>
+          <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">In this market</span>
         </div>
         <div class="w-full bg-gray-800 h-1 rounded-full mt-3 overflow-hidden">
           <div class="bg-purple-500 h-full" style="width: {{ stats_kpi.winrate_30d }}%;"></div>
@@ -197,11 +197,11 @@
       <div class="bg-[#14181f] border border-gray-800/60 rounded-xl p-3.5 flex flex-col justify-between shadow-lg relative overflow-hidden col-span-2 md:col-span-1">
         <div>
           <div class="flex items-center justify-between">
-            <span class="text-[11px] font-medium text-gray-400 block">ROI Odd Justa</span>
+            <span class="text-[11px] font-medium text-gray-400 block">Fair Odd ROI</span>
             <span class="text-[9px] font-mono text-emerald-400 font-bold">Odd ~{{ stats_kpi.avg_odd }}</span>
           </div>
           <span class="text-2xl font-black text-[#00d26a] font-mono mt-1.5 block">{{ stats_kpi.roi }}</span>
-          <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">Stake fixa 1 unid.</span>
+          <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">Flat stake 1 unit</span>
         </div>
         <div class="w-full bg-gray-800 h-1 rounded-full mt-3 overflow-hidden">
           <div class="bg-[#00d26a] h-full w-[70%]"></div>
@@ -214,25 +214,25 @@
     {% if not is_historical_day %}
     <div class="flex flex-wrap items-center justify-between gap-3 bg-[#14181f] border border-gray-800/60 rounded-xl px-4 py-2.5 text-xs font-mono">
       <div class="flex flex-wrap items-center gap-2">
-        <span class="text-gray-400 font-mono text-[11px]">Partidas:</span>
+        <span class="text-gray-400 font-mono text-[11px]">Matches:</span>
         <a href="?status={{ current_status|default:'today' }}{% if selected_market %}&market={{ selected_market }}{% endif %}" class="px-3 py-1.5 rounded-lg font-semibold transition {% if current_status != 'live' and current_status != 'finished' %}bg-cyan-500/20 text-cyan-300 border border-cyan-500/40{% else %}bg-[#0e1217] text-gray-400 hover:text-white border border-gray-800{% endif %}">
-          Todas
+          All
         </a>
         <a href="?status=live{% if selected_market %}&market={{ selected_market }}{% endif %}" class="px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1.5 {% if current_status == 'live' %}bg-rose-500/25 text-rose-300 border border-rose-500/50{% else %}bg-[#0e1217] text-rose-400 hover:text-rose-300 border border-rose-500/20{% endif %}">
           <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-          <span>Ao Vivo</span>
+          <span>Live</span>
           <span class="px-1.5 py-0.2 rounded-full bg-rose-500 text-white font-bold text-[10px]">
             {{ live_count|default:"8" }}
           </span>
         </a>
         <a href="?status=finished{% if selected_market %}&market={{ selected_market }}{% endif %}" class="px-3 py-1.5 rounded-lg font-semibold transition {% if current_status == 'finished' %}bg-cyan-500/20 text-cyan-300 border border-cyan-500/40{% else %}bg-[#0e1217] text-gray-400 hover:text-white border border-gray-800{% endif %}">
-          Encerradas
+          Finished
         </a>
 
         <!-- Botão Filtro Sniper Só >= 80% -->
         <button id="btnSniperFilter" onclick="toggleSniperFilter()" class="ml-2 px-3 py-1.5 rounded-lg bg-[#0e1217] hover:bg-emerald-500/10 text-gray-400 hover:text-emerald-400 border border-gray-800 hover:border-emerald-500/40 transition font-bold flex items-center gap-1.5">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-          <span>Só &ge; 80% (Sniper)</span>
+          <span>Only &ge; 80% (Sniper)</span>
         </button>
       </div>
 
@@ -240,7 +240,7 @@
       <div class="flex items-center gap-2">
         <div class="relative">
           <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-500 text-xs"></i>
-          <input type="text" id="matchSearchInput" oninput="filterMatchesLive()" placeholder="Buscar time ou liga..." class="bg-[#0e1217] border border-gray-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-gray-500 outline-none focus:border-cyan-500 transition w-48 sm:w-56 font-sans">
+          <input type="text" id="matchSearchInput" oninput="filterMatchesLive()" placeholder="Search team or league..." class="bg-[#0e1217] border border-gray-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-gray-500 outline-none focus:border-cyan-500 transition w-48 sm:w-56 font-sans">
         </div>
       </div>
     </div>
@@ -249,15 +249,15 @@
     <div class="flex flex-wrap items-center justify-between gap-3 bg-[#14181f] border border-gray-800/60 rounded-xl px-4 py-2.5 text-xs font-mono">
       <div class="flex items-center gap-2 text-gray-300 font-bold">
         <i class="fa-solid fa-clock-rotate-left text-cyan-400 text-sm"></i>
-        <span>Histórico de Resultados &middot; {{ server_date }}</span>
-        <span class="text-[10px] text-gray-500 font-mono font-normal">({{ stats_kpi.kpi_count }} partidas auditadas)</span>
+        <span>Results History &middot; {{ server_date }}</span>
+        <span class="text-[10px] text-gray-500 font-mono font-normal">({{ stats_kpi.kpi_count }} audited matches)</span>
       </div>
 
       <!-- Barra de Busca Instantânea -->
       <div class="flex items-center gap-2">
         <div class="relative">
           <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-500 text-xs"></i>
-          <input type="text" id="matchSearchInput" oninput="filterMatchesLive()" placeholder="Buscar time ou liga..." class="bg-[#0e1217] border border-gray-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-gray-500 outline-none focus:border-cyan-500 transition w-48 sm:w-56 font-sans">
+          <input type="text" id="matchSearchInput" oninput="filterMatchesLive()" placeholder="Search team or league..." class="bg-[#0e1217] border border-gray-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-gray-500 outline-none focus:border-cyan-500 transition w-48 sm:w-56 font-sans">
         </div>
       </div>
     </div>
@@ -267,8 +267,8 @@
     <div class="space-y-3">
       <div class="flex items-center gap-2">
         <span class="w-1 h-4 bg-[#00b4d8] rounded-full"></span>
-        <h2 class="text-base font-extrabold text-white tracking-tight">Melhores apostas do dia</h2>
-        <span class="text-xs text-gray-500 font-mono">as previsões com maior confiança matemática</span>
+        <h2 class="text-base font-extrabold text-white tracking-tight">Best bets of the day</h2>
+        <span class="text-xs text-gray-500 font-mono">highest mathematical confidence forecasts</span>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
@@ -308,7 +308,7 @@
           <div class="pt-2.5 border-t border-gray-800/60 flex items-center justify-between">
             <div class="flex items-baseline gap-1.5">
               <span class="text-xl font-black text-[#00d26a] font-mono leading-none">{{ pick.prob }}%</span>
-              <span class="text-[10px] text-gray-500 font-mono">justa {{ pick.fair_odd }}</span>
+              <span class="text-[10px] text-gray-500 font-mono">fair {{ pick.fair_odd }}</span>
             </div>
             <a href="/vip/analise/{{ pick.match.id }}/" class="text-gray-400 hover:text-cyan-400 transition text-xs">
               <i class="fa-solid fa-chevron-right text-[10px]"></i>
@@ -326,12 +326,12 @@
       <div class="w-12 h-12 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center mx-auto text-xl">
         <i class="fa-solid fa-satellite-dish animate-pulse"></i>
       </div>
-      <h3 class="text-base font-bold text-white font-mono">Nenhum jogo ao vivo no momento exato</h3>
+      <h3 class="text-base font-bold text-white font-mono">No live matches at this exact moment</h3>
       <p class="text-xs text-gray-400 max-w-md mx-auto">
-        As transmissões e feeds de radar ao vivo atualizam automaticamente a cada 60 segundos assim que uma partida inicia.
+        Live radar feeds and telemetry update automatically every 60 seconds as soon as matches kick off.
       </p>
       <a href="?status=today" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-mono font-bold transition">
-        Ver Jogos de Hoje
+        View Today's Matches
       </a>
     </div>
     {% endif %}
@@ -345,12 +345,12 @@
         <div class="flex items-center gap-2.5">
           <span class="w-1 h-4 bg-cyan-400 rounded-full"></span>
           <h3 class="text-sm font-bold text-white">{{ sec.title }}</h3>
-          <span class="text-xs text-gray-500 font-mono hidden sm:inline">&middot; a mostrar as mais fortes</span>
+          <span class="text-xs text-gray-500 font-mono hidden sm:inline">&middot; showing highest confidence</span>
         </div>
         <div class="flex items-center gap-3">
-          <span class="text-xs font-mono text-emerald-400 font-semibold">{{ sec.winrate_30d }} acerto 30 d.</span>
+          <span class="text-xs font-mono text-emerald-400 font-semibold">{{ sec.winrate_30d }} 30d winrate</span>
           <button onclick="toggleSectionRows('{{ sec.id }}')" id="btn-toggle-{{ sec.id }}" class="px-2.5 py-1 rounded bg-[#0e1217] hover:bg-gray-800 text-cyan-400 border border-gray-800 hover:border-cyan-500/40 text-[11px] font-mono font-bold transition flex items-center gap-1.5">
-            <span>Ver todas ({{ sec.matches|length }})</span>
+            <span>View all ({{ sec.matches|length }})</span>
             <i class="fa-solid fa-chevron-down text-[9px] transition-transform duration-200" id="icon-toggle-{{ sec.id }}"></i>
           </button>
         </div>
@@ -361,13 +361,13 @@
         <table class="w-full text-left font-mono text-xs">
           <thead>
             <tr class="border-b border-gray-800/60 text-gray-500 text-[10px] uppercase tracking-wider bg-[#10141a]">
-              <th class="py-2.5 px-4 w-16">Hora</th>
-              <th class="py-2.5 px-4 w-44">Campeonato</th>
-              <th class="py-2.5 px-4">Jogo</th>
-              <th class="py-2.5 px-4 text-center min-w-[130px] whitespace-nowrap">Casa &middot; Fora</th>
-              <th class="py-2.5 px-4 text-center min-w-[100px] whitespace-nowrap">Previsão</th>
-              <th class="py-2.5 px-4 text-center min-w-[80px] whitespace-nowrap">Justa</th>
-              <th class="py-2.5 px-4 text-right w-28">Ação</th>
+              <th class="py-2.5 px-4 w-16">Time</th>
+              <th class="py-2.5 px-4 w-44">League</th>
+              <th class="py-2.5 px-4">Match</th>
+              <th class="py-2.5 px-4 text-center min-w-[130px] whitespace-nowrap">Home &middot; Away</th>
+              <th class="py-2.5 px-4 text-center min-w-[100px] whitespace-nowrap">Prediction</th>
+              <th class="py-2.5 px-4 text-center min-w-[80px] whitespace-nowrap">Fair</th>
+              <th class="py-2.5 px-4 text-right w-28">Action</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-800/40 text-gray-200" id="tbody-{{ sec.id }}">
@@ -408,7 +408,7 @@
                 </a>
                 {% if sec.id == 'lays' and m.lay_score %}
                   <span class="ml-2 font-mono text-[10px] px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-300 border border-rose-500/30">
-                    Contra: {{ m.lay_score }}
+                    Against: {{ m.lay_score }}
                   </span>
                 {% endif %}
                 {% if m.is_finished %}
@@ -581,7 +581,7 @@
                 {% else %}
                   <a href="/vip/analise/{{ m.id }}/"
                      class="inline-flex items-center gap-1 bg-[#1c232d] hover:bg-cyan-600 hover:text-white text-gray-300 text-[10px] font-mono font-bold px-2.5 py-1 rounded border border-gray-700 hover:border-cyan-500 transition">
-                    Analisar
+                    Analyze
                     <i class="fa-solid fa-arrow-right text-[9px]"></i>
                   </a>
                 {% endif %}
@@ -620,10 +620,10 @@
     });
 
     if (isHidden) {
-      btn.querySelector('span').innerText = 'Recolher Top 5';
+      btn.querySelector('span').innerText = 'Collapse Top 5';
       icon.classList.add('rotate-180');
     } else {
-      btn.querySelector('span').innerText = 'Ver todas (' + (extraRows.length + 5) + ')';
+      btn.querySelector('span').innerText = 'View all (' + (extraRows.length + 5) + ')';
       icon.classList.remove('rotate-180');
     }
   }

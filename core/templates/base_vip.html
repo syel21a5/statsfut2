@@ -93,17 +93,17 @@
 
       <!-- Links de Navegação Principal (Estilo CornerPro) -->
       <nav class="hidden lg:flex items-center gap-6 font-mono text-xs font-semibold tracking-wider">
-        <a href="/vip/jogos/" class="{% if not current_status or current_status == 'today' or current_status == 'tomorrow' or current_status == 'finished' %}{% if not selected_market or selected_market == 'all' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-white hover:text-[#00b4d8]{% endif %}{% else %}text-white hover:text-[#00b4d8]{% endif %} transition">TODOS JOGOS</a>
+        <a href="/vip/jogos/" class="{% if not current_status or current_status == 'today' or current_status == 'tomorrow' or current_status == 'finished' %}{% if not selected_market or selected_market == 'all' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-white hover:text-[#00b4d8]{% endif %}{% else %}text-white hover:text-[#00b4d8]{% endif %} transition">ALL MATCHES</a>
         <a href="/vip/jogos/?status=live" class="{% if current_status == 'live' %}text-rose-300 bg-rose-500/25 border-rose-500/50{% else %}text-rose-400 hover:text-rose-300 bg-rose-500/10 border-rose-500/20{% endif %} transition flex items-center gap-1.5 px-2.5 py-1 rounded-lg border shadow-sm">
           <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-          <span>AO VIVO</span>
+          <span>LIVE</span>
           <span class="ml-0.5 px-1.5 py-0.2 rounded-full bg-rose-500 text-white font-bold text-[10px]">
             {{ live_count|default:"0" }}
           </span>
         </a>
-        <a href="/vip/jogos/?market=gols" class="{% if selected_market == 'gols' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-gray-400 hover:text-white{% endif %} transition">GOLS</a>
-        <a href="/vip/jogos/?market=cantos" class="{% if selected_market == 'cantos' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-gray-400 hover:text-white{% endif %} transition">ESCANTEIOS</a>
-        <a href="/vip/jogos/?market=lays" class="{% if selected_market == 'lays' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-gray-400 hover:text-white{% endif %} transition">LAY MERCADOS</a>
+        <a href="/vip/jogos/?market=gols" class="{% if selected_market == 'gols' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-gray-400 hover:text-white{% endif %} transition">GOALS</a>
+        <a href="/vip/jogos/?market=cantos" class="{% if selected_market == 'cantos' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-gray-400 hover:text-white{% endif %} transition">CORNERS</a>
+        <a href="/vip/jogos/?market=lays" class="{% if selected_market == 'lays' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-gray-400 hover:text-white{% endif %} transition">LAY MARKETS</a>
       </nav>
 
       <!-- Lado Direito: Seletor de Idioma + Status + Sair -->
@@ -118,11 +118,11 @@
           </button>
 
           <div id="langDropdownMenu" class="hidden absolute right-0 mt-1.5 w-36 bg-[#14181f] border border-gray-800 rounded-xl shadow-2xl py-1 z-50 font-mono text-xs">
-            <a href="/pt-br/vip/jogos/" class="w-full text-left px-3 py-1.5 flex items-center gap-2 hover:bg-gray-800/60 text-gray-300 hover:text-cyan-400">
-              <span class="fi fi-br rounded-sm"></span> <span>Português</span>
-            </a>
             <a href="/vip/jogos/" class="w-full text-left px-3 py-1.5 flex items-center gap-2 hover:bg-gray-800/60 text-gray-300 hover:text-cyan-400">
               <span class="fi fi-us rounded-sm"></span> <span>English</span>
+            </a>
+            <a href="/pt-br/vip/jogos/" class="w-full text-left px-3 py-1.5 flex items-center gap-2 hover:bg-gray-800/60 text-gray-300 hover:text-cyan-400">
+              <span class="fi fi-br rounded-sm"></span> <span>Português</span>
             </a>
             <a href="/es/vip/jogos/" class="w-full text-left px-3 py-1.5 flex items-center gap-2 hover:bg-gray-800/60 text-gray-300 hover:text-cyan-400">
               <span class="fi fi-es rounded-sm"></span> <span>Español</span>
@@ -135,9 +135,9 @@
 
         <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#1c232d] border border-emerald-500/30 text-[#00d26a] font-mono text-[11px] font-bold">
           <span class="w-1.5 h-1.5 rounded-full bg-[#00d26a] animate-pulse"></span>
-          VIP ATIVO
+          VIP ACTIVE
         </span>
-        <a href="/login" class="text-gray-400 hover:text-white text-xs font-mono transition ml-1" title="Sair">
+        <a href="/login" class="text-gray-400 hover:text-white text-xs font-mono transition ml-1" title="Exit">
           <i class="fa-solid fa-arrow-right-from-bracket"></i>
         </a>
       </div>
@@ -152,16 +152,16 @@
     <div class="max-w-[1600px] mx-auto px-4 sm:px-6 flex flex-col md:flex-row md:items-center justify-between gap-3">
       <div>
         <h1 class="text-lg font-black text-white tracking-tight flex items-center gap-2">
-          <span>Previsões</span>
+          <span>Predictions</span>
           <span class="text-[10px] font-mono font-normal bg-gray-800 text-gray-300 px-2 py-0.5 rounded">v2.4</span>
         </h1>
         <p class="text-xs text-gray-400 mt-0.5">
-          Algoritmo estatístico auditado com leitura de linhas asiáticas, gols esperados (xG) e pressão final.
+          Audited statistical algorithm analyzing Asian lines, expected goals (xG) and late pressure.
         </p>
       </div>
       <div class="flex items-center gap-2">
         <span class="text-[11px] font-mono text-gray-400 bg-[#14181f] px-3 py-1.5 rounded-lg border border-gray-800">
-          <span class="text-cyan-400 font-bold">Modo:</span> Escuro Profissional
+          <span class="text-cyan-400 font-bold">Mode:</span> Dark Terminal
         </span>
       </div>
     </div>
@@ -184,124 +184,96 @@
   <!-- Dicionário Multilíngue Exaustivo & Script de Tradução VIP -->
   <script>
     const VIP_TRANSLATIONS = {
-      'en': {
+      'pt': {
         // Menu Superior
-        'TODOS JOGOS': 'ALL MATCHES',
-        'AO VIVO': 'LIVE',
-        'GOLS': 'GOALS',
-        'ESCANTEIOS': 'CORNERS',
-        'LAY MERCADOS': 'LAY MARKETS',
-        'VIP ATIVO': 'VIP ACTIVE',
-        'Previsões': 'Predictions',
-        'Modo:': 'Mode:',
-        'Escuro Profissional': 'Dark Terminal',
-        'Algoritmo estatístico auditado com leitura de linhas asiáticas, gols esperados (xG) e pressão final.': 'Audited statistical algorithm analyzing Asian lines, expected goals (xG) and late pressure.',
+        'ALL MATCHES': 'TODOS OS JOGOS',
+        'LIVE': 'AO VIVO',
+        'GOALS': 'GOLS',
+        'CORNERS': 'ESCANTEIOS',
+        'LAY MARKETS': 'MERCADOS LAY',
+        'VIP ACTIVE': 'VIP ATIVO',
+        'Predictions': 'Previsões',
+        'Mode:': 'Modo:',
+        'Dark Terminal': 'Escuro Profissional',
+        'Audited statistical algorithm analyzing Asian lines, expected goals (xG) and late pressure.': 'Algoritmo estatístico auditado com leitura de linhas asiáticas, gols esperados (xG) e pressão final.',
 
         // Rodada / Calendário
-        'DATA / RODADA': 'DATE / ROUND',
-        'RODADA / DATA': 'DATE / ROUND',
-        'ONTEM': 'YESTERDAY',
-        'HOJE': 'TODAY',
-        'AMANHÃ': 'TOMORROW',
-        'Hoje ·': 'Today ·',
-        'Amanhã ·': 'Tomorrow ·',
-        'Em ': 'On ',
-        'set.': 'Sep',
-        'out.': 'Oct',
-        'nov.': 'Nov',
-        'dez.': 'Dec',
-        'jan.': 'Jan',
-        'fev.': 'Feb',
-        'mar.': 'Mar',
-        'abr.': 'Apr',
-        'mai.': 'May',
-        'jun.': 'Jun',
-        'jul.': 'Jul',
-        'ago.': 'Aug',
+        'DATE / ROUND': 'DATA / RODADA',
+        'Date / Round': 'Data / Rodada',
+        'YESTERDAY': 'ONTEM',
+        'TODAY': 'HOJE',
+        'TOMORROW': 'AMANHÃ',
+        'Today': 'Hoje',
+        'Tomorrow': 'Amanhã',
+        'Go to Today': 'Ir para Hoje',
+        'Today ·': 'Hoje ·',
+        'Tomorrow ·': 'Amanhã ·',
+        'On ': 'Em ',
 
         // Sidebar Mercados
-        'MERCADOS & FILTROS': 'MARKETS & FILTERS',
-        'Todos os mercados': 'All markets',
-        'Ambos marcam': 'Both teams to score',
-        'Resultado / Lay': 'Result / Lay',
-        'Lay Placar (95%+)': 'Lay Score (95%+)',
-        'Gols +1.5 FT': 'Over 1.5 Goals',
-        'Gols +2.5 FT': 'Over 2.5 Goals',
-        'Ambos Marcam (BTTS)': 'Both Teams to Score',
-        'Menos de 3.5 FT': 'Under 3.5 Goals',
-        'Cantos +7.5 FT': 'Corners Over 7.5',
-        'Cantos +8.5 FT': 'Corners Over 8.5',
-        'Cantos Finais (75\'+)': 'Late Corners (75\'+)',
-        'Lay Placar Improvável': 'Lay Unlikely Score',
+        'Markets': 'Mercados',
+        'Forecasts': 'Previsões',
+        'All markets': 'Todos os mercados',
+        'Goals': 'Gols',
+        'Both Teams to Score': 'Ambos marcam',
+        'Result / Lay': 'Resultado / Lay',
+        'Lay Correct Score (95%+)': 'Lay Placar (95%+)',
+        'Late Corners (75\'+)': 'Cantos Finais (75\'+)',
 
         // Cards KPIs Superiores
-        'Jogos do Mercado': 'Market Matches',
-        'Disponíveis hoje': 'Available today',
-        'Auditados no banco': 'Audited in database',
-        'Tips para': 'Tips for',
-        'Acerto': 'Accuracy',
-        'Acerto Hoje': 'Hit Rate Today',
-        'Acerto Amanhã': 'Hit Rate Tomorrow',
-        'Acerto Em': 'Hit Rate On',
-        'Histórico': 'Historical',
-        'Futuro': 'Future',
-        'resolvidos': 'resolved',
-        'Acerto 7 dias': '7-Day Winrate',
-        'Média': 'Average',
-        'Histórico consolidado': 'Consolidated track record',
-        'Acerto 30 dias': '30-Day Winrate',
-        'Amostra': 'Sample',
-        'Neste mercado': 'In this market',
-        'ROI Odd Justa': 'Fair Odd ROI',
-        'Odd Justa Média': 'Avg Fair Odd',
-        'ROI Estimado': 'Estimated ROI',
-        'Stake fixa 1 unid.': 'Flat stake 1 unit',
+        'Market Games': 'Jogos do Mercado',
+        'Available today': 'Disponíveis hoje',
+        'Audited in database': 'Auditados no banco',
+        'Tips for': 'Tips para',
+        'Winrate': 'Acerto',
+        'History': 'Histórico',
+        'settled': 'resolvidos',
+        '7-Day Winrate': 'Acerto 7 dias',
+        'Average': 'Média',
+        'Consolidated history': 'Histórico consolidado',
+        '30-Day Winrate': 'Acerto 30 dias',
+        'Sample': 'Amostra',
+        'In this market': 'Neste mercado',
+        'Fair Odd ROI': 'ROI Odd Justa',
+        'Flat stake 1 unit': 'Stake fixa 1 unid.',
 
         // Filtros Rápidos
-        'Partidas:': 'Matches:',
-        'Todas': 'All',
-        'Ao Vivo': 'Live',
-        'Encerradas': 'Finished',
-        'Encerrados': 'Finished',
-        'Só ≥ 80% (Sniper)': 'Only ≥ 80% (Sniper)',
-        'Só Sniper ≥80%': 'Sniper ≥80% Only',
-        'Buscar time ou liga...': 'Search team or league...',
-        'Buscar clube ou campeonato...': 'Search club or league...',
+        'Matches:': 'Partidas:',
+        'All': 'Todas',
+        'Finished': 'Encerradas',
+        'Only ≥ 80% (Sniper)': 'Só ≥ 80% (Sniper)',
+        'Search team or league...': 'Buscar time ou liga...',
 
         // Top Picks Carousel
-        'Melhores apostas do dia': 'Top picks of the day',
-        'as previsões com maior confiança matemática': 'predictions with the highest mathematical confidence',
-        'TOP PICKS DA RODADA': 'TOP ROUND PICKS',
-        'Auditado': 'Audited',
-        'Prob.': 'Prob.',
-        'justa': 'fair',
-        'Justa': 'Fair',
-        'Analisar': 'Analyze',
+        'Best bets of the day': 'Melhores apostas do dia',
+        'highest mathematical confidence forecasts': 'as previsões com maior confiança matemática',
+        'fair': 'justa',
+        'Analyze': 'Analisar',
 
         // Tabela & Cabeçalhos
-        'a mostrar as mais fortes': 'showing the strongest',
-        'acerto 30 d.': 'hit rate 30 d.',
-        'Ver todas': 'View all',
-        'Hora': 'Time',
-        'HORA': 'TIME',
-        'Campeonato': 'League',
-        'CAMPEONATO': 'LEAGUE',
-        'Jogo': 'Match',
-        'JOGO': 'MATCH',
-        'Casa · Fora': 'Home · Away',
-        'CASA · FORA': 'HOME · AWAY',
-        'Previsão': 'Probability',
-        'PREVISÃO': 'PROBABILITY',
-        'Ação': 'Action',
-        'AÇÃO': 'ACTION',
-        'Gols Mais de 1.5 FT': 'Over 1.5 Goals FT',
-        'Gols Mais de 2.5 FT': 'Over 2.5 Goals FT',
-        'Gols Menos de 3.5 FT': 'Under 3.5 Goals FT',
-        'Cantos Mais de 7.5 FT': 'Corners Over 7.5 FT',
-        'Cantos Mais de 8.5 FT': 'Corners Over 8.5 FT',
-        'Cantos Finais (Pressão 75\'+)': 'Late Corners (Pressure 75\'+)',
-        'Contra:': 'Lay:',
-        'Tips': 'Tips'
+        'showing highest confidence': 'a mostrar as mais fortes',
+        '30d winrate': 'acerto 30 d.',
+        'View all': 'Ver todas',
+        'Collapse Top 5': 'Recolher Top 5',
+        'Time': 'Hora',
+        'League': 'Campeonato',
+        'Match': 'Jogo',
+        'Home · Away': 'Casa · Fora',
+        'Prediction': 'Previsão',
+        'Fair': 'Justa',
+        'Action': 'Ação',
+        'Over 1.5 Goals FT': 'Gols Mais de 1.5 FT',
+        'Over 2.5 Goals FT': 'Gols Mais de 2.5 FT',
+        'Under 3.5 Goals FT (Safety)': 'Gols Menos de 3.5 FT (Proteção)',
+        'Both Teams to Score (BTTS)': 'Ambos Marcam (Sim)',
+        'Corners Over 7.5 FT': 'Escanteios Mais de 7.5 FT',
+        'Corners Over 8.5 FT': 'Escanteios Mais de 8.5 FT',
+        'Late Corners (Pressure 75\'+)': 'Cantos Finais (Pressão 75\'+)',
+        'Lay Correct Score (Exchange 95%+)': 'Lay Placar Improvável (Exchange 95%+)',
+        'Against:': 'Contra:',
+        'No live matches at this exact moment': 'Nenhum jogo ao vivo no momento exato',
+        'Live radar feeds and telemetry update automatically every 60 seconds as soon as matches kick off.': 'As transmissões e feeds de radar ao vivo atualizam automaticamente a cada 60 segundos assim que uma partida inicia.',
+        'View Today\'s Matches': 'Ver Jogos de Hoje'
       },
       'es': {
         // Menu Superior
@@ -584,8 +556,9 @@
       // Normalizar (pt-br -> pt)
       const langKey = currentLang.startsWith('pt') ? 'pt' : (currentLang.startsWith('es') ? 'es' : (currentLang.startsWith('de') ? 'de' : 'en'));
 
-      // 2. Aplicar Tradução Dinâmica se não for Português
-      if (langKey !== 'pt' && typeof VIP_TRANSLATIONS !== 'undefined' && VIP_TRANSLATIONS[langKey]) {
+      // 2. Aplicar Tradução Dinâmica apenas quando o usuário selecionar um idioma alternativo (PT, ES, DE)
+      // No padrão (EN), o HTML e os dados do servidor já são 100% nativos em inglês, eliminando qualquer flash de tradução!
+      if (langKey !== 'en' && typeof VIP_TRANSLATIONS !== 'undefined' && VIP_TRANSLATIONS[langKey]) {
         const dict = VIP_TRANSLATIONS[langKey];
         
         // Função para traduzir nós de texto
