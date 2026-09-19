@@ -1,5 +1,6 @@
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="pt-BR" class="dark">
+<html lang="{{ LANGUAGE_CODE|default:'pt-br' }}" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -37,6 +38,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Flag Icons CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/7.1.0/css/flag-icons.min.css">
 
   <style>
     body {
@@ -102,13 +106,70 @@
         <a href="/vip/jogos/?market=lays" class="{% if selected_market == 'lays' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-gray-400 hover:text-white{% endif %} transition">LAY MERCADOS</a>
       </nav>
 
-      <!-- Lado Direito: Status / Sair -->
-      <div class="flex items-center gap-3">
+      <!-- Lado Direito: Seletor de Idioma + Status + Sair -->
+      <div class="flex items-center gap-2.5">
+        
+        <!-- Dropdown de Idiomas (PT, EN, ES, DE) -->
+        {% get_current_language as CURRENT_LANG %}
+        <div class="relative" id="langDropdownContainer">
+          <button id="langDropdownBtn" type="button" class="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-[#14181f] border border-gray-800 text-xs font-mono text-gray-300 hover:text-white hover:border-gray-700 transition">
+            {% if CURRENT_LANG == 'pt-br' or CURRENT_LANG == 'pt' %}
+              <span class="fi fi-br rounded-sm"></span>
+              <span class="font-bold">PT</span>
+            {% elif CURRENT_LANG == 'es' %}
+              <span class="fi fi-es rounded-sm"></span>
+              <span class="font-bold">ES</span>
+            {% elif CURRENT_LANG == 'de' %}
+              <span class="fi fi-de rounded-sm"></span>
+              <span class="font-bold">DE</span>
+            {% else %}
+              <span class="fi fi-us rounded-sm"></span>
+              <span class="font-bold">EN</span>
+            {% endif %}
+            <i class="fa-solid fa-chevron-down text-[9px] text-gray-500 ml-0.5"></i>
+          </button>
+
+          <div id="langDropdownMenu" class="hidden absolute right-0 mt-1.5 w-36 bg-[#14181f] border border-gray-800 rounded-xl shadow-2xl py-1 z-50 font-mono text-xs">
+            <form action="{% url 'set_language' %}" method="post" id="form-lang-pt">
+              {% csrf_token %}
+              <input type="hidden" name="language" value="pt-br">
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              <button type="submit" class="w-full text-left px-3 py-1.5 flex items-center gap-2 hover:bg-gray-800/60 {% if CURRENT_LANG == 'pt-br' or CURRENT_LANG == 'pt' %}text-cyan-400 font-bold{% else %}text-gray-300{% endif %}">
+                <span class="fi fi-br rounded-sm"></span> <span>Português</span>
+              </button>
+            </form>
+            <form action="{% url 'set_language' %}" method="post" id="form-lang-en">
+              {% csrf_token %}
+              <input type="hidden" name="language" value="en">
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              <button type="submit" class="w-full text-left px-3 py-1.5 flex items-center gap-2 hover:bg-gray-800/60 {% if CURRENT_LANG == 'en' %}text-cyan-400 font-bold{% else %}text-gray-300{% endif %}">
+                <span class="fi fi-us rounded-sm"></span> <span>English</span>
+              </button>
+            </form>
+            <form action="{% url 'set_language' %}" method="post" id="form-lang-es">
+              {% csrf_token %}
+              <input type="hidden" name="language" value="es">
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              <button type="submit" class="w-full text-left px-3 py-1.5 flex items-center gap-2 hover:bg-gray-800/60 {% if CURRENT_LANG == 'es' %}text-cyan-400 font-bold{% else %}text-gray-300{% endif %}">
+                <span class="fi fi-es rounded-sm"></span> <span>Español</span>
+              </button>
+            </form>
+            <form action="{% url 'set_language' %}" method="post" id="form-lang-de">
+              {% csrf_token %}
+              <input type="hidden" name="language" value="de">
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              <button type="submit" class="w-full text-left px-3 py-1.5 flex items-center gap-2 hover:bg-gray-800/60 {% if CURRENT_LANG == 'de' %}text-cyan-400 font-bold{% else %}text-gray-300{% endif %}">
+                <span class="fi fi-de rounded-sm"></span> <span>Deutsch</span>
+              </button>
+            </form>
+          </div>
+        </div>
+
         <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#1c232d] border border-emerald-500/30 text-[#00d26a] font-mono text-[11px] font-bold">
           <span class="w-1.5 h-1.5 rounded-full bg-[#00d26a] animate-pulse"></span>
           VIP ATIVO
         </span>
-        <a href="/login" class="text-gray-400 hover:text-white text-xs font-mono transition">
+        <a href="/login" class="text-gray-400 hover:text-white text-xs font-mono transition ml-1" title="Sair">
           <i class="fa-solid fa-arrow-right-from-bracket"></i>
         </a>
       </div>
@@ -151,6 +212,47 @@
       StatsFut VIP &middot; Modelo Matem&aacute;tico Exclusivo &middot; Proibi&ccedil;&atilde;o de Repasse
     </div>
   </footer>
+
+  <!-- Script de Toggle Dropdown de Idiomas & Conversor de Fuso Horário Local do Usuário -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Dropdown de Idiomas
+      const btn = document.getElementById('langDropdownBtn');
+      const menu = document.getElementById('langDropdownMenu');
+      if (btn && menu) {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          menu.classList.toggle('hidden');
+        });
+        document.addEventListener('click', () => {
+          if (!menu.classList.contains('hidden')) {
+            menu.classList.add('hidden');
+          }
+        });
+      }
+
+      // 2. Ajuste Dinâmico de Horário Local do Visitante (Intl API)
+      try {
+        const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        document.querySelectorAll('[data-utc-time]').forEach(el => {
+          const utcIso = el.getAttribute('data-utc-time');
+          if (utcIso) {
+            const dateObj = new Date(utcIso);
+            if (!isNaN(dateObj)) {
+              const formattedTime = new Intl.DateTimeFormat(navigator.language || 'pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+              }).format(dateObj);
+              el.textContent = formattedTime;
+            }
+          }
+        });
+      } catch (err) {
+        console.warn('Erro ao ajustar fuso horário local:', err);
+      }
+    });
+  </script>
 
   {% block extra_scripts %}{% endblock %}
 </body>
