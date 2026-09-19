@@ -276,7 +276,20 @@ def vip_games_list_view(request):
             qs = qs.order_by('date')
 
     total_day_matches = qs.count()
-    raw_matches = list(qs[:70])
+
+    # Priorizar jogos AO VIVO no topo da lista para nunca ficarem de fora do limite
+    if status_filter == 'today':
+        live_matches_today = list(qs.filter(status__iexact='Live'))
+        other_matches_today = list(qs.exclude(status__iexact='Live')[:150])
+        # Unir colocando os ao vivo em prioridade absoluta
+        seen_ids = set()
+        raw_matches = []
+        for m in (live_matches_today + other_matches_today):
+            if m.id not in seen_ids:
+                seen_ids.add(m.id)
+                raw_matches.append(m)
+    else:
+        raw_matches = list(qs[:150])
     
     # Fallback se não encontrar partidas ao vivo no status exato, traz as mais recentes em andamento
     if status_filter == 'live' and not raw_matches:
@@ -440,10 +453,13 @@ def vip_games_list_view(request):
         m.away_spec_pct = stats['away_o15_pct']
 
         # ── Auditoria de Resultado (Green / Red) para jogos encerrados ──
-        is_finished = m.status in ['Finished', 'FT'] and m.home_score is not None and m.away_score is not None
+        status_str = (m.status or '').upper()
+        is_live = status_str in ['LIVE', '1H', '2H', 'HT', 'ET', 'P']
+        is_finished = status_str in ['FINISHED', 'FT', 'AET', 'PEN'] and m.home_score is not None and m.away_score is not None
         tot_goals = (m.home_score + m.away_score) if is_finished else None
         tot_corners = (m.home_corners + m.away_corners) if (is_finished and m.home_corners is not None and m.away_corners is not None) else None
 
+        m.is_live = is_live
         m.is_finished = is_finished
         m.res_o15 = 'green' if (is_finished and tot_goals >= 2) else ('red' if is_finished else None)
         m.res_o25 = 'green' if (is_finished and tot_goals >= 3) else ('red' if is_finished else None)
