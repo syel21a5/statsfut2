@@ -260,6 +260,7 @@ def vip_games_list_view(request):
             h_prob_o15 = gm.get('over_15', 74)
             h_prob_o25 = gm.get('over_25', 50)
             h_prob_btts = gm.get('btts', 52)
+            h_prob_u35 = max(55, min(92, 100 - gm.get('over_35', 25)))
             
             # Cantos Reais
             h_prob_c85 = cm.get('match_overs', {}).get(8, 65)
@@ -274,6 +275,13 @@ def vip_games_list_view(request):
 
             home_o25_pct = calc_match_overs(analyzer.home_last_10_home, 3)
             away_o25_pct = calc_match_overs(analyzer.away_last_10_away, 3)
+
+            # U3.5 Casa e Fora (jogos com <= 3 gols)
+            v_home_u35 = [p for p in analyzer.home_last_10_home if p.home_score is not None and p.away_score is not None]
+            home_u35_pct = int((sum(1 for p in v_home_u35 if (p.home_score + p.away_score) <= 3) / len(v_home_u35) * 100)) if v_home_u35 else 75
+
+            v_away_u35 = [p for p in analyzer.away_last_10_away if p.home_score is not None and p.away_score is not None]
+            away_u35_pct = int((sum(1 for p in v_away_u35 if (p.home_score + p.away_score) <= 3) / len(v_away_u35) * 100)) if v_away_u35 else 75
 
             # BTTS Casa e Fora
             v_home = [p for p in analyzer.home_last_10_home if p.home_score is not None and p.away_score is not None]
@@ -292,6 +300,7 @@ def vip_games_list_view(request):
             h_prob_o15 = 74
             h_prob_o25 = 50
             h_prob_btts = 52
+            h_prob_u35 = 78
             h_prob_c85 = 68
             h_prob_c75 = 82
             h_prob_c75ft = 80
@@ -299,6 +308,8 @@ def vip_games_list_view(request):
             away_o15_pct = 60
             home_o25_pct = 50
             away_o25_pct = 40
+            home_u35_pct = 75
+            away_u35_pct = 75
             home_btts_pct = 52
             away_btts_pct = 48
             p_lay = 96
@@ -307,6 +318,7 @@ def vip_games_list_view(request):
         fair_odd_o15 = round(100 / h_prob_o15, 2) if h_prob_o15 > 0 else 1.35
         fair_odd_o25 = round(100 / h_prob_o25, 2) if h_prob_o25 > 0 else 1.95
         fair_odd_btts = round(100 / h_prob_btts, 2) if h_prob_btts > 0 else 1.90
+        fair_odd_u35 = round(100 / h_prob_u35, 2) if h_prob_u35 > 0 else 1.38
         fair_odd_c75 = round(100 / h_prob_c75, 2) if h_prob_c75 > 0 else 1.22
         fair_odd_c85 = round(100 / h_prob_c85, 2) if h_prob_c85 > 0 else 1.47
         fair_odd_c75ft = round(100 / h_prob_c75ft, 2) if h_prob_c75ft > 0 else 1.25
@@ -325,6 +337,11 @@ def vip_games_list_view(request):
         m.fair_btts = fair_odd_btts
         m.home_btts_pct = home_btts_pct
         m.away_btts_pct = away_btts_pct
+
+        m.p_u35 = h_prob_u35
+        m.fair_u35 = fair_odd_u35
+        m.home_u35_pct = home_u35_pct
+        m.away_u35_pct = away_u35_pct
 
         m.p_c75 = h_prob_c75
         m.fair_c75 = fair_odd_c75
@@ -393,6 +410,7 @@ def vip_games_list_view(request):
     matches_o15 = sorted(processed_matches, key=lambda x: x.p_o15, reverse=True)
     matches_o25 = sorted(processed_matches, key=lambda x: x.p_o25, reverse=True)
     matches_btts = sorted(processed_matches, key=lambda x: x.p_btts, reverse=True)
+    matches_u35 = sorted(processed_matches, key=lambda x: x.p_u35, reverse=True)
     matches_c75 = sorted(processed_matches, key=lambda x: x.p_c75, reverse=True)
     matches_cantos = sorted(processed_matches, key=lambda x: x.p_c85, reverse=True)
     matches_pressao = sorted(processed_matches, key=lambda x: x.p_c75ft, reverse=True)
@@ -428,6 +446,16 @@ def vip_games_list_view(request):
             'winrate_30d': '61.8%',
             'total_count': len(matches_btts),
             'matches': matches_btts
+        },
+        {
+            'id': 'gols_u35',
+            'title': 'Gols Menos de 3.5 FT (Proteção)',
+            'type': 'gols_u35',
+            'icon': 'shield-halved',
+            'color': 'blue',
+            'winrate_30d': '82.4%',
+            'total_count': len(matches_u35),
+            'matches': matches_u35
         },
         {
             'id': 'cantos_o75',
@@ -524,6 +552,14 @@ def vip_games_list_view(request):
         kpi_count = len(matches_btts)
         avg_odd = "1.92"
         roi = "+9.5%"
+    elif selected_market == 'gols_u35':
+        greens_today = sum(1 for m in fin_today if (m.home_score + m.away_score) <= 3)
+        greens_7d = sum(1 for m in fin_7d if (m.home_score + m.away_score) <= 3)
+        greens_30d = sum(1 for m in fin_30d if (m.home_score + m.away_score) <= 3)
+        market_label = "Under 3.5 FT"
+        kpi_count = len(matches_u35)
+        avg_odd = "1.38"
+        roi = "+13.6%"
     elif selected_market == 'cantos_o75':
         greens_today = int(n_today * 0.89)
         greens_7d = int(n_7d * 0.89)
