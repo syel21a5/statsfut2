@@ -295,9 +295,19 @@
           </div>
 
           <!-- Meio do Card: Times e Campeonato -->
-          <div class="my-2 space-y-1">
-            <div class="text-xs font-bold text-white truncate">{{ pick.match.home_team.name }}</div>
-            <div class="text-xs font-bold text-white truncate">{{ pick.match.away_team.name }}</div>
+          <div class="my-2 space-y-1.5">
+            <div class="flex items-center gap-2">
+              {% if pick.match.home_team.logo_url %}
+                <img src="{{ pick.match.home_team.logo_url }}" alt="{{ pick.match.home_team.name }}" class="w-4 h-4 object-contain shrink-0" onerror="this.style.display='none'">
+              {% endif %}
+              <div class="text-xs font-bold text-white truncate">{{ pick.match.home_team.name }}</div>
+            </div>
+            <div class="flex items-center gap-2">
+              {% if pick.match.away_team.logo_url %}
+                <img src="{{ pick.match.away_team.logo_url }}" alt="{{ pick.match.away_team.name }}" class="w-4 h-4 object-contain shrink-0" onerror="this.style.display='none'">
+              {% endif %}
+              <div class="text-xs font-bold text-white truncate">{{ pick.match.away_team.name }}</div>
+            </div>
             <div class="text-[10px] text-gray-500 font-mono truncate">{{ pick.match.league.name }}</div>
           </div>
 
@@ -384,10 +394,24 @@
                 {{ m.league.name }}
               </td>
 
-              <!-- Jogo -->
+              <!-- Jogo com Escudos Oficiais -->
               <td class="py-3 px-4 font-sans font-bold text-white">
-                <a href="/vip/analise/{{ m.id }}/" class="hover:text-cyan-400 transition">
-                  {{ m.home_team.name }} <span class="text-gray-500 font-mono font-normal text-xs mx-1">vs</span> {{ m.away_team.name }}
+                <a href="/vip/analise/{{ m.id }}/" class="hover:text-cyan-400 transition inline-flex items-center gap-2 flex-wrap">
+                  <span class="inline-flex items-center gap-1.5">
+                    {% if m.home_team.logo_url %}
+                      <img src="{{ m.home_team.logo_url }}" alt="{{ m.home_team.name }}" class="w-4 h-4 object-contain inline-block shrink-0" onerror="this.style.display='none'">
+                    {% endif %}
+                    <span>{{ m.home_team.name }}</span>
+                  </span>
+
+                  <span class="text-gray-500 font-mono font-normal text-xs">vs</span>
+
+                  <span class="inline-flex items-center gap-1.5">
+                    {% if m.away_team.logo_url %}
+                      <img src="{{ m.away_team.logo_url }}" alt="{{ m.away_team.name }}" class="w-4 h-4 object-contain inline-block shrink-0" onerror="this.style.display='none'">
+                    {% endif %}
+                    <span>{{ m.away_team.name }}</span>
+                  </span>
                 </a>
                 {% if sec.id == 'lays' and m.lay_score %}
                   <span class="ml-2 font-mono text-[10px] px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-300 border border-rose-500/30">
