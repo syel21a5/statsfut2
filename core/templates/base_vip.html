@@ -92,30 +92,34 @@
       </div>
 
       <!-- Links de Navegação Principal (Estilo CornerPro) -->
-      <nav class="hidden lg:flex items-center gap-6 font-mono text-xs font-semibold tracking-wider">
+      <nav class="hidden lg:flex items-center gap-5 font-mono text-xs font-semibold tracking-wider">
         <a href="{{ lang_prefix }}/vip/jogos/" class="{% if request.resolver_match.url_name in 'vip_games_list vip_games_list_i18n' and not current_status == 'live' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-white hover:text-[#00b4d8]{% endif %} transition">ALL MATCHES</a>
         
-        <a href="{{ lang_prefix }}/vip/radar/" class="{% if request.resolver_match.url_name in 'vip_radar vip_radar_i18n vip_live_radar vip_live_radar_i18n' %}text-rose-300 bg-rose-500/25 border-rose-500/50 border-b-2 border-rose-400{% else %}text-rose-400 hover:text-rose-300 bg-rose-500/10 border-rose-500/20{% endif %} transition flex items-center gap-1.5 px-2.5 py-1 rounded-lg border shadow-sm font-bold">
+        <a href="{{ lang_prefix }}/vip/radar/" class="{% if request.resolver_match.url_name in 'vip_radar vip_radar_i18n vip_live_radar vip_live_radar_i18n' %}text-rose-300 bg-rose-500/25 border-rose-500/50 border-b-2 border-rose-400{% else %}text-rose-400 hover:text-rose-300 bg-rose-500/10 border-rose-500/20{% endif %} transition flex items-center gap-1.5 px-2.5 py-1 rounded-lg border shadow-sm font-bold group" title="VIP TOTAL ONLY">
           <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
           <span>LIVE RADAR</span>
           <span class="ml-0.5 px-1.5 py-0.2 rounded-full bg-rose-500 text-white font-bold text-[10px]">
             {{ live_count|default:"0" }}
           </span>
+          <i class="fa-solid fa-crown text-[10px] text-amber-400" title="Exclusivo VIP Total"></i>
         </a>
 
-        <a href="{{ lang_prefix }}/vip/bilhetes/" class="{% if request.resolver_match.url_name in 'vip_tickets vip_tickets_i18n' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1 font-bold{% else %}text-gray-400 hover:text-white{% endif %} transition flex items-center gap-1.5">
+        <a href="{{ lang_prefix }}/vip/bilhetes/" class="{% if request.resolver_match.url_name in 'vip_tickets vip_tickets_i18n' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1 font-bold{% else %}text-gray-400 hover:text-white{% endif %} transition flex items-center gap-1.5" title="VIP TOTAL ONLY">
           <i class="fa-solid fa-layer-group text-[11px] text-cyan-400"></i>
           <span>READY TICKETS</span>
+          <i class="fa-solid fa-crown text-[10px] text-amber-400" title="Exclusivo VIP Total"></i>
         </a>
 
-        <a href="{{ lang_prefix }}/vip/bots/" class="{% if request.resolver_match.url_name in 'vip_bots vip_bots_i18n' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1 font-bold{% else %}text-gray-400 hover:text-white{% endif %} transition flex items-center gap-1.5">
+        <a href="{{ lang_prefix }}/vip/bots/" class="{% if request.resolver_match.url_name in 'vip_bots vip_bots_i18n' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1 font-bold{% else %}text-gray-400 hover:text-white{% endif %} transition flex items-center gap-1.5" title="VIP TOTAL ONLY">
           <i class="fa-solid fa-robot text-[11px] text-purple-400"></i>
           <span>BOT STUDIO</span>
+          <i class="fa-solid fa-crown text-[10px] text-amber-400" title="Exclusivo VIP Total"></i>
         </a>
 
-        <a href="{{ lang_prefix }}/vip/ferramentas/" class="{% if request.resolver_match.url_name in 'vip_tools vip_tools_i18n' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1 font-bold{% else %}text-gray-400 hover:text-white{% endif %} transition flex items-center gap-1.5">
+        <a href="{{ lang_prefix }}/vip/ferramentas/" class="{% if request.resolver_match.url_name in 'vip_tools vip_tools_i18n' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1 font-bold{% else %}text-gray-400 hover:text-white{% endif %} transition flex items-center gap-1.5" title="VIP TOTAL ONLY">
           <i class="fa-solid fa-calculator text-[11px] text-amber-400"></i>
           <span>HEDGE & +EV</span>
+          <i class="fa-solid fa-crown text-[10px] text-amber-400" title="Exclusivo VIP Total"></i>
         </a>
 
         <!-- Dropdown Agrupado: MARKETS (Gols, Cantos, Lays) -->
@@ -191,13 +195,16 @@
           </div>
         </div>
 
-        <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#1c232d] border border-emerald-500/30 text-[#00d26a] font-mono text-[11px] font-bold">
-          <span class="w-1.5 h-1.5 rounded-full bg-[#00d26a] animate-pulse"></span>
-          VIP ACTIVE
-        </span>
-        <a href="/vip-logout" class="text-gray-400 hover:text-rose-400 text-xs font-mono transition ml-1 flex items-center gap-1" title="Sair / Logout">
-          <i class="fa-solid fa-arrow-right-from-bracket"></i>
-          <span class="hidden md:inline text-[10px]">LOGOUT</span>
+        <!-- Usuário Conectado & Status do Plano -->
+        <div class="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-lg bg-[#14181f] border border-gray-800 text-xs font-mono">
+          <i class="fa-solid fa-user text-[11px] text-gray-400"></i>
+          <span id="vipCurrentUsername" class="text-gray-200 font-bold max-w-[110px] truncate">...</span>
+          <span id="vipPlanBadge" class="px-1.5 py-0.2 rounded text-[10px] font-bold uppercase bg-gray-800 text-gray-400 border border-gray-700">VIP</span>
+        </div>
+
+        <a href="/vip-logout" class="text-gray-400 hover:text-rose-400 text-xs font-mono transition ml-1 flex items-center gap-1.5 px-2 py-1 rounded bg-[#14181f] border border-gray-800/80 hover:border-rose-500/30" title="Sair / Logout">
+          <i class="fa-solid fa-arrow-right-from-bracket text-rose-400"></i>
+          <span class="hidden md:inline text-[10px] font-bold text-gray-300 hover:text-rose-400">LOGOUT</span>
         </a>
       </div>
 
@@ -1430,6 +1437,36 @@
       } catch (err) {
         console.warn('Erro ao ajustar fuso horário local:', err);
       }
+
+      // 5. Ler cookie do usuário conectado e badge do plano
+      (function() {
+        function getCookie(name) {
+          const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+          return v ? v[2] : null;
+        }
+        const tok = getCookie('vip_session');
+        const uEl = document.getElementById('vipCurrentUsername');
+        const bEl = document.getElementById('vipPlanBadge');
+        if (tok && uEl && bEl) {
+          const parts = tok.split(':');
+          if (parts.length >= 2) {
+            const username = parts[0];
+            const plan = parts[1].toLowerCase();
+            uEl.textContent = username;
+            if (plan === 'vip') {
+              bEl.textContent = 'VIP TOTAL';
+              bEl.className = 'px-1.5 py-0.2 rounded text-[9px] font-extrabold uppercase bg-amber-500/15 text-amber-400 border border-amber-500/30 shadow-sm';
+            } else if (plan === 'popular') {
+              bEl.textContent = 'POPULAR';
+              bEl.className = 'px-1.5 py-0.2 rounded text-[9px] font-bold uppercase bg-blue-500/15 text-blue-400 border border-blue-500/30';
+            }
+          } else if (tok === 'vip_auth_ok_2026') {
+            uEl.textContent = 'Admin';
+            bEl.textContent = 'VIP TOTAL';
+            bEl.className = 'px-1.5 py-0.2 rounded text-[9px] font-extrabold uppercase bg-amber-500/15 text-amber-400 border border-amber-500/30 shadow-sm';
+          }
+        }
+      })();
     });
   </script>
 
