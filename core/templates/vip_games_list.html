@@ -17,16 +17,9 @@
           <i class="fa-solid fa-calendar-days text-cyan-400 text-xs"></i>
           <span class="text-[11px] font-mono font-bold text-gray-300 uppercase tracking-wider">Data / Rodada</span>
         </div>
-        <div class="flex items-center gap-2">
-          <!-- Mini Datepicker HTML5 nativo -->
-          <label class="cursor-pointer text-gray-400 hover:text-cyan-400 transition" title="Escolher data no calendário">
-            <i class="fa-regular fa-calendar text-xs"></i>
-            <input type="date" class="sr-only" onchange="if(this.value) window.location.href='?status=' + this.value + '{% if selected_market %}&market={{ selected_market }}{% endif %}';">
-          </label>
-          <a href="?status=today{% if selected_market %}&market={{ selected_market }}{% endif %}" class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/20 transition" title="Ir para Hoje">
-            HOJE
-          </a>
-        </div>
+        <a href="?status=today{% if selected_market %}&market={{ selected_market }}{% endif %}" class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/20 transition" title="Ir para Hoje">
+          HOJE
+        </a>
       </div>
       
       <!-- Carrossel de 7 Dias com Micro-Contador e Destaque Neon -->

@@ -219,10 +219,15 @@ def vip_games_list_view(request):
     query_date = now.date()
 
     if status_filter == 'today':
-        qs = qs.filter(date__gte=now - timedelta(hours=3), date__lte=now + timedelta(hours=24)).order_by('date')
+        start_d = datetime.combine(now.date(), datetime.min.time(), tzinfo=pytz.UTC)
+        end_d = datetime.combine(now.date(), datetime.max.time(), tzinfo=pytz.UTC)
+        qs = qs.filter(date__range=(start_d, end_d)).order_by('date')
     elif status_filter == 'tomorrow':
-        qs = qs.filter(date__gte=now + timedelta(hours=24), date__lte=now + timedelta(hours=48)).order_by('date')
-        query_date = (now + timedelta(days=1)).date()
+        tom_date = (now + timedelta(days=1)).date()
+        query_date = tom_date
+        start_d = datetime.combine(tom_date, datetime.min.time(), tzinfo=pytz.UTC)
+        end_d = datetime.combine(tom_date, datetime.max.time(), tzinfo=pytz.UTC)
+        qs = qs.filter(date__range=(start_d, end_d)).order_by('date')
     elif status_filter == 'finished':
         # Partidas encerradas recentemente (últimas 24 horas)
         qs = qs.filter(status__in=['Finished', 'FT'], date__gte=now - timedelta(hours=24)).order_by('-date')
@@ -576,7 +581,7 @@ def vip_games_list_view(request):
             'is_today': delta == 0,
             'is_yesterday': delta == -1,
             'is_tomorrow': delta == 1,
-            'is_active': (delta == 0 and status_filter in ['today', None, '']) or (status_filter == d.strftime('%Y-%m-%d')) or (delta == 1 and status_filter == 'tomorrow'),
+            'is_active': (delta == 0 and status_filter in ['today', None, '']) or (status_filter == d.strftime('%Y-%m-%d')) or (delta == 1 and status_filter in ['tomorrow', d.strftime('%Y-%m-%d')]),
             'match_count': day_match_count,
             'has_matches': day_match_count > 0,
         })
