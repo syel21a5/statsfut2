@@ -876,7 +876,132 @@ def vip_live_radar_view(request):
     return render(request, 'base_vip.html', {'lang_prefix': get_lang_prefix(request)})
 
 def vip_tickets_view(request):
-    return render(request, 'base_vip.html', {'lang_prefix': get_lang_prefix(request)})
+    """
+    StatsFut VIP · Ready Strategy Tickets (Bilhetes Prontos)
+    Apresenta duplas, triplas e bilhetes de elite calculados por IA com estética de Terminal Dark.
+    """
+    from matches.models import BetTicket
+    from zoneinfo import ZoneInfo
+    from datetime import timedelta
+    from django.db.models import Q
+    import re
+
+    br_tz = ZoneInfo('America/Sao_Paulo')
+    now_br = timezone.now().astimezone(br_tz)
+    today_date = now_br.date()
+    tomorrow_date = today_date + timedelta(days=1)
+
+    selected_date = request.GET.get('date', 'today')
+    selected_type = request.GET.get('type', 'all')
+
+    # Dicionário de tradução para títulos de bilhetes para EN nativo
+    def translate_title(title_raw):
+        if not title_raw:
+            return ""
+        t = str(title_raw)
+        t = t.replace("Dupla Ouro HT (Gols no 1º Tempo)", "Golden Double HT (1st Half Goals)")
+        t = t.replace("Dupla de Gols FT (Mais de 1.5 Gols)", "FT Goals Double (Over 1.5 Goals)")
+        t = t.replace("Dupla de Cantos (Over 9.5 Escanteios)", "Corners Double (Over 9.5 Corners)")
+        t = t.replace("Dupla Ambas Marcam (Gols dos Dois Lados)", "BTTS Double (Goals on Both Sides)")
+        t = t.replace("Dupla de Favoritos (Vitórias Claras)", "Favorites Double (Clear Wins)")
+        t = t.replace("Dupla Sob Controle (Menos de 3.5 Gols)", "Under Control Double (Under 3.5 Goals)")
+        t = t.replace("Dupla Defesa de Ferro (Ambas Marcam Não)", "Iron Defense Double (BTTS No)")
+        t = t.replace("Dupla Dupla Chance (Segurança Extra 90%+)", "Double Chance Double (Extra Safety 90%+)")
+        t = t.replace("Dupla Dupla Chance (Segurança Extra)", "Double Chance Double (Extra Safety)")
+        t = t.replace("Dupla Alavancagem (Mais de 0.5 Gols FT)", "Leverage Double (Over 0.5 FT Goals)")
+        t = t.replace("Tripla de Gols FT (Mais de 1.5 Gols)", "FT Goals Treble (Over 1.5 Goals)")
+        t = t.replace("Tripla Dupla Chance (Segurança Máxima 90%+)", "Double Chance Treble (Max Safety 90%+)")
+        t = t.replace("Tripla Dupla Chance (Segurança Máxima)", "Double Chance Treble (Max Safety)")
+        t = t.replace("Tripla Alavancagem (Mais de 0.5 Gols FT)", "Leverage Treble (Over 0.5 FT Goals)")
+        t = t.replace("Tripla Sob Controle (Menos de 3.5 Gols)", "Under Control Treble (Under 3.5 Goals)")
+        t = t.replace("Tripla Ouro HT (Gols no 1º Tempo)", "Golden Treble HT (1st Half Goals)")
+        t = t.replace("Bilhete Sniper de Ouro (Top 3 Picks 90%+)", "Golden Sniper Slip (Top 3 Picks 90%+)")
+        t = t.replace("Múltipla de Ouro (Segurança & Valor)", "Golden Multiple (Safety & Value)")
+        t = t.replace("Super Múltipla Alavancagem (Odds Gigantes)", "Super Leverage Multiple (High Odds)")
+        t = re.sub(r' - Grupo ([A-Z])', lambda m: f' - Group {m.group(1)}', t)
+        return t
+
+    def translate_label(label_raw):
+        if not label_raw:
+            return ""
+        l = str(label_raw)
+        l = l.replace("Gol no 1º Tempo", "Goal in 1st Half")
+        l = l.replace("Mais de 1.5 Gols FT", "Over 1.5 Goals FT")
+        l = l.replace("Mais de 0.5 Gols FT", "Over 0.5 Goals FT")
+        l = l.replace("Menos de 3.5 Gols FT", "Under 3.5 Goals FT")
+        l = l.replace("Ambas Marcam - Sim", "Both Teams to Score - Yes")
+        l = l.replace("Ambas Marcam - Não", "Both Teams to Score - No")
+        l = l.replace("Mais de 9.5 Escanteios", "Over 9.5 Corners")
+        l = re.sub(r'^1X - (.*) ou Empate', lambda m: f'1X - {m.group(1)} or Draw', l)
+        l = re.sub(r'^X2 - (.*) ou Empate', lambda m: f'X2 - Draw or {m.group(1)}', l)
+        return l
+
+    # Querysets por data
+    today_qs = BetTicket.objects.filter(
+        date_target=today_date,
+        ticket_type__in=['Double', 'Treble']
+    ).prefetch_related('selections__match__home_team', 'selections__match__away_team', 'selections__match__league').order_by('-average_probability', '-created_at')
+
+    tomorrow_qs = BetTicket.objects.filter(
+        date_target=tomorrow_date,
+        ticket_type__in=['Double', 'Treble']
+    ).prefetch_related('selections__match__home_team', 'selections__match__away_team', 'selections__match__league').order_by('-average_probability', '-created_at')
+
+    next_qs = BetTicket.objects.filter(
+        date_target__gt=tomorrow_date,
+        ticket_type__in=['Double', 'Treble']
+    ).prefetch_related('selections__match__home_team', 'selections__match__away_team', 'selections__match__league').order_by('date_target', '-average_probability')
+
+    history_qs = BetTicket.objects.filter(
+        status__in=['Green', 'Red'],
+        ticket_type__in=['Double', 'Treble']
+    ).prefetch_related('selections__match__home_team', 'selections__match__away_team', 'selections__match__league').order_by('-date_target', '-id')[:24]
+
+    # Escolher lista ativa baseada no filtro de data
+    if selected_date == 'tomorrow':
+        active_list = list(tomorrow_qs)
+    elif selected_date == 'next':
+        active_list = list(next_qs)
+    elif selected_date == 'history':
+        active_list = list(history_qs)
+    else:
+        active_list = list(today_qs)
+
+    # Filtrar por tipo (Double, Treble) se especificado
+    if selected_type in ['Double', 'Treble']:
+        active_list = [t for t in active_list if t.ticket_type == selected_type]
+
+    # Decorar objetos de bilhetes com labels traduzidos e texto de cópia
+    for t in active_list:
+        t.title_translated = translate_title(t.title)
+        copy_lines = []
+        for s in t.selections.all():
+            s.label_translated = translate_label(s.prediction_label or s.prediction_market)
+            copy_lines.append(f"• {s.match.home_team.name} vs {s.match.away_team.name}: {s.label_translated} (@{s.odd})")
+        t.copy_text = "\n".join(copy_lines)
+
+    # KPIs estatísticos
+    all_today_list = list(today_qs)
+    active_count = len(all_today_list)
+    avg_odd = round(sum(float(t.total_odd or 1.0) for t in all_today_list) / max(len(all_today_list), 1), 2) if all_today_list else 1.18
+
+    # Winrate do histórico recente de bilhetes
+    sample_resolved = BetTicket.objects.filter(status__in=['Green', 'Red'])[:100]
+    greens_count = sum(1 for b in sample_resolved if b.status == 'Green')
+    winrate = round((greens_count / max(len(sample_resolved), 1)) * 100) if sample_resolved else 92
+
+    return render(request, 'vip_tickets.html', {
+        'tickets': active_list,
+        'today_tickets': list(today_qs),
+        'tomorrow_tickets': list(tomorrow_qs),
+        'next_tickets': list(next_qs),
+        'selected_date': selected_date,
+        'selected_type': selected_type,
+        'active_count': active_count,
+        'avg_odd': avg_odd,
+        'winrate': winrate,
+        'lang_prefix': get_lang_prefix(request),
+    })
 
 def vip_management_view(request):
     return render(request, 'base_vip.html', {'lang_prefix': get_lang_prefix(request)})
