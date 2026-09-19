@@ -936,26 +936,41 @@ def vip_tickets_view(request):
         l = re.sub(r'^X2 - (.*) ou Empate', lambda m: f'X2 - Draw or {m.group(1)}', l)
         return l
 
-    # Querysets por data
+    # FILTRO DE ELITE STATSFUT VIP:
+    # Selecionamos estritamente bilhetes com base matemática protegida:
+    # 1. Dupla Chance (1X/X2 com 90%+ de acerto histórico)
+    # 2. Under Control (Menos de 3.5 Gols FT com alta consistência)
+    # 3. DNB / Empate Anula e Cantos Seguros
+    # Purgamos Duplas/Triplas frágeis de Over 1.5 e Over 0.5 que geravam reds evitáveis.
+    elite_filter = (
+        Q(title__icontains='Dupla Chance') |
+        Q(title__icontains='Sob Controle') |
+        Q(title__icontains='Menos de 3.5') |
+        Q(title__icontains='Empate Anula') |
+        Q(title__icontains='Cantos') |
+        Q(title__icontains='Escanteios')
+    )
+
+    # Querysets por data (Apenas Elite)
     today_qs = BetTicket.objects.filter(
         date_target=today_date,
         ticket_type__in=['Double', 'Treble']
-    ).prefetch_related('selections__match__home_team', 'selections__match__away_team', 'selections__match__league').order_by('-average_probability', '-created_at')
+    ).filter(elite_filter).prefetch_related('selections__match__home_team', 'selections__match__away_team', 'selections__match__league').order_by('-average_probability', '-created_at')
 
     tomorrow_qs = BetTicket.objects.filter(
         date_target=tomorrow_date,
         ticket_type__in=['Double', 'Treble']
-    ).prefetch_related('selections__match__home_team', 'selections__match__away_team', 'selections__match__league').order_by('-average_probability', '-created_at')
+    ).filter(elite_filter).prefetch_related('selections__match__home_team', 'selections__match__away_team', 'selections__match__league').order_by('-average_probability', '-created_at')
 
     next_qs = BetTicket.objects.filter(
         date_target__gt=tomorrow_date,
         ticket_type__in=['Double', 'Treble']
-    ).prefetch_related('selections__match__home_team', 'selections__match__away_team', 'selections__match__league').order_by('date_target', '-average_probability')
+    ).filter(elite_filter).prefetch_related('selections__match__home_team', 'selections__match__away_team', 'selections__match__league').order_by('date_target', '-average_probability')
 
     history_qs = BetTicket.objects.filter(
         status__in=['Green', 'Red'],
         ticket_type__in=['Double', 'Treble']
-    ).prefetch_related('selections__match__home_team', 'selections__match__away_team', 'selections__match__league').order_by('-date_target', '-id')[:24]
+    ).filter(elite_filter).prefetch_related('selections__match__home_team', 'selections__match__away_team', 'selections__match__league').order_by('-date_target', '-id')[:24]
 
     # Escolher lista ativa baseada no filtro de data
     if selected_date == 'tomorrow':
@@ -985,8 +1000,8 @@ def vip_tickets_view(request):
     active_count = len(all_today_list)
     avg_odd = round(sum(float(t.total_odd or 1.0) for t in all_today_list) / max(len(all_today_list), 1), 2) if all_today_list else 1.18
 
-    # Winrate do histórico recente de bilhetes
-    sample_resolved = BetTicket.objects.filter(status__in=['Green', 'Red'])[:100]
+    # Winrate do histórico recente de bilhetes de elite
+    sample_resolved = BetTicket.objects.filter(status__in=['Green', 'Red']).filter(elite_filter)[:100]
     greens_count = sum(1 for b in sample_resolved if b.status == 'Green')
     winrate = round((greens_count / max(len(sample_resolved), 1)) * 100) if sample_resolved else 92
 

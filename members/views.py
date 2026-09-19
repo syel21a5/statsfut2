@@ -322,7 +322,9 @@ def premium_dashboard(request):
                         sel.save(update_fields=['status'])
                     continue
 
-                is_finished = m.status in ['FT', 'Finished', 'Concluded'] or (m.home_score is not None and m.away_score is not None)
+                # Consideramos resolvido SOMENTE se o status for realmente finalizado
+                # Jogos agendados ou ao vivo NÃO podem ser avaliados prematuramente!
+                is_finished = m.status in ['FT', 'Finished', 'Concluded', 'AET', 'PEN']
             
                 if not is_finished:
                     any_pending = True
