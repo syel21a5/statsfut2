@@ -277,11 +277,10 @@ def vip_games_list_view(request):
 
     total_day_matches = qs.count()
 
-    # Priorizar jogos AO VIVO no topo da lista para nunca ficarem de fora do limite
+    # Priorizar jogos AO VIVO no topo da lista e manter um volume ágil (máx 60 jogos)
     if status_filter == 'today':
         live_matches_today = list(qs.filter(status__iexact='Live'))
-        other_matches_today = list(qs.exclude(status__iexact='Live')[:150])
-        # Unir colocando os ao vivo em prioridade absoluta
+        other_matches_today = list(qs.exclude(status__iexact='Live')[:50])
         seen_ids = set()
         raw_matches = []
         for m in (live_matches_today + other_matches_today):
@@ -289,7 +288,7 @@ def vip_games_list_view(request):
                 seen_ids.add(m.id)
                 raw_matches.append(m)
     else:
-        raw_matches = list(qs[:150])
+        raw_matches = list(qs[:60])
     
     # Fallback se não encontrar partidas ao vivo no status exato, traz as mais recentes em andamento
     if status_filter == 'live' and not raw_matches:
@@ -402,8 +401,10 @@ def vip_games_list_view(request):
                 'p_c75ft': h_prob_c75ft, 'fair_c75ft': fair_odd_c75ft,
                 'p_lay': p_lay, 'fair_lay': fair_lay, 'lay_score': lay_score,
             }
-            # Cache por 180 segundos (3 min) se for pré-jogo ou 60s se for ao vivo
-            cache_ttl = 60 if m.status == 'Live' else 300
+            status_str = (m.status or '').upper()
+            is_live = status_str in ['LIVE', '1H', '2H', 'HT', 'ET', 'P', 'IN PLAY', 'IN_PLAY']
+            is_finished = status_str in ['FINISHED', 'FT', 'AET', 'PEN'] and m.home_score is not None and m.away_score is not None
+            cache_ttl = 45 if is_live else (86400 if is_finished else 1800)
             cache.set(cache_key, stats, cache_ttl)
 
         m.p_o15 = stats['p_o15']
