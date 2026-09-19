@@ -111,21 +111,21 @@ def get_match_full_stats(match):
         ev_d = round(((fair_d / d_odd) - 1) * 100, 1)
         ev_a = round(((fair_a / a_odd) - 1) * 100, 1)
         odds_data.append({
-            'market': f'Vitória {match.home_team.name[:15]}',
+            'market': f'{match.home_team.name[:15]} Win',
             'book_odd': round(h_odd, 2),
             'fair_odd': fair_h,
             'ev': f'{"+" if ev_h > 0 else ""}{ev_h}%',
             'status': 'strong_value' if ev_h > 5 else ('value' if ev_h >= 0 else 'neutral')
         })
         odds_data.append({
-            'market': 'Empate',
+            'market': 'Draw',
             'book_odd': round(d_odd, 2),
             'fair_odd': fair_d,
             'ev': f'{"+" if ev_d > 0 else ""}{ev_d}%',
             'status': 'strong_value' if ev_d > 5 else ('value' if ev_d >= 0 else 'neutral')
         })
         odds_data.append({
-            'market': f'Vitória {match.away_team.name[:15]}',
+            'market': f'{match.away_team.name[:15]} Win',
             'book_odd': round(a_odd, 2),
             'fair_odd': fair_a,
             'ev': f'{"+" if ev_a > 0 else ""}{ev_a}%',
@@ -142,14 +142,14 @@ def get_match_full_stats(match):
 
     # Mercados de Gols e Cantos na Tabela +EV
     odds_data.append({
-        'market': 'Over 2.5 Gols',
+        'market': 'Over 2.5 Goals',
         'book_odd': round(float(match.over_25_odds or (1.30 if total_expected_goals >= 3.0 else 1.85)), 2),
         'fair_odd': round(100 / max(prob_over_25, 1.0), 2),
         'ev': f'+{round((prob_over_25 / 100 * 1.5 - 1) * 100, 1)}%',
         'status': 'value' if prob_over_25 >= 60 else 'neutral'
     })
     odds_data.append({
-        'market': 'Over 9.5 Escanteios',
+        'market': 'Over 9.5 Corners',
         'book_odd': round(float(match.corners_over_95_odds or 1.90), 2),
         'fair_odd': round(100 / max(corners_prob_over_95, 1.0), 2),
         'ev': f'+{round((corners_prob_over_95 / 100 * 1.9 - 1) * 100, 1)}%',

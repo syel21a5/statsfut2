@@ -9,7 +9,7 @@
 <div class="bg-[#14181f] border border-gray-800/80 rounded-2xl p-5 mb-6 shadow-xl relative overflow-hidden">
   <div class="flex flex-col md:flex-row items-center justify-between gap-6">
     
-    <!-- Time Mandante -->
+    <!-- Time Home -->
     <div class="flex items-center gap-4 flex-1 justify-end text-right">
       <div>
         <div class="flex items-center gap-2 justify-end">
@@ -57,7 +57,7 @@
       <span class="text-[10px] text-gray-500 font-mono mt-1 truncate max-w-[150px] text-center">{{ match.league.name }}</span>
     </div>
 
-    <!-- Time Visitante -->
+    <!-- Time Away -->
     <div class="flex items-center gap-4 flex-1 justify-start text-left">
       <div class="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-[#1c232d] to-[#0e1217] border border-gray-700/60 p-2 flex items-center justify-center shadow-xl shrink-0 group relative overflow-hidden">
         {% if match.away_team.logo_url %}
@@ -125,7 +125,7 @@
 </div>
 
 <!-- ═════════════════════════════════════════════════════════════════
-     1. ABA: ANÁLISE GLOBAL (COM TODOS OS BOXES DE 01, 02 E 1.PNG)
+     1. TAB: GLOBAL ANALYSIS
      ═════════════════════════════════════════════════════════════════ -->
 <div id="pane-global" class="tab-pane space-y-6">
   
@@ -136,7 +136,7 @@
       <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
       <h3 class="text-xs font-mono font-bold text-cyan-400 uppercase tracking-widest flex items-center gap-2">
         <svg class="w-4 h-4 text-cyan-400 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-        Match Intelligence &middot; Síntese Executiva IA
+        Match Intelligence &middot; AI Executive Synthesis
       </h3>
     </div>
     <p class="text-sm text-gray-200 leading-relaxed font-sans">
@@ -163,22 +163,22 @@
           <div class="bg-[#0e1217] p-3 rounded-lg border-b-2 border-rose-500 border border-gray-800/80 flex flex-col justify-between">
             <span class="text-[11px] text-gray-400">Over 2.5 FT</span>
             <span class="text-2xl font-black text-rose-500 my-1">{{ p_o25 }}%</span>
-            <span class="text-[10px] text-gray-500">Linha esticada</span>
+            <span class="text-[10px] text-gray-500">Extended Line</span>
           </div>
           <div class="bg-[#0e1217] p-3 rounded-lg border-b-2 border-[#00d26a] border border-gray-800/80 flex flex-col justify-between">
             <span class="text-[11px] text-gray-400">Over 1.5 FT</span>
             <span class="text-2xl font-black text-[#00d26a] my-1">{{ p_o15 }}%</span>
-            <span class="text-[10px] text-emerald-400 font-bold">Alta confiança</span>
+            <span class="text-[10px] text-emerald-400 font-bold">High confidence</span>
           </div>
           <div class="bg-[#0e1217] p-3 rounded-lg border-b-2 border-amber-500 border border-gray-800/80 flex flex-col justify-between">
             <span class="text-[11px] text-gray-400">Both Teams to Score</span>
             <span class="text-2xl font-black text-amber-400 my-1">{{ p_btts }}%</span>
-            <span class="text-[10px] text-gray-500">Tendência sim</span>
+            <span class="text-[10px] text-gray-500">Trend Active</span>
           </div>
           <div class="bg-[#0e1217] p-3 rounded-lg border-b-2 border-cyan-500 border border-gray-800/80 flex flex-col justify-between">
             <span class="text-[11px] text-gray-400">Peak goal window</span>
             <span class="text-2xl font-black text-cyan-400 my-1">31'-HT</span>
-            <span class="text-[10px] text-gray-500">Pressão final 1ºT</span>
+            <span class="text-[10px] text-gray-500">Late 1H Pressure</span>
           </div>
           <div class="bg-[#0e1217] p-3 rounded-lg border-b-2 border-cyan-500 border border-gray-800/80 flex flex-col justify-between">
             <span class="text-[11px] text-gray-400">Expected goals</span>
@@ -203,7 +203,7 @@
           </div>
           <div class="flex items-start gap-2.5">
             <span class="w-2 h-2 rounded-full bg-cyan-400 shrink-0 mt-1"></span>
-            <p>The most probable score is <strong class="text-white font-mono">1-1 (15%)</strong> seguido de <strong class="text-white font-mono">2-1 (12%)</strong>.</p>
+            <p>The most probable score is <strong class="text-white font-mono">1-1 (15%)</strong> followed by <strong class="text-white font-mono">2-1 (12%)</strong>.</p>
           </div>
         </div>
       </div>
@@ -213,7 +213,7 @@
         <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
           <div class="flex items-center gap-2.5">
             <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
-            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Últimos Confrontos &middot; Histórico Completo</h3>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Recent Head-to-Head &middot; Full History</h3>
           </div>
           <div class="flex items-center gap-2 font-mono text-xs">
             <span class="px-2.5 py-1 rounded bg-[#1c232d] text-cyan-400 font-bold border border-cyan-500/30 flex items-center gap-1.5">
@@ -236,7 +236,7 @@
             <thead class="border-b border-gray-800/60 text-gray-500 text-[10px] uppercase tracking-wider bg-[#10141a]">
               <tr>
                 <th class="py-2.5 px-3">Data / Liga</th>
-                <th class="py-2.5 px-3">Adversário</th>
+                <th class="py-2.5 px-3">Opponent</th>
                 <th class="py-2.5 px-3 text-center">Odd</th>
                 <th class="py-2.5 px-3 text-center">Status</th>
                 <th class="py-2.5 px-3 text-center">Score (HT)</th>
@@ -296,23 +296,23 @@
         <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
           <div class="flex items-center gap-2">
             <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
-            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Insights do Time</h3>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Team Insights</h3>
           </div>
           <span class="px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-400 font-mono text-[10px] font-bold border border-cyan-500/30">BETA</span>
         </div>
 
         <div class="space-y-2.5 text-xs">
           <div class="p-3 rounded-lg bg-[#0e1217] border border-gray-800/80 flex items-start gap-3">
-            <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 font-mono text-[10px] font-bold shrink-0">AUSÊNCIA</span>
+            <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 font-mono text-[10px] font-bold shrink-0">ABSENCE</span>
             <p class="text-gray-300">Starting defender suspended due to yellow cards accumulation.</p>
           </div>
           <div class="p-3 rounded-lg bg-[#0e1217] border border-gray-800/80 flex items-start gap-3">
             <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-[#00d26a] font-mono text-[10px] font-bold shrink-0">ARTILHEIRO</span>
-            <p class="text-gray-300">Main striker with an average of <strong class="text-white">0.75 gols/jogo</strong> nos últimos 4 jogos.</p>
+            <p class="text-gray-300">Main striker with an average of <strong class="text-white">0.75 goals/match</strong> nos últimos 4 matches.</p>
           </div>
           <div class="p-3 rounded-lg bg-[#0e1217] border border-gray-800/80 flex items-start gap-3">
-            <span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 font-mono text-[10px] font-bold shrink-0">TENDÊNCIA</span>
-            <p class="text-gray-300">{{ match.home_team.name }} marcou gol antes dos 30' em <strong class="text-white">5 dos últimos 6 jogos</strong>.</p>
+            <span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 font-mono text-[10px] font-bold shrink-0">TREND</span>
+            <p class="text-gray-300">{{ match.home_team.name }} scored a goal before 30' in <strong class="text-white">5 of the last 6 matches</strong>.</p>
           </div>
         </div>
       </div>
@@ -322,7 +322,7 @@
         <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
           <div class="flex items-center gap-2">
             <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
-            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Estilos de Jogo &amp; Forças</h3>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Playing Styles &amp; Strengths</h3>
           </div>
         </div>
 
@@ -332,15 +332,15 @@
             <div class="space-y-1.5 text-gray-300">
               <div class="flex items-center gap-2">
                 <span class="w-1.5 h-1.5 rounded-full bg-[#00d26a]"></span>
-                <span>Transições velozes e criação ativa pelas alas</span>
+                <span>Fast transitions and active playmaking on flanks</span>
               </div>
               <div class="flex items-center gap-2">
                 <span class="w-1.5 h-1.5 rounded-full bg-[#00d26a]"></span>
-                <span>Pressão alta e rápida recuperação de bola</span>
+                <span>High pressing and rapid ball recovery</span>
               </div>
               <div class="flex items-center gap-2">
                 <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                <span>Vulnerabilidade defensiva em bolas paradas</span>
+                <span>Defensive vulnerability on set pieces</span>
               </div>
             </div>
           </div>
@@ -350,11 +350,11 @@
             <div class="space-y-1.5 text-gray-300">
               <div class="flex items-center gap-2">
                 <span class="w-1.5 h-1.5 rounded-full bg-[#00d26a]"></span>
-                <span>Posse de bola paciente e controle de ritmo</span>
+                <span>Patient ball possession and tempo control</span>
               </div>
               <div class="flex items-center gap-2">
                 <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                <span>Dificuldade de finalização fora de casa</span>
+                <span>Finishing struggle in away fixtures</span>
               </div>
             </div>
           </div>
@@ -366,7 +366,7 @@
         <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
           <div class="flex items-center gap-2">
             <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
-            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Classificação da Liga</h3>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">League Standings</h3>
           </div>
           <span class="text-[10px] font-mono text-gray-500">{{ match.league.name }}</span>
         </div>
@@ -423,13 +423,13 @@
       <div>
         <div class="flex items-center gap-2 mb-1">
           <span class="px-2.5 py-0.5 rounded bg-emerald-500/20 text-[#00d26a] font-mono text-xs font-bold border border-emerald-500/30">
-            MÉTODO EXCLUSIVO STATSFUT
+            EXCLUSIVE STATSFUT METHOD
           </span>
           <span class="text-xs font-mono text-gray-400">&middot; Betfair &amp; Exchanges</span>
         </div>
-        <h3 class="text-lg font-black text-white tracking-tight">Smart Lay Bets &middot; Apostas Contra Placares Improváveis</h3>
+        <h3 class="text-lg font-black text-white tracking-tight">Smart Lay Bets &middot; Betting Against Unlikely Scores</h3>
         <p class="text-xs text-gray-300 mt-1 max-w-3xl">
-          Apostar <strong>CONTRA (LAY)</strong> estes resultados tem probabilidade estatística calculada superior a <strong>92% até 98%</strong> de sucesso contínuo a longo prazo.
+          Apostar <strong>CONTRA (LAY)</strong> estes resultados tem probabilidade estatística calculada superior a <strong>92% até 98%</strong> of sustained long-term success.
         </p>
       </div>
 
@@ -500,7 +500,7 @@
         <div class="space-y-2.5 text-xs text-gray-300">
           <div class="p-3 rounded-lg bg-[#0e1217] border border-gray-800 flex items-start gap-3">
             <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0 mt-1.5"></span>
-            <p><strong>Favorite Goal Trigger:</strong> Se o mandante favorito fizer 1 a 0 no 1º tempo, as odds dos placares improváveis (ex: 0-2, 0-3) disparam e você pode fechar a operação com <strong>70% a 85% do lucro garantido</strong> via Cashout.</p>
+            <p><strong>Favorite Goal Trigger:</strong> If the favorite scores 1-0 in the 1st half, odds on unlikely scores (e.g. 0-2, 0-3) spike and you can close with <strong>70% a 85% do lucro garantido</strong> via Cashout.</p>
           </div>
           <div class="p-3 rounded-lg bg-[#0e1217] border border-gray-800 flex items-start gap-3">
             <span class="w-2 h-2 rounded-full bg-cyan-400 shrink-0 mt-1.5"></span>
@@ -527,11 +527,11 @@
         <thead class="border-b border-gray-800/60 text-gray-500 text-[10px] uppercase tracking-wider bg-[#10141a]">
           <tr>
             <th class="py-3 px-4">#</th>
-            <th class="py-3 px-4">Mercado Contra (LAY)</th>
+            <th class="py-3 px-4">Lay Market (Against)</th>
             <th class="py-3 px-4 text-center">Mathematical Score Prob.</th>
-            <th class="py-3 px-4 text-center">Taxa de Sucesso (Green)</th>
+            <th class="py-3 px-4 text-center">Success Rate (Green)</th>
             <th class="py-3 px-4 text-center">Fair Odd</th>
-            <th class="py-3 px-4 text-right">Ação Exchange</th>
+            <th class="py-3 px-4 text-right">Exchange Action</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-800/40 text-gray-200">
@@ -663,7 +663,7 @@
 </div>
 
 <!-- ═════════════════════════════════════════════════════════════════
-     2. ABA: GOLS (COM TODOS OS BOXES DE GOLS 01, 02 E 03.PNG)
+     2. TAB: GOALS
      ═════════════════════════════════════════════════════════════════ -->
 <div id="pane-gols" class="tab-pane hidden space-y-6">
   
@@ -700,7 +700,7 @@
           <thead class="border-b border-gray-800/60 text-gray-400 text-[10px] uppercase">
             <tr>
               <th class="py-2 text-cyan-400">{{ match.home_team.name }}</th>
-              <th class="py-2 text-center text-gray-500">Métrica</th>
+              <th class="py-2 text-center text-gray-500">Metric</th>
               <th class="py-2 text-right text-purple-400">{{ match.away_team.name }}</th>
             </tr>
           </thead>
@@ -722,7 +722,7 @@
             </tr>
             <tr>
               <td class="py-2.5 font-bold text-gray-300">25%</td>
-              <td class="py-2.5 text-center text-gray-400">Jogos Sem Marcar</td>
+              <td class="py-2.5 text-center text-gray-400">Matches Without Scoring</td>
               <td class="py-2.5 text-right font-bold text-gray-300">30%</td>
             </tr>
             <tr>
@@ -746,14 +746,14 @@
             <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
             <h3 class="text-sm font-bold text-white uppercase tracking-wider">Asian Goal Handicap</h3>
           </div>
-          <span class="text-xs font-mono text-cyan-400">Linha de Valor</span>
+          <span class="text-xs font-mono text-cyan-400">Value Line</span>
         </div>
-        <div class="text-xs text-gray-400 mb-2">With +0.5 handicap, home covers the line in <strong class="text-white font-mono">90%</strong> dos jogos.</div>
+        <div class="text-xs text-gray-400 mb-2">With +0.5 handicap, home covers the line in <strong class="text-white font-mono">90%</strong> dos matches.</div>
 
         <table class="w-full font-mono text-xs text-left">
           <thead class="border-b border-gray-800/60 text-gray-500 text-[10px] uppercase">
             <tr>
-              <th class="py-2">Linha</th>
+              <th class="py-2">Line</th>
               <th class="py-2 text-center">Home Covers</th>
               <th class="py-2 text-center">Away Covers</th>
             </tr>
@@ -863,16 +863,16 @@
             <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
             <h3 class="text-sm font-bold text-white uppercase tracking-wider">Over Goals Forecasts FT</h3>
           </div>
-          <span class="text-xs font-mono text-emerald-400">Jogo Completo</span>
+          <span class="text-xs font-mono text-emerald-400">Full Match</span>
         </div>
 
         <table class="w-full font-mono text-xs text-left">
           <thead class="border-b border-gray-800/60 text-gray-400 text-[10px] uppercase">
             <tr>
-              <th class="py-2">Linha</th>
-              <th class="py-2 text-center">Mandante</th>
-              <th class="py-2 text-center">Visitante</th>
-              <th class="py-2 text-right">Prob. Jogo</th>
+              <th class="py-2">Line</th>
+              <th class="py-2 text-center">Home</th>
+              <th class="py-2 text-center">Away</th>
+              <th class="py-2 text-right">Match Prob.</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-800/40 text-gray-200">
@@ -911,7 +911,7 @@
             <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
             <h3 class="text-sm font-bold text-white uppercase tracking-wider">Goals by Minute Interval</h3>
           </div>
-          <span class="text-xs font-mono text-gray-400">% de jogos com gol no período</span>
+          <span class="text-xs font-mono text-gray-400">% de matches with a goal in period</span>
         </div>
 
         <div class="space-y-1.5 font-mono text-xs">
@@ -953,55 +953,55 @@
         <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
           <div class="flex items-center gap-2">
             <span class="w-1.5 h-4 bg-cyan-400 rounded-full"></span>
-            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Distribuição por Tempo &amp; Margens</h3>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Half Distribution &amp; Winning Margins</h3>
           </div>
           <span class="text-xs font-mono text-cyan-400">1ºT vs 2ºT</span>
         </div>
 
         <div class="space-y-2 font-mono text-xs">
           <div class="flex items-center justify-between p-2.5 rounded bg-[#0e1217]">
-            <span class="text-gray-400">Mais Gols no 1º Tempo</span>
+            <span class="text-gray-400">More Goals in 1st Half</span>
             <span class="text-white font-bold">25% prob.</span>
           </div>
           <div class="flex items-center justify-between p-2.5 rounded bg-[#0e1217]">
-            <span class="text-gray-400">Mesmo Número nos Dois Tempos</span>
+            <span class="text-gray-400">Equal Goals in Both Halves</span>
             <span class="text-white font-bold">25% prob.</span>
           </div>
           <div class="flex items-center justify-between p-2.5 rounded bg-cyan-500/10 border border-cyan-500/20">
-            <span class="text-cyan-400 font-bold">Mais Gols no 2º Tempo (Pico)</span>
+            <span class="text-cyan-400 font-bold">More Goals in 2nd Half (Peak)</span>
             <span class="text-cyan-400 font-black text-sm">50% prob.</span>
           </div>
         </div>
 
         <div class="pt-2 border-t border-gray-800/70">
-          <h4 class="text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-2">Margens de Vitória</h4>
+          <h4 class="text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-2">Winning Margins</h4>
           <div class="grid grid-cols-2 gap-2 text-center font-mono text-xs">
             <div class="p-2 rounded bg-[#0e1217] border border-gray-800">
-              <span class="text-[10px] text-gray-500 block">Vitória por 1 gol</span>
+              <span class="text-[10px] text-gray-500 block">Win by 1 goal</span>
               <span class="text-white font-bold text-sm mt-0.5 block">32%</span>
             </div>
             <div class="p-2 rounded bg-[#0e1217] border border-gray-800">
-              <span class="text-[10px] text-gray-500 block">Vitória por 2 gols</span>
+              <span class="text-[10px] text-gray-500 block">Win by 2 goals</span>
               <span class="text-white font-bold text-sm mt-0.5 block">18%</span>
             </div>
             <div class="p-2 rounded bg-[#0e1217] border border-gray-800">
-              <span class="text-[10px] text-gray-500 block">Goleada (3+ gols)</span>
+              <span class="text-[10px] text-gray-500 block">Blowout (3+ goals)</span>
               <span class="text-rose-400 font-bold text-sm mt-0.5 block">8%</span>
             </div>
             <div class="p-2 rounded bg-[#0e1217] border border-gray-800">
-              <span class="text-[10px] text-gray-500 block">Empate sem gols (0-0)</span>
+              <span class="text-[10px] text-gray-500 block">Scoreless Draw (0-0)</span>
               <span class="text-amber-400 font-bold text-sm mt-0.5 block">6%</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- 8. Combos &middot; Vencedor + Gols -->
+      <!-- 8. Combos &middot; Winner + Goals -->
       <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
         <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
           <div class="flex items-center gap-2">
             <span class="w-1.5 h-4 bg-purple-400 rounded-full"></span>
-            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Combos &middot; Vencedor + Gols</h3>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Combos &middot; Winner + Goals</h3>
           </div>
           <span class="text-xs font-mono text-purple-400">Alta Odd</span>
         </div>
@@ -1009,14 +1009,14 @@
         <table class="w-full font-mono text-xs text-left">
           <thead class="border-b border-gray-800/60 text-gray-500 text-[10px] uppercase">
             <tr>
-              <th class="py-2">Mercado Combo</th>
+              <th class="py-2">Combo Market</th>
               <th class="py-2 text-center">Prob.</th>
               <th class="py-2 text-right">Fair Odd</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-800/40 text-gray-200">
             <tr>
-              <td class="py-2.5 font-bold text-white">{{ match.home_team.name|slice:":10" }} &amp; Não Sofre (Win to Nil)</td>
+              <td class="py-2.5 font-bold text-white">{{ match.home_team.name|slice:":10" }} &amp; Clean Sheet (Win to Nil)</td>
               <td class="py-2.5 text-center text-emerald-400 font-bold">28%</td>
               <td class="py-2.5 text-right font-bold text-cyan-400">3.57</td>
             </tr>
@@ -1026,17 +1026,17 @@
               <td class="py-2.5 text-right font-bold text-cyan-400">5.26</td>
             </tr>
             <tr>
-              <td class="py-2.5 font-bold text-white">Empate com Gols (Draw &amp; Yes)</td>
+              <td class="py-2.5 font-bold text-white">Draw with Goals (Draw &amp; Yes)</td>
               <td class="py-2.5 text-center text-amber-400 font-bold">12%</td>
               <td class="py-2.5 text-right font-bold text-cyan-400">8.33</td>
             </tr>
             <tr>
-              <td class="py-2.5 font-bold text-white">1X &amp; Faixa 2 a 4 Gols</td>
+              <td class="py-2.5 font-bold text-white">1X &amp; 2 to 4 Goals Band</td>
               <td class="py-2.5 text-center text-[#00d26a] font-bold text-sm">38%</td>
               <td class="py-2.5 text-right font-bold text-emerald-400">2.63</td>
             </tr>
             <tr>
-              <td class="py-2.5 font-bold text-white">Dupla Chance 1X &amp; 1-2 Gols</td>
+              <td class="py-2.5 font-bold text-white">Double Chance 1X &amp; 1-2 Goals</td>
               <td class="py-2.5 text-center text-gray-300">22%</td>
               <td class="py-2.5 text-right font-bold text-cyan-400">4.54</td>
             </tr>
@@ -1051,26 +1051,26 @@
 </div>
 
 <!-- ═════════════════════════════════════════════════════════════════
-     3. ABA: ESCANTEIOS (COM TODOS OS BOXES DE ESCANTEIO 01, 02, 03 E 04.PNG)
+     3. TAB: CORNERS
      ═════════════════════════════════════════════════════════════════ -->
 <div id="pane-escanteios" class="tab-pane hidden space-y-6">
   
-  <!-- Badges Rápidos de Escanteios -->
+  <!-- Badges Rápidos de Corners -->
   <div class="flex flex-wrap items-center gap-3">
     <span class="px-3 py-1.5 rounded-lg bg-cyan-500/15 border border-cyan-500/30 text-cyan-400 font-mono text-xs font-bold">
-      Over 8.5 Cantos &middot; {{ p_c85 }}%
+      Over 8.5 Corners &middot; {{ p_c85 }}%
     </span>
     <span class="px-3 py-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-[#00d26a] font-mono text-xs font-bold">
-      Race 3 Mandante &middot; 80%
+      Race 3 Home &middot; 80%
     </span>
     <span class="px-3 py-1.5 rounded-lg bg-purple-500/15 border border-purple-500/30 text-purple-400 font-mono text-xs font-bold">
       Janela 75'-FT &middot; {{ p_c75ft }}%
     </span>
     <span class="px-3 py-1.5 rounded-lg bg-gray-800 border border-gray-700 text-gray-300 font-mono text-xs font-bold">
-      Média Total &middot; 10.40
+      Total Average &middot; 10.40
     </span>
     <span class="px-3 py-1.5 rounded-lg bg-rose-500/15 border border-rose-500/30 text-rose-400 font-mono text-xs font-bold">
-      Canto até 10' min &middot; 70%
+      Corner before 10' &middot; 70%
     </span>
   </div>
 
@@ -1081,7 +1081,7 @@
     </div>
     <div class="space-y-1">
       <div class="text-[11px] font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
-        <span>Analyst Insight &middot; Estratégia Recomendada para Cantos</span>
+        <span>Analyst Insight &middot; Recommended Corners Strategy</span>
         <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px]">Base 10.40</span>
       </div>
       <p class="text-gray-300 text-xs leading-relaxed font-sans">
@@ -1092,55 +1092,55 @@
 
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
     
-    <!-- Coluna Esquerda: Linhas Over + Calculadora de Cantos + Primeiro/Último Canto -->
+    <!-- Coluna Esquerda: Lines Over + Calculadora de Cantos + Primeiro/Último Canto -->
     <div class="lg:col-span-6 space-y-6">
       
-      <!-- Linhas Over Escanteios FT -->
+      <!-- Lines Over Corners FT -->
       <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
         <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
           <div class="flex items-center gap-2">
             <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
-            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Linhas de Escanteios FT</h3>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Lines de Corners FT</h3>
           </div>
-          <span class="text-xs font-mono text-cyan-400">Total do Jogo</span>
+          <span class="text-xs font-mono text-cyan-400">Match Total</span>
         </div>
 
         <table class="w-full font-mono text-xs text-left">
           <thead class="border-b border-gray-800/60 text-gray-400 text-[10px] uppercase">
             <tr>
-              <th class="py-2">Linha</th>
-              <th class="py-2 text-center">Mandante</th>
-              <th class="py-2 text-center">Visitante</th>
-              <th class="py-2 text-right">Prob. Jogo</th>
+              <th class="py-2">Line</th>
+              <th class="py-2 text-center">Home</th>
+              <th class="py-2 text-center">Away</th>
+              <th class="py-2 text-right">Match Prob.</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-800/40 text-gray-200">
             <tr>
-              <td class="py-2.5 font-bold text-white">Over 6.5 Cantos</td>
+              <td class="py-2.5 font-bold text-white">Over 6.5 Corners</td>
               <td class="py-2.5 text-center text-gray-300">80%</td>
               <td class="py-2.5 text-center text-gray-300">100%</td>
               <td class="py-2.5 text-right font-black text-[#00d26a] text-sm">90%</td>
             </tr>
             <tr>
-              <td class="py-2.5 font-bold text-white">Over 7.5 Cantos</td>
+              <td class="py-2.5 font-bold text-white">Over 7.5 Corners</td>
               <td class="py-2.5 text-center text-gray-300">70%</td>
               <td class="py-2.5 text-center text-gray-300">80%</td>
               <td class="py-2.5 text-right font-black text-[#00d26a] text-sm">75%</td>
             </tr>
             <tr>
-              <td class="py-2.5 font-bold text-white">Over 8.5 Cantos</td>
+              <td class="py-2.5 font-bold text-white">Over 8.5 Corners</td>
               <td class="py-2.5 text-center text-gray-300">70%</td>
               <td class="py-2.5 text-center text-gray-300">70%</td>
               <td class="py-2.5 text-right font-black text-cyan-400 text-sm">{{ p_c85 }}%</td>
             </tr>
             <tr>
-              <td class="py-2.5 font-bold text-white">Over 9.5 Cantos</td>
+              <td class="py-2.5 font-bold text-white">Over 9.5 Corners</td>
               <td class="py-2.5 text-center text-gray-300">60%</td>
               <td class="py-2.5 text-center text-gray-300">60%</td>
               <td class="py-2.5 text-right font-black text-amber-400 text-sm">{{ p_c95 }}%</td>
             </tr>
             <tr>
-              <td class="py-2.5 font-bold text-white">Over 10.5 Cantos</td>
+              <td class="py-2.5 font-bold text-white">Over 10.5 Corners</td>
               <td class="py-2.5 text-center text-gray-300">30%</td>
               <td class="py-2.5 text-center text-gray-300">50%</td>
               <td class="py-2.5 text-right font-black text-rose-500 text-sm">{{ p_c105 }}%</td>
@@ -1151,67 +1151,67 @@
         <div class="pt-3 border-t border-gray-800/60 flex items-center justify-between text-xs font-mono">
           <div class="flex items-center gap-2">
             <span class="text-gray-400">Over 9.5 (odd 1.97):</span>
-            <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-[#00d26a] font-bold border border-emerald-500/30">COM VALOR</span>
+            <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-[#00d26a] font-bold border border-emerald-500/30">VALUE FOUND</span>
           </div>
           <div class="flex items-center gap-2">
             <span class="text-gray-400">Under 9.5 (odd 1.82):</span>
-            <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-[#00d26a] font-bold border border-emerald-500/30">COM VALOR</span>
+            <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-[#00d26a] font-bold border border-emerald-500/30">VALUE FOUND</span>
           </div>
         </div>
       </div>
 
-      <!-- Box: Ferramenta Calculadora de Escanteios (Print escanteio 02.png) -->
+      <!-- Box: Ferramenta Calculadora de Corners (Print escanteio 02.png) -->
       <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
         <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
           <div class="flex items-center gap-2">
             <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
-            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Calculadora de Escanteios (Ao Vivo)</h3>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Live Corners Calculator</h3>
           </div>
-          <span class="text-xs font-mono text-cyan-400">Projection Dinâmica</span>
+          <span class="text-xs font-mono text-cyan-400">Dynamic Projection</span>
         </div>
 
         <div class="grid grid-cols-2 gap-4 font-mono text-xs">
           <div>
-            <label class="text-gray-400 block mb-1">Minuto do Jogo: <span id="calcMinVal" class="text-white font-bold">0'</span></label>
+            <label class="text-gray-400 block mb-1">Match Minute: <span id="calcMinVal" class="text-white font-bold">0'</span></label>
             <input type="range" min="0" max="90" value="0" class="w-full accent-cyan-400" oninput="updateCornerCalc(this.value, document.getElementById('calcCornersInput').value)">
           </div>
           <div>
-            <label class="text-gray-400 block mb-1">Cantos Já Batidos: <span id="calcCornVal" class="text-white font-bold">0</span></label>
+            <label class="text-gray-400 block mb-1">Corners Taken: <span id="calcCornVal" class="text-white font-bold">0</span></label>
             <input type="range" id="calcCornersInput" min="0" max="20" value="0" class="w-full accent-cyan-400" oninput="updateCornerCalc(document.querySelector('input[type=range]').value, this.value)">
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3 pt-2 font-mono text-center">
           <div class="p-3 rounded-lg bg-[#0e1217] border border-gray-800">
-            <span class="text-[11px] text-gray-500 block">Projection HT (1º Tempo)</span>
+            <span class="text-[11px] text-gray-500 block">HT Projection (1st Half)</span>
             <span id="projHT" class="text-xl font-black text-cyan-400 mt-1 block">4.80</span>
           </div>
           <div class="p-3 rounded-lg bg-[#0e1217] border border-gray-800">
-            <span class="text-[11px] text-gray-500 block">Projection FT (Jogo Todo)</span>
+            <span class="text-[11px] text-gray-500 block">FT Projection (Full Match)</span>
             <span id="projFT" class="text-xl font-black text-emerald-400 mt-1 block">10.45</span>
           </div>
         </div>
       </div>
 
-      <!-- Box: Primeiro e Último Escanteio (Print escanteios 04.png) -->
+      <!-- Box: First and Last Corner (Print escanteios 04.png) -->
       <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
         <div class="flex items-center gap-2 border-b border-gray-800/70 pb-3">
           <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
-          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Primeiro e Último Escanteio</h3>
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider">First and Last Corner</h3>
         </div>
 
         <table class="w-full font-mono text-xs text-left">
           <thead class="border-b border-gray-800/60 text-gray-500 text-[10px] uppercase">
             <tr>
               <th class="py-2 text-cyan-400">{{ match.home_team.name }}</th>
-              <th class="py-2 text-center text-gray-400">Métrica</th>
+              <th class="py-2 text-center text-gray-400">Metric</th>
               <th class="py-2 text-right text-purple-400">{{ match.away_team.name }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-800/40 text-gray-200">
             <tr>
               <td class="py-2.5 font-bold text-emerald-400">70%</td>
-              <td class="py-2.5 text-center text-gray-300">1º Escanteio do Jogo</td>
+              <td class="py-2.5 text-center text-gray-300">1st Corner of Match</td>
               <td class="py-2.5 text-right font-bold text-amber-400">60%</td>
             </tr>
             <tr>
@@ -1221,56 +1221,56 @@
             </tr>
             <tr>
               <td class="py-2.5 font-bold text-rose-400">20%</td>
-              <td class="py-2.5 text-center text-gray-300">Último Escanteio do Jogo</td>
+              <td class="py-2.5 text-center text-gray-300">Last Corner of Match</td>
               <td class="py-2.5 text-right font-bold text-amber-400">40%</td>
             </tr>
             <tr>
               <td class="py-2.5 font-bold text-cyan-400">50%</td>
-              <td class="py-2.5 text-center text-gray-300">Escanteio após os 87' min</td>
+              <td class="py-2.5 text-center text-gray-300">Corner after 87' min</td>
               <td class="py-2.5 text-right font-bold text-cyan-400">40%</td>
             </tr>
           </tbody>
         </table>
         <div class="p-2.5 rounded bg-[#0e1217] text-gray-400 text-xs flex items-center gap-2">
           <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
-          <span>{{ match.home_team.name }} conquista o primeiro escanteio em 70% dos jogos (pressão alta inicial).</span>
+          <span>{{ match.home_team.name }} conquista o primeiro escanteio em 70% dos matches (pressão alta inicial).</span>
         </div>
       </div>
 
     </div>
 
-    <!-- Coluna Direita: Escanteios por Intervalo + Races de Escanteios -->
+    <!-- Coluna Direita: Corners por Intervalo + Races de Corners -->
     <div class="lg:col-span-6 space-y-6">
       
-      <!-- Tabela Detalhada: Escanteios por Intervalo (Print escanteio 02.png) -->
+      <!-- Tabela Detalhada: Corners por Intervalo (Print escanteio 02.png) -->
       <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
         <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
           <div class="flex items-center gap-2">
             <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
-            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Escanteios por Intervalo Crítico</h3>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Corners by Critical Interval</h3>
           </div>
-          <span class="text-xs font-mono text-cyan-400">Minutos &amp; Pressão</span>
+          <span class="text-xs font-mono text-cyan-400">Minutes &amp; Pressure</span>
         </div>
 
         <div class="space-y-1.5 font-mono text-xs">
           <div class="grid grid-cols-3 py-2 px-3 rounded bg-[#0e1217] items-center text-center">
             <span class="text-left text-gray-300 font-bold">50%</span>
-            <span class="text-gray-400">00' - 10' minutos</span>
+            <span class="text-gray-400">00' - 10' minutes</span>
             <span class="text-right text-[#00d26a] font-bold">80%</span>
           </div>
           <div class="grid grid-cols-3 py-2 px-3 rounded bg-[#0e1217] items-center text-center">
             <span class="text-left text-gray-300 font-bold">40%</span>
-            <span class="text-gray-400">11' - 20' minutos</span>
+            <span class="text-gray-400">11' - 20' minutes</span>
             <span class="text-right text-gray-300 font-bold">50%</span>
           </div>
           <div class="grid grid-cols-3 py-2 px-3 rounded bg-cyan-500/10 border border-cyan-500/20 items-center text-center">
             <span class="text-left text-cyan-400 font-black">70%</span>
-            <span class="font-bold text-cyan-400">37' ao Intervalo (HT)</span>
+            <span class="font-bold text-cyan-400">37' to Halftime (HT)</span>
             <span class="text-right text-cyan-400 font-black">80%</span>
           </div>
           <div class="grid grid-cols-3 py-2 px-3 rounded bg-purple-500/10 border border-purple-500/20 items-center text-center">
             <span class="text-left text-purple-400 font-black">80%</span>
-            <span class="font-bold text-purple-400">75' ao Fim (Pressão FT)</span>
+            <span class="font-bold text-purple-400">75' to Full Time (FT Pressure)</span>
             <span class="text-right text-purple-400 font-black">80%</span>
           </div>
           <div class="grid grid-cols-3 py-2 px-3 rounded bg-emerald-500/10 border border-emerald-500/20 items-center text-center">
@@ -1281,14 +1281,14 @@
         </div>
       </div>
 
-      <!-- Box: Races de Escanteios Completa (Print escanteios 04.png) -->
+      <!-- Box: Races de Corners Completa (Print escanteios 04.png) -->
       <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
         <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
           <div class="flex items-center gap-2">
             <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
-            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Races de Escanteios (Quem chega 1º)</h3>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Corners Race (First to N)</h3>
           </div>
-          <span class="text-xs font-mono text-gray-400">% jogos que alcançou N</span>
+          <span class="text-xs font-mono text-gray-400">% matches que alcançou N</span>
         </div>
 
         <table class="w-full font-mono text-xs text-left">
@@ -1301,22 +1301,22 @@
           </thead>
           <tbody class="divide-y divide-gray-800/40 text-gray-200">
             <tr>
-              <td class="py-2.5 font-bold text-white">Race a 3 Escanteios</td>
+              <td class="py-2.5 font-bold text-white">Race to 3 Corners</td>
               <td class="py-2.5 text-center font-bold text-emerald-400">80% Vence</td>
               <td class="py-2.5 text-center text-gray-400">30% Vence</td>
             </tr>
             <tr>
-              <td class="py-2.5 font-bold text-white">Race a 5 Escanteios</td>
+              <td class="py-2.5 font-bold text-white">Race to 5 Corners</td>
               <td class="py-2.5 text-center font-bold text-cyan-400">60% Vence</td>
               <td class="py-2.5 text-center text-gray-400">40% Vence</td>
             </tr>
             <tr>
-              <td class="py-2.5 font-bold text-white">Race a 7 Escanteios</td>
+              <td class="py-2.5 font-bold text-white">Race to 7 Corners</td>
               <td class="py-2.5 text-center font-bold text-white">40% Vence</td>
               <td class="py-2.5 text-center text-gray-400">30% Vence</td>
             </tr>
             <tr>
-              <td class="py-2.5 font-bold text-white">Race a 9 Escanteios</td>
+              <td class="py-2.5 font-bold text-white">Race to 9 Corners</td>
               <td class="py-2.5 text-center font-bold text-gray-400">20% Vence</td>
               <td class="py-2.5 text-center text-gray-400">30% Vence</td>
             </tr>
@@ -1331,7 +1331,7 @@
 </div>
 
 <!-- ═════════════════════════════════════════════════════════════════
-     3.5 ABA EXCLUSIVA STATSFUT: CHUTES & ATAQUE (PRECISÃO E LETALIDADE)
+     4. TAB: SHOTS & ATTACK (ACCURACY & LETHALITY)
      ═════════════════════════════════════════════════════════════════ -->
 <div id="pane-chutes" class="tab-pane hidden space-y-6">
   
@@ -1343,19 +1343,19 @@
       <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
         <div class="flex items-center gap-2 border-b border-gray-800/70 pb-3">
           <span class="w-1.5 h-4 bg-cyan-400 rounded-full"></span>
-          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Precisão de Finalização &middot; Letalidade</h3>
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Finishing Accuracy &middot; Lethality</h3>
         </div>
 
         <div class="grid grid-cols-2 gap-3 font-mono text-center">
           <div class="p-3.5 rounded-xl bg-[#0e1217] border border-gray-800">
-            <span class="text-[10px] text-gray-500 block uppercase">Precisão Mandante</span>
+            <span class="text-[10px] text-gray-500 block uppercase">Precisão Home</span>
             <span class="text-2xl font-black text-cyan-400 mt-1 block">21%</span>
-            <span class="text-[10px] text-gray-400 mt-0.5 block">12.0 chutes p/ gol</span>
+            <span class="text-[10px] text-gray-400 mt-0.5 block">12.0 shots / goal</span>
           </div>
           <div class="p-3.5 rounded-xl bg-[#0e1217] border border-gray-800">
-            <span class="text-[10px] text-gray-500 block uppercase">Precisão Visitante</span>
+            <span class="text-[10px] text-gray-500 block uppercase">Precisão Away</span>
             <span class="text-2xl font-black text-emerald-400 mt-1 block">46%</span>
-            <span class="text-[10px] text-emerald-400 font-bold mt-0.5 block">3.7 chutes p/ gol (LETAL)</span>
+            <span class="text-[10px] text-emerald-400 font-bold mt-0.5 block">3.7 shots / goal (LETHAL)</span>
           </div>
         </div>
 
@@ -1369,14 +1369,14 @@
           <thead class="border-b border-gray-800/60 text-gray-500 text-[10px] uppercase">
             <tr>
               <th class="py-2 text-cyan-400">{{ match.home_team.name|slice:":10" }}</th>
-              <th class="py-2 text-center text-gray-400">Métrica de Chutes</th>
+              <th class="py-2 text-center text-gray-400">Shots Metric</th>
               <th class="py-2 text-right text-purple-400">{{ match.away_team.name|slice:":10" }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-800/40 text-gray-200">
             <tr>
               <td class="py-2.5 font-bold text-white">76%</td>
-              <td class="py-2.5 text-center text-gray-400">Mais Chutes no Jogo</td>
+              <td class="py-2.5 text-center text-gray-400">Most Shots in Match</td>
               <td class="py-2.5 text-right font-bold text-white">19%</td>
             </tr>
             <tr>
@@ -1386,7 +1386,7 @@
             </tr>
             <tr>
               <td class="py-2.5 font-bold text-white">36%</td>
-              <td class="py-2.5 text-center text-gray-400">Over 12.5 Chutes Individuais</td>
+              <td class="py-2.5 text-center text-gray-400">Over 12.5 Individual Shots</td>
               <td class="py-2.5 text-right font-bold text-emerald-400">63%</td>
             </tr>
           </tbody>
@@ -1395,14 +1395,14 @@
 
     </div>
 
-    <!-- Coluna Direita: Linhas de Chutes Totais e no Alvo -->
+    <!-- Coluna Direita: Lines de Chutes Totais e no Alvo -->
     <div class="lg:col-span-6 space-y-6">
       
       <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
         <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
           <div class="flex items-center gap-2">
             <span class="w-1.5 h-4 bg-cyan-400 rounded-full"></span>
-            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Linhas de Chutes Totais &middot; Jogo</h3>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Lines de Chutes Totais &middot; Jogo</h3>
           </div>
           <span class="text-xs font-mono text-cyan-400">Over / Under</span>
         </div>
@@ -1410,31 +1410,31 @@
         <table class="w-full font-mono text-xs text-left">
           <thead class="border-b border-gray-800/60 text-gray-500 text-[10px] uppercase">
             <tr>
-              <th class="py-2">Linha de Finalização</th>
+              <th class="py-2">Finishing Line</th>
               <th class="py-2 text-center">Probabilidade</th>
               <th class="py-2 text-right">Veredicto</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-800/40 text-gray-200">
             <tr>
-              <td class="py-2.5 font-bold text-white">Over 18.5 Chutes Totais</td>
+              <td class="py-2.5 font-bold text-white">Over 18.5 Total Shots</td>
               <td class="py-2.5 text-center text-emerald-400 font-bold">69%</td>
-              <td class="py-2.5 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-[#00d26a] font-bold">COM VALOR</span></td>
+              <td class="py-2.5 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-[#00d26a] font-bold">VALUE FOUND</span></td>
             </tr>
             <tr>
-              <td class="py-2.5 font-bold text-white">Over 20.5 Chutes Totais</td>
+              <td class="py-2.5 font-bold text-white">Over 20.5 Total Shots</td>
               <td class="py-2.5 text-center text-cyan-400 font-bold">56%</td>
-              <td class="py-2.5 text-right"><span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 font-bold">JUSTA</span></td>
+              <td class="py-2.5 text-right"><span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 font-bold">FAIR ODD</span></td>
             </tr>
             <tr>
-              <td class="py-2.5 font-bold text-white">Over 22.5 Chutes Totais</td>
+              <td class="py-2.5 font-bold text-white">Over 22.5 Total Shots</td>
               <td class="py-2.5 text-center text-gray-400 font-bold">39%</td>
-              <td class="py-2.5 text-right"><span class="px-2 py-0.5 rounded bg-gray-800 text-gray-400 font-bold">SEM VALOR</span></td>
+              <td class="py-2.5 text-right"><span class="px-2 py-0.5 rounded bg-gray-800 text-gray-400 font-bold">NO VALUE</span></td>
             </tr>
             <tr>
               <td class="py-2.5 font-bold text-white">Over 7.5 Shots on Target</td>
               <td class="py-2.5 text-center text-emerald-400 font-bold">58%</td>
-              <td class="py-2.5 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-[#00d26a] font-bold">COM VALOR</span></td>
+              <td class="py-2.5 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-[#00d26a] font-bold">VALUE FOUND</span></td>
             </tr>
           </tbody>
         </table>
@@ -1447,7 +1447,7 @@
 </div>
 
 <!-- ═════════════════════════════════════════════════════════════════
-     4. ABA: CARTÕES (COM TODOS OS BOXES DE CARTÕES 01 E 02.PNG)
+     5. TAB: CARDS & FOULS
      ═════════════════════════════════════════════════════════════════ -->
 <div id="pane-cartoes" class="tab-pane hidden space-y-6">
   
@@ -1460,20 +1460,20 @@
       <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
         <div class="flex items-center gap-2 border-b border-gray-800/70 pb-3">
           <span class="w-1.5 h-4 bg-amber-400 rounded-full"></span>
-          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Cards &middot; Médias Gerais</h3>
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Cards &middot; General Averages</h3>
         </div>
 
         <div class="grid grid-cols-3 gap-2 text-center font-mono text-xs mb-3">
           <div class="p-2.5 rounded bg-[#0e1217] border border-gray-800">
-            <span class="text-[10px] text-gray-500 block">Vermelhos (10j)</span>
+            <span class="text-[10px] text-gray-500 block">Reds (Last 10)</span>
             <span class="text-rose-400 font-bold text-sm mt-0.5 block">1 &middot; 0</span>
           </div>
           <div class="p-2.5 rounded bg-[#0e1217] border border-gray-800">
-            <span class="text-[10px] text-gray-500 block">Média Faltas/J</span>
+            <span class="text-[10px] text-gray-500 block">Avg Fouls/M</span>
             <span class="text-white font-bold text-sm mt-0.5 block">10.7 &middot; 10.3</span>
           </div>
           <div class="p-2.5 rounded bg-[#0e1217] border border-gray-800">
-            <span class="text-[10px] text-gray-500 block">Faltas p/ Cartão</span>
+            <span class="text-[10px] text-gray-500 block">Fouls per Card</span>
             <span class="text-cyan-400 font-bold text-sm mt-0.5 block">6.7 &middot; 5.2</span>
           </div>
         </div>
@@ -1482,28 +1482,28 @@
         <div class="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 font-mono text-xs flex items-center justify-between">
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-3.5 bg-rose-500 rounded-sm shadow-sm"></span>
-            <span class="text-rose-300 font-bold">Alerta Cartão Vermelho (Expulsão):</span>
+            <span class="text-rose-300 font-bold">Red Card Alert (Sending Off):</span>
           </div>
-          <span class="text-rose-400 font-black text-sm">0.25 / jogo <span class="text-[10px] text-gray-400 font-normal">(Alta Tensão)</span></span>
+          <span class="text-rose-400 font-black text-sm">0.25 / match <span class="text-[10px] text-gray-400 font-normal">(High Tension)</span></span>
         </div>
 
         <table class="w-full font-mono text-xs text-left">
           <thead class="border-b border-gray-800/60 text-gray-400 text-[10px] uppercase">
             <tr>
               <th class="py-2 text-cyan-400">{{ match.home_team.name }}</th>
-              <th class="py-2 text-center text-gray-500">Métrica</th>
+              <th class="py-2 text-center text-gray-500">Metric</th>
               <th class="py-2 text-right text-purple-400">{{ match.away_team.name }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-800/40 text-gray-200">
             <tr>
               <td class="py-2.5 font-bold text-white">1.60</td>
-              <td class="py-2.5 text-center text-gray-400">Cards a Favor</td>
+              <td class="py-2.5 text-center text-gray-400">Cards For</td>
               <td class="py-2.5 text-right font-bold text-white">2.00</td>
             </tr>
             <tr>
               <td class="py-2.5 font-bold text-rose-400">2.70</td>
-              <td class="py-2.5 text-center text-gray-400">Cards Sofridos</td>
+              <td class="py-2.5 text-center text-gray-400">Cards Against</td>
               <td class="py-2.5 text-right font-bold text-rose-400">2.40</td>
             </tr>
             <tr>
@@ -1515,31 +1515,31 @@
         </table>
       </div>
 
-      <!-- Box: Estatísticas do Árbitro (Print cartoes 02.png) -->
+      <!-- Box: Referee Statistics (Print cartoes 02.png) -->
       <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
         <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
           <div class="flex items-center gap-2">
             <span class="w-1.5 h-4 bg-amber-400 rounded-full"></span>
-            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Estatísticas do Árbitro</h3>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Referee Statistics</h3>
           </div>
           <span class="text-xs font-mono text-cyan-400">Miguel Ángel Ortiz Arias</span>
         </div>
 
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center font-mono text-xs">
           <div class="p-2.5 rounded bg-[#0e1217] border border-gray-800">
-            <span class="text-[10px] text-gray-500 block">Amarelos / J</span>
+            <span class="text-[10px] text-gray-500 block">Yellows / M</span>
             <span class="text-amber-400 font-bold text-sm mt-0.5 block">3.80</span>
           </div>
           <div class="p-2.5 rounded bg-[#0e1217] border border-gray-800">
-            <span class="text-[10px] text-gray-500 block">Vermelhos %</span>
+            <span class="text-[10px] text-gray-500 block">Reds %</span>
             <span class="text-rose-500 font-bold text-sm mt-0.5 block">19%</span>
           </div>
           <div class="p-2.5 rounded bg-[#0e1217] border border-gray-800">
-            <span class="text-[10px] text-gray-500 block">Faltas / J</span>
+            <span class="text-[10px] text-gray-500 block">Fouls / M</span>
             <span class="text-white font-bold text-sm mt-0.5 block">24.5</span>
           </div>
           <div class="p-2.5 rounded bg-[#0e1217] border border-gray-800">
-            <span class="text-[10px] text-gray-500 block">Amostra (Jogos)</span>
+            <span class="text-[10px] text-gray-500 block">Sample (Matches)</span>
             <span class="text-cyan-400 font-bold text-sm mt-0.5 block">48</span>
           </div>
         </div>
@@ -1547,7 +1547,7 @@
 
     </div>
 
-    <!-- Coluna Direita: Cards por Tempo + Linhas Over Cards -->
+    <!-- Coluna Direita: Cards por Tempo + Lines Over Cards -->
     <div class="lg:col-span-6 space-y-6">
       
       <!-- Box: Cards por Tempo de Jogo (Print cartoes 02.png) -->
@@ -1555,9 +1555,9 @@
         <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
           <div class="flex items-center gap-2">
             <span class="w-1.5 h-4 bg-amber-400 rounded-full"></span>
-            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Cards Amarelos por Intervalo</h3>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Yellow Cards by Interval</h3>
           </div>
-          <span class="text-xs font-mono text-amber-400">Minutos &amp; Pressão</span>
+          <span class="text-xs font-mono text-amber-400">Minutes &amp; Pressure</span>
         </div>
 
         <div class="space-y-1.5 font-mono text-xs">
@@ -1578,32 +1578,32 @@
           </div>
           <div class="grid grid-cols-3 py-2 px-3 rounded bg-amber-500/15 border border-amber-500/30 items-center text-center">
             <span class="text-left text-amber-400 font-black">90% (16 Tot)</span>
-            <span class="font-bold text-amber-400">76' - FT (FIM DO JOGO)</span>
+            <span class="font-bold text-amber-400">76' - FT (FULL TIME)</span>
             <span class="text-right text-amber-400 font-black">90% (21 Tot)</span>
           </div>
         </div>
 
         <div class="p-2.5 rounded bg-[#0e1217] text-gray-400 text-xs flex items-center gap-2">
           <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
-          <span>O período mais quente é o 76'-FT: 90% dos jogos têm cartão amarelo nesse intervalo.</span>
+          <span>O período mais quente é o 76'-FT: 90% dos matches têm cartão amarelo nesse intervalo.</span>
         </div>
       </div>
 
-      <!-- Box: Linhas de Over Cards (Print cartoes 02.png) -->
+      <!-- Box: Lines de Over Cards (Print cartoes 02.png) -->
       <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
         <div class="flex items-center justify-between border-b border-gray-800/70 pb-3">
           <div class="flex items-center gap-2">
             <span class="w-1.5 h-4 bg-amber-400 rounded-full"></span>
-            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Linhas de Over Cards</h3>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Lines de Over Cards</h3>
           </div>
-          <span class="text-xs font-mono text-emerald-400">Total do Jogo</span>
+          <span class="text-xs font-mono text-emerald-400">Match Total</span>
         </div>
 
         <table class="w-full font-mono text-xs text-left">
           <thead class="border-b border-gray-800/60 text-gray-400 text-[10px] uppercase">
             <tr>
-              <th class="py-2">Linha</th>
-              <th class="py-2 text-center">Média Combinada</th>
+              <th class="py-2">Line</th>
+              <th class="py-2 text-center">Combined Average</th>
               <th class="py-2 text-right">Veredicto</th>
             </tr>
           </thead>
@@ -1611,17 +1611,17 @@
             <tr>
               <td class="py-2.5 font-bold text-white">Over 3.5 Cards</td>
               <td class="py-2.5 text-center text-emerald-400 font-bold">65%</td>
-              <td class="py-2.5 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-[#00d26a] font-bold">COM VALOR</span></td>
+              <td class="py-2.5 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-[#00d26a] font-bold">VALUE FOUND</span></td>
             </tr>
             <tr>
               <td class="py-2.5 font-bold text-white">Over 4.5 Cards</td>
               <td class="py-2.5 text-center text-cyan-400 font-bold">50%</td>
-              <td class="py-2.5 text-right"><span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 font-bold">JUSTA</span></td>
+              <td class="py-2.5 text-right"><span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 font-bold">FAIR ODD</span></td>
             </tr>
             <tr>
               <td class="py-2.5 font-bold text-white">Over 5.5 Cards</td>
               <td class="py-2.5 text-center text-rose-500 font-bold">30%</td>
-              <td class="py-2.5 text-right"><span class="px-2 py-0.5 rounded bg-gray-800 text-gray-400 font-bold">SEM VALOR</span></td>
+              <td class="py-2.5 text-right"><span class="px-2 py-0.5 rounded bg-gray-800 text-gray-400 font-bold">NO VALUE</span></td>
             </tr>
           </tbody>
         </table>
@@ -1634,24 +1634,24 @@
 </div>
 
 <!-- ═════════════════════════════════════════════════════════════════
-     5. ABA: ANÁLISE DE ODDS (COM TODOS OS BOXES DE ANALISE DE ODDS 01, 02 E 03.PNG)
+     6. TAB: ODDS ANALYSIS
      ═════════════════════════════════════════════════════════════════ -->
 <div id="pane-odds" class="tab-pane hidden space-y-6">
   
   <!-- Cards de KPIs no Topo (Print analise de odds 01.png) -->
   <div class="grid grid-cols-2 md:grid-cols-4 gap-3 font-mono">
     <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-3.5">
-      <span class="text-[11px] text-gray-400 block">Mercados Analisados</span>
+      <span class="text-[11px] text-gray-400 block">Markets Analyzed</span>
       <span class="text-2xl font-black text-white mt-1 block">62</span>
     </div>
     <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-3.5">
-      <span class="text-[11px] text-gray-400 block">Com Valor Encontrado</span>
+      <span class="text-[11px] text-gray-400 block">Value Opportunities Found</span>
       <span class="text-2xl font-black text-[#00d26a] mt-1 block">4</span>
     </div>
     <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-3.5">
       <span class="text-[11px] text-gray-400 block">Maior Edge (+EV)</span>
       <span class="text-2xl font-black text-cyan-400 mt-1 block">+13.8%</span>
-      <span class="text-[10px] text-gray-500 block">Over 9.5 Escanteios</span>
+      <span class="text-[10px] text-gray-500 block">Over 9.5 Corners</span>
     </div>
     <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-3.5">
       <span class="text-[11px] text-gray-400 block">Confidence Modelo</span>
@@ -1672,16 +1672,16 @@
     <div class="px-5 py-3.5 bg-[#171d26] border-b border-gray-800/70 flex items-center justify-between">
       <div class="flex items-center gap-2">
         <span class="w-1.5 h-4 bg-cyan-400 rounded-full"></span>
-        <h3 class="text-sm font-bold text-white uppercase tracking-wider">Mercados com Cálculo de Fair Odd</h3>
+        <h3 class="text-sm font-bold text-white uppercase tracking-wider">Markets with Fair Odd Calculation</h3>
       </div>
-      <span class="text-xs text-gray-400">Mostrando 62 mercados auditados</span>
+      <span class="text-xs text-gray-400">Showing 62 audited markets</span>
     </div>
 
     <div class="overflow-x-auto">
       <table class="w-full text-left">
         <thead class="border-b border-gray-800/60 text-gray-500 text-[10px] uppercase tracking-wider bg-[#10141a]">
           <tr>
-            <th class="py-2.5 px-4">Mercado</th>
+            <th class="py-2.5 px-4">Market</th>
             <th class="py-2.5 px-4 text-center">Projection %</th>
             <th class="py-2.5 px-4 text-center">Odd Casa</th>
             <th class="py-2.5 px-4 text-center">Fair Odd</th>
@@ -1692,39 +1692,39 @@
         </thead>
         <tbody class="divide-y divide-gray-800/40 text-gray-200">
           <tr class="hover:bg-gray-800/30 transition">
-            <td class="py-3 px-4 font-bold text-white">Over 1.5 Gols FT</td>
+            <td class="py-3 px-4 font-bold text-white">Over 1.5 Goals FT</td>
             <td class="py-3 px-4 text-center text-emerald-400 font-bold">{{ p_o15 }}%</td>
             <td class="py-3 px-4 text-center font-bold text-white">1.36</td>
             <td class="py-3 px-4 text-center text-gray-400">1.22</td>
             <td class="py-3 px-4 text-center text-emerald-400 font-bold">+11.4%</td>
-            <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-[#00d26a] font-bold">COM VALOR</span></td>
+            <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-[#00d26a] font-bold">VALUE FOUND</span></td>
             <td class="py-3 px-4 text-center text-cyan-400 font-bold">&bull;&bull;&bull;&bull;&bull;</td>
           </tr>
           <tr class="hover:bg-gray-800/30 transition">
-            <td class="py-3 px-4 font-bold text-white">Over 9.5 Escanteios FT</td>
+            <td class="py-3 px-4 font-bold text-white">Over 9.5 Corners FT</td>
             <td class="py-3 px-4 text-center text-cyan-400 font-bold">60%</td>
             <td class="py-3 px-4 text-center font-bold text-white">1.97</td>
             <td class="py-3 px-4 text-center text-gray-400">1.66</td>
             <td class="py-3 px-4 text-center text-emerald-400 font-bold">+13.8%</td>
-            <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-[#00d26a] font-bold">COM VALOR</span></td>
+            <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-[#00d26a] font-bold">VALUE FOUND</span></td>
             <td class="py-3 px-4 text-center text-cyan-400 font-bold">&bull;&bull;&bull;&bull;&bull;</td>
           </tr>
           <tr class="hover:bg-gray-800/30 transition">
-            <td class="py-3 px-4 font-bold text-white">Mandante Vence (1X2)</td>
+            <td class="py-3 px-4 font-bold text-white">Home Vence (1X2)</td>
             <td class="py-3 px-4 text-center text-gray-300">46%</td>
             <td class="py-3 px-4 text-center font-bold text-white">2.20</td>
             <td class="py-3 px-4 text-center text-gray-400">2.17</td>
             <td class="py-3 px-4 text-center text-cyan-400 font-bold">+1.4%</td>
-            <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 font-bold">JUSTA</span></td>
+            <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 font-bold">FAIR ODD</span></td>
             <td class="py-3 px-4 text-center text-cyan-400 font-bold">&bull;&bull;&bull;&bull;&cir;</td>
           </tr>
           <tr class="hover:bg-gray-800/30 transition">
-            <td class="py-3 px-4 font-bold text-white">Over 2.5 Gols FT</td>
+            <td class="py-3 px-4 font-bold text-white">Over 2.5 Goals FT</td>
             <td class="py-3 px-4 text-center text-rose-400 font-bold">{{ p_o25 }}%</td>
             <td class="py-3 px-4 text-center font-bold text-white">1.95</td>
             <td class="py-3 px-4 text-center text-gray-400">2.38</td>
             <td class="py-3 px-4 text-center text-rose-500 font-bold">-18.1%</td>
-            <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-gray-800 text-gray-400 font-bold">SEM VALOR</span></td>
+            <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-gray-800 text-gray-400 font-bold">NO VALUE</span></td>
             <td class="py-3 px-4 text-center text-gray-500 font-bold">&bull;&bull;&bull;&cir;&cir;</td>
           </tr>
         </tbody>
@@ -1750,22 +1750,22 @@
         <p class="text-xs text-gray-400 mt-1">Cumulative evolution of attacks, shots and pressure across 90 minutes.</p>
       </div>
       <div class="flex items-center gap-2 font-mono text-xs">
-        <span class="text-gray-400">Simulação:</span>
+        <span class="text-gray-400">Simulation:</span>
         <span class="px-2.5 py-1 rounded bg-[#1c232d] text-cyan-400 font-bold border border-cyan-500/30">90' Min</span>
       </div>
     </div>
 
-    <!-- Seletor de Métricas Gráficas (Exato graficos 01.png) -->
+    <!-- Seletor de Metrics Gráficas (Exato graficos 01.png) -->
     <div class="flex flex-wrap items-center gap-2 font-mono text-xs">
-      <button class="px-3 py-1.5 rounded-lg bg-cyan-500 text-gray-950 font-bold shadow-sm shadow-cyan-500/30">Ataques</button>
+      <button class="px-3 py-1.5 rounded-lg bg-cyan-500 text-gray-950 font-bold shadow-sm shadow-cyan-500/30">Attacks</button>
       <button class="px-3 py-1.5 rounded-lg bg-[#1c232d] text-gray-300 hover:text-white border border-gray-700">Dangerous Attacks</button>
       <button class="px-3 py-1.5 rounded-lg bg-[#1c232d] text-gray-300 hover:text-white border border-gray-700">Shots</button>
       <button class="px-3 py-1.5 rounded-lg bg-[#1c232d] text-gray-300 hover:text-white border border-gray-700">On Target</button>
-      <button class="px-3 py-1.5 rounded-lg bg-[#1c232d] text-gray-300 hover:text-white border border-gray-700">Escanteios</button>
+      <button class="px-3 py-1.5 rounded-lg bg-[#1c232d] text-gray-300 hover:text-white border border-gray-700">Corners</button>
       <button class="px-3 py-1.5 rounded-lg bg-[#1c232d] text-gray-300 hover:text-white border border-gray-700">Pressure / Momentum</button>
     </div>
 
-    <!-- Área do Gráfico de Linhas / Timeline SVG -->
+    <!-- Área do Gráfico de Lines / Timeline SVG -->
     <div class="bg-[#0e1217] rounded-xl p-4 border border-gray-800/80 relative">
       <div class="flex items-center justify-between text-[11px] font-mono text-gray-400 mb-2">
         <div class="flex items-center gap-4">
@@ -1779,20 +1779,20 @@
       <!-- Gráfico SVG Interativo da Timeline com Marcadores de Gol -->
       <div class="w-full h-56 relative mt-4">
         <svg viewBox="0 0 900 200" class="w-full h-full overflow-visible">
-          <!-- Linhas de Grade Verticais (Minutos 15', 30', 45' HT, 60', 75', 90') -->
+          <!-- Lines de Grade Verticais (Minutos 15', 30', 45' HT, 60', 75', 90') -->
           <line x1="150" y1="0" x2="150" y2="180" stroke="#1f2937" stroke-width="1" stroke-dasharray="3,3" />
           <line x1="300" y1="0" x2="300" y2="180" stroke="#1f2937" stroke-width="1" stroke-dasharray="3,3" />
           <line x1="450" y1="0" x2="450" y2="180" stroke="#374151" stroke-width="1.5" />
           <line x1="600" y1="0" x2="600" y2="180" stroke="#1f2937" stroke-width="1" stroke-dasharray="3,3" />
           <line x1="750" y1="0" x2="750" y2="180" stroke="#1f2937" stroke-width="1" stroke-dasharray="3,3" />
 
-          <!-- Linha 1: Total do Jogo (Azul Ciano) -->
+          <!-- Line 1: Match Total (Azul Ciano) -->
           <path d="M 0,180 Q 200,140 450,90 T 900,10" fill="none" stroke="#00b4d8" stroke-width="2.5" />
           
-          <!-- Linha 2: Mandante (Verde) -->
+          <!-- Line 2: Home (Verde) -->
           <path d="M 0,180 Q 200,165 450,135 T 900,100" fill="none" stroke="#00d26a" stroke-width="2" />
 
-          <!-- Linha 3: Visitante (Vermelho/Rosa) -->
+          <!-- Line 3: Away (Vermelho/Rosa) -->
           <path d="M 0,180 Q 200,150 450,105 T 900,40" fill="none" stroke="#f43f5e" stroke-width="2" />
 
           <!-- Marcadores de Gol (⚽) Exatos do print graficos 01.png -->
@@ -1827,13 +1827,13 @@
 
       <!-- Eixo X de Minutagem -->
       <div class="flex justify-between font-mono text-[10px] text-gray-500 pt-2 border-t border-gray-800/80 mt-2">
-        <span>00' Início</span>
+        <span>00' Kickoff</span>
         <span>15'</span>
         <span>30'</span>
-        <span class="text-cyan-400 font-bold">45' Intervalo (HT)</span>
+        <span class="text-cyan-400 font-bold">45' Halftime (HT)</span>
         <span>60'</span>
         <span>75'</span>
-        <span class="text-emerald-400 font-bold">90' Fim de Jogo</span>
+        <span class="text-emerald-400 font-bold">90' Full Time (FT)</span>
       </div>
     </div>
 
