@@ -1,5 +1,6 @@
 import json
 from django.shortcuts import render, get_object_or_404
+from django.core.cache import cache
 from django.utils import timezone
 from datetime import datetime, timedelta
 import pytz
@@ -230,6 +231,13 @@ def vip_games_list_view(request):
         start_d = datetime.combine(tom_date, datetime.min.time(), tzinfo=pytz.UTC)
         end_d = datetime.combine(tom_date, datetime.max.time(), tzinfo=pytz.UTC)
         qs = qs.filter(date__range=(start_d, end_d)).order_by('date')
+    elif status_filter in ['yesterday', 'ontem']:
+        yesterday_date = (now - timedelta(days=1)).date()
+        query_date = yesterday_date
+        is_historical_day = True
+        start_d = datetime.combine(yesterday_date, datetime.min.time(), tzinfo=pytz.UTC)
+        end_d = datetime.combine(yesterday_date, datetime.max.time(), tzinfo=pytz.UTC)
+        qs = qs.filter(date__range=(start_d, end_d)).order_by('date')
     elif status_filter == 'finished':
         # Partidas encerradas recentemente (últimas 24 horas)
         qs = qs.filter(status__in=['Finished', 'FT'], date__gte=now - timedelta(hours=24)).order_by('-date')
@@ -276,124 +284,143 @@ def vip_games_list_view(request):
         return int((cnt / len(valid)) * 100)
 
     for m in raw_matches:
-        try:
-            analyzer = MatchAnalyzer(m)
-            gm = analyzer.get_goal_markets()
-            cm = analyzer.get_corner_markets()
-            
-            # Gols Reais e Específicos
-            h_prob_o15 = gm.get('over_15', 74)
-            h_prob_o25 = gm.get('over_25', 50)
-            h_prob_btts = gm.get('btts', 52)
-            h_prob_u35 = max(55, min(92, 100 - gm.get('over_35', 25)))
-            
-            # Cantos Reais
-            h_prob_c85 = cm.get('match_overs', {}).get(8, 65)
-            if h_prob_c85 == 0:
-                h_prob_c85 = 65
-            h_prob_c75 = min(96, max(72, cm.get('match_overs', {}).get(7, h_prob_c85 + 10)))
-            h_prob_c75ft = min(92, max(68, h_prob_c85 + 12))
-            
-            # Taxas Casa e Fora Reais de acordo com mercados
-            home_o15_pct = calc_match_overs(analyzer.home_last_10_home, 2)
-            away_o15_pct = calc_match_overs(analyzer.away_last_10_away, 2)
+        cache_key = f"vip_match_stats_v2_{m.id}"
+        stats = cache.get(cache_key)
 
-            home_o25_pct = calc_match_overs(analyzer.home_last_10_home, 3)
-            away_o25_pct = calc_match_overs(analyzer.away_last_10_away, 3)
+        if not stats:
+            try:
+                analyzer = MatchAnalyzer(m)
+                gm = analyzer.get_goal_markets()
+                cm = analyzer.get_corner_markets()
+                
+                # Gols Reais e Específicos
+                h_prob_o15 = gm.get('over_15', 74)
+                h_prob_o25 = gm.get('over_25', 50)
+                h_prob_btts = gm.get('btts', 52)
+                h_prob_u35 = max(55, min(92, 100 - gm.get('over_35', 25)))
+                
+                # Cantos Reais
+                h_prob_c85 = cm.get('match_overs', {}).get(8, 65)
+                if h_prob_c85 == 0:
+                    h_prob_c85 = 65
+                h_prob_c75 = min(96, max(72, cm.get('match_overs', {}).get(7, h_prob_c85 + 10)))
+                h_prob_c75ft = min(92, max(68, h_prob_c85 + 12))
+                
+                # Taxas Casa e Fora Reais de acordo com mercados
+                home_o15_pct = calc_match_overs(analyzer.home_last_10_home, 2)
+                away_o15_pct = calc_match_overs(analyzer.away_last_10_away, 2)
 
-            # U3.5 Casa e Fora (jogos com <= 3 gols)
-            v_home_u35 = [p for p in analyzer.home_last_10_home if p.home_score is not None and p.away_score is not None]
-            home_u35_pct = int((sum(1 for p in v_home_u35 if (p.home_score + p.away_score) <= 3) / len(v_home_u35) * 100)) if v_home_u35 else 75
+                home_o25_pct = calc_match_overs(analyzer.home_last_10_home, 3)
+                away_o25_pct = calc_match_overs(analyzer.away_last_10_away, 3)
 
-            v_away_u35 = [p for p in analyzer.away_last_10_away if p.home_score is not None and p.away_score is not None]
-            away_u35_pct = int((sum(1 for p in v_away_u35 if (p.home_score + p.away_score) <= 3) / len(v_away_u35) * 100)) if v_away_u35 else 75
+                # U3.5 Casa e Fora (jogos com <= 3 gols)
+                v_home_u35 = [p for p in analyzer.home_last_10_home if p.home_score is not None and p.away_score is not None]
+                home_u35_pct = int((sum(1 for p in v_home_u35 if (p.home_score + p.away_score) <= 3) / len(v_home_u35) * 100)) if v_home_u35 else 75
 
-            # BTTS Casa e Fora
-            v_home = [p for p in analyzer.home_last_10_home if p.home_score is not None and p.away_score is not None]
-            home_btts_pct = int((sum(1 for p in v_home if p.home_score > 0 and p.away_score > 0) / len(v_home) * 100)) if v_home else 50
+                v_away_u35 = [p for p in analyzer.away_last_10_away if p.home_score is not None and p.away_score is not None]
+                away_u35_pct = int((sum(1 for p in v_away_u35 if (p.home_score + p.away_score) <= 3) / len(v_away_u35) * 100)) if v_away_u35 else 75
 
-            v_away = [p for p in analyzer.away_last_10_away if p.home_score is not None and p.away_score is not None]
-            away_btts_pct = int((sum(1 for p in v_away if p.home_score > 0 and p.away_score > 0) / len(v_away) * 100)) if v_away else 50
-            
-            # Lay Bets Reais
-            lays = analyzer.get_lay_bets()
-            best_lay = lays[0] if lays else {'prob': 96, 'back_odd': 25.0, 'market': 'Lay Score 3-0'}
-            p_lay = best_lay.get('prob', 96)
-            fair_lay = best_lay.get('back_odd', 25.0)
-            lay_score = best_lay.get('market', '').replace('Lay Score ', '').strip()
+                # BTTS Casa e Fora
+                v_home = [p for p in analyzer.home_last_10_home if p.home_score is not None and p.away_score is not None]
+                home_btts_pct = int((sum(1 for p in v_home if p.home_score > 0 and p.away_score > 0) / len(v_home) * 100)) if v_home else 50
 
-        except Exception:
-            h_prob_o15 = 74
-            h_prob_o25 = 50
-            h_prob_btts = 52
-            h_prob_u35 = 78
-            h_prob_c85 = 68
-            h_prob_c75 = 82
-            h_prob_c75ft = 80
-            home_o15_pct = 70
-            away_o15_pct = 60
-            home_o25_pct = 50
-            away_o25_pct = 40
-            home_u35_pct = 75
-            away_u35_pct = 75
-            home_btts_pct = 52
-            away_btts_pct = 48
-            p_lay = 96
-            fair_lay = 25.0
-            lay_score = '3-0'
+                v_away = [p for p in analyzer.away_last_10_away if p.home_score is not None and p.away_score is not None]
+                away_btts_pct = int((sum(1 for p in v_away if p.home_score > 0 and p.away_score > 0) / len(v_away) * 100)) if v_away else 50
+                
+                # Lay Bets Reais
+                lays = analyzer.get_lay_bets()
+                best_lay = lays[0] if lays else {'prob': 96, 'back_odd': 25.0, 'market': 'Lay Score 3-0'}
+                p_lay = best_lay.get('prob', 96)
+                fair_lay = best_lay.get('back_odd', 25.0)
+                lay_score = best_lay.get('market', '').replace('Lay Score ', '').strip()
 
-        fair_odd_o15 = round(100 / h_prob_o15, 2) if h_prob_o15 > 0 else 1.35
-        fair_odd_o25 = round(100 / h_prob_o25, 2) if h_prob_o25 > 0 else 1.95
-        fair_odd_btts = round(100 / h_prob_btts, 2) if h_prob_btts > 0 else 1.90
-        fair_odd_u35 = round(100 / h_prob_u35, 2) if h_prob_u35 > 0 else 1.38
-        fair_odd_c75 = round(100 / h_prob_c75, 2) if h_prob_c75 > 0 else 1.22
-        fair_odd_c85 = round(100 / h_prob_c85, 2) if h_prob_c85 > 0 else 1.47
-        fair_odd_c75ft = round(100 / h_prob_c75ft, 2) if h_prob_c75ft > 0 else 1.25
+            except Exception:
+                h_prob_o15 = 74
+                h_prob_o25 = 50
+                h_prob_btts = 52
+                h_prob_u35 = 78
+                h_prob_c85 = 68
+                h_prob_c75 = 82
+                h_prob_c75ft = 80
+                home_o15_pct = 70
+                away_o15_pct = 60
+                home_o25_pct = 50
+                away_o25_pct = 40
+                home_u35_pct = 75
+                away_u35_pct = 75
+                home_btts_pct = 52
+                away_btts_pct = 48
+                p_lay = 96
+                fair_lay = 25.0
+                lay_score = '3-0'
 
-        m.p_o15 = h_prob_o15
-        m.fair_o15 = fair_odd_o15
-        m.home_o15_pct = home_o15_pct
-        m.away_o15_pct = away_o15_pct
+            fair_odd_o15 = round(100 / h_prob_o15, 2) if h_prob_o15 > 0 else 1.35
+            fair_odd_o25 = round(100 / h_prob_o25, 2) if h_prob_o25 > 0 else 1.95
+            fair_odd_btts = round(100 / h_prob_btts, 2) if h_prob_btts > 0 else 1.90
+            fair_odd_u35 = round(100 / h_prob_u35, 2) if h_prob_u35 > 0 else 1.38
+            fair_odd_c75 = round(100 / h_prob_c75, 2) if h_prob_c75 > 0 else 1.22
+            fair_odd_c85 = round(100 / h_prob_c85, 2) if h_prob_c85 > 0 else 1.47
+            fair_odd_c75ft = round(100 / h_prob_c75ft, 2) if h_prob_c75ft > 0 else 1.25
 
-        m.p_o25 = h_prob_o25
-        m.fair_o25 = fair_odd_o25
-        m.home_o25_pct = home_o25_pct
-        m.away_o25_pct = away_o25_pct
+            stats = {
+                'p_o15': h_prob_o15, 'fair_o15': fair_odd_o15, 'home_o15_pct': home_o15_pct, 'away_o15_pct': away_o15_pct,
+                'p_o25': h_prob_o25, 'fair_o25': fair_odd_o25, 'home_o25_pct': home_o25_pct, 'away_o25_pct': away_o25_pct,
+                'p_btts': h_prob_btts, 'fair_btts': fair_odd_btts, 'home_btts_pct': home_btts_pct, 'away_btts_pct': away_btts_pct,
+                'p_u35': h_prob_u35, 'fair_u35': fair_odd_u35, 'home_u35_pct': home_u35_pct, 'away_u35_pct': away_u35_pct,
+                'p_c75': h_prob_c75, 'fair_c75': fair_odd_c75,
+                'p_c85': h_prob_c85, 'fair_c85': fair_odd_c85,
+                'p_c75ft': h_prob_c75ft, 'fair_c75ft': fair_odd_c75ft,
+                'p_lay': p_lay, 'fair_lay': fair_lay, 'lay_score': lay_score,
+            }
+            # Cache por 180 segundos (3 min) se for pré-jogo ou 60s se for ao vivo
+            cache_ttl = 60 if m.status == 'Live' else 300
+            cache.set(cache_key, stats, cache_ttl)
 
-        m.p_btts = h_prob_btts
-        m.fair_btts = fair_odd_btts
-        m.home_btts_pct = home_btts_pct
-        m.away_btts_pct = away_btts_pct
+        m.p_o15 = stats['p_o15']
+        m.fair_o15 = stats['fair_o15']
+        m.home_o15_pct = stats['home_o15_pct']
+        m.away_o15_pct = stats['away_o15_pct']
 
-        m.p_u35 = h_prob_u35
-        m.fair_u35 = fair_odd_u35
-        m.home_u35_pct = home_u35_pct
-        m.away_u35_pct = away_u35_pct
+        m.p_o25 = stats['p_o25']
+        m.fair_o25 = stats['fair_o25']
+        m.home_o25_pct = stats['home_o25_pct']
+        m.away_o25_pct = stats['away_o25_pct']
 
-        m.p_c75 = h_prob_c75
-        m.fair_c75 = fair_odd_c75
-        m.home_c75_pct = min(100, max(30, h_prob_c75 + 3))
-        m.away_c75_pct = min(100, max(30, h_prob_c75 - 3))
+        m.p_btts = stats['p_btts']
+        m.fair_btts = stats['fair_btts']
+        m.home_btts_pct = stats['home_btts_pct']
+        m.away_btts_pct = stats['away_btts_pct']
 
-        m.p_c85 = h_prob_c85
-        m.fair_c85 = fair_odd_c85
-        m.home_c85_pct = min(100, max(30, h_prob_c85 + 4))
-        m.away_c85_pct = min(100, max(30, h_prob_c85 - 4))
+        m.p_u35 = stats['p_u35']
+        m.fair_u35 = stats['fair_u35']
+        m.home_u35_pct = stats['home_u35_pct']
+        m.away_u35_pct = stats['away_u35_pct']
 
-        m.p_c75ft = h_prob_c75ft
-        m.fair_c75ft = fair_odd_c75ft
-        m.home_c75ft_pct = min(100, max(40, h_prob_c75ft + 2))
-        m.away_c75ft_pct = min(100, max(40, h_prob_c75ft - 2))
+        m.p_c75 = stats['p_c75']
+        m.fair_c75 = stats['fair_c75']
+        m.home_c75_pct = min(100, max(30, stats['p_c75'] + 3))
+        m.away_c75_pct = min(100, max(30, stats['p_c75'] - 3))
 
-        m.p_lay = p_lay
-        m.fair_lay = fair_lay
-        m.lay_score = lay_score
-        m.home_lay_pct = min(100, max(50, p_lay))
-        m.away_lay_pct = min(100, max(50, p_lay - 2))
+        m.p_c85 = stats['p_c85']
+        m.fair_c85 = stats['fair_c85']
+        m.home_c85_pct = min(100, max(30, stats['p_c85'] + 2))
+        m.away_c85_pct = min(100, max(30, stats['p_c85'] - 2))
+
+        m.p_c75ft = stats['p_c75ft']
+        m.fair_c75ft = stats['fair_c75ft']
+        m.home_c75ft_pct = min(100, max(30, stats['p_c75ft'] + 2))
+        m.away_c75ft_pct = min(100, max(30, stats['p_c75ft'] - 2))
+
+        m.p_lay = stats['p_lay']
+        m.fair_lay = stats['fair_lay']
+        m.lay_score = stats['lay_score']
+        m.home_lay_pct = min(100, max(50, stats['p_lay']))
+        m.away_lay_pct = min(100, max(50, stats['p_lay'] - 2))
+        lay_score = stats['lay_score']
 
         # Valores padrão de fallback
-        m.home_spec_pct = home_o15_pct
-        m.away_spec_pct = away_o15_pct
+        m.home_spec_pct = stats['home_o15_pct']
+        m.away_spec_pct = stats['away_o15_pct']
 
         # ── Auditoria de Resultado (Green / Red) para jogos encerrados ──
         is_finished = m.status in ['Finished', 'FT'] and m.home_score is not None and m.away_score is not None
@@ -417,37 +444,37 @@ def vip_games_list_view(request):
 
         # Melhores apostas DIVERSIFICADAS ou FOCADAS no mercado selecionado
         if selected_market == 'gols_o15':
-            if h_prob_o15 >= 75:
-                top_picks.append({'match': m, 'market_name': 'Over 1.5 FT', 'badge_color': 'emerald', 'prob': h_prob_o15, 'fair_odd': fair_odd_o15})
+            if m.p_o15 >= 75:
+                top_picks.append({'match': m, 'market_name': 'Over 1.5 FT', 'badge_color': 'emerald', 'prob': m.p_o15, 'fair_odd': m.fair_o15})
         elif selected_market == 'gols_o25':
-            if h_prob_o25 >= 55:
-                top_picks.append({'match': m, 'market_name': 'Over 2.5 FT', 'badge_color': 'emerald', 'prob': h_prob_o25, 'fair_odd': fair_odd_o25})
+            if m.p_o25 >= 55:
+                top_picks.append({'match': m, 'market_name': 'Over 2.5 FT', 'badge_color': 'emerald', 'prob': m.p_o25, 'fair_odd': m.fair_o25})
         elif selected_market == 'gols_btts':
-            if h_prob_btts >= 50:
-                top_picks.append({'match': m, 'market_name': 'Ambos Marcam', 'badge_color': 'amber', 'prob': h_prob_btts, 'fair_odd': fair_odd_btts})
+            if m.p_btts >= 50:
+                top_picks.append({'match': m, 'market_name': 'Ambos Marcam', 'badge_color': 'amber', 'prob': m.p_btts, 'fair_odd': m.fair_btts})
         elif selected_market == 'gols_u35':
-            if h_prob_u35 >= 75:
-                top_picks.append({'match': m, 'market_name': 'Under 3.5 FT', 'badge_color': 'blue', 'prob': h_prob_u35, 'fair_odd': fair_odd_u35})
+            if m.p_u35 >= 75:
+                top_picks.append({'match': m, 'market_name': 'Under 3.5 FT', 'badge_color': 'blue', 'prob': m.p_u35, 'fair_odd': m.fair_u35})
         elif selected_market == 'cantos_o75':
-            if h_prob_c75 >= 75:
-                top_picks.append({'match': m, 'market_name': 'Cantos +7.5 FT', 'badge_color': 'cyan', 'prob': h_prob_c75, 'fair_odd': fair_odd_c75})
+            if m.p_c75 >= 75:
+                top_picks.append({'match': m, 'market_name': 'Cantos +7.5 FT', 'badge_color': 'cyan', 'prob': m.p_c75, 'fair_odd': m.fair_c75})
         elif selected_market == 'cantos_o85':
-            if h_prob_c85 >= 65:
-                top_picks.append({'match': m, 'market_name': 'Cantos +8.5 FT', 'badge_color': 'cyan', 'prob': h_prob_c85, 'fair_odd': fair_odd_c85})
+            if m.p_c85 >= 65:
+                top_picks.append({'match': m, 'market_name': 'Cantos +8.5 FT', 'badge_color': 'cyan', 'prob': m.p_c85, 'fair_odd': m.fair_c85})
         elif selected_market == 'cantos_75ft':
-            if h_prob_c75ft >= 75:
-                top_picks.append({'match': m, 'market_name': 'Cantos 75\' FT', 'badge_color': 'purple', 'prob': h_prob_c75ft, 'fair_odd': fair_odd_c75ft})
+            if m.p_c75ft >= 75:
+                top_picks.append({'match': m, 'market_name': 'Cantos 75\' FT', 'badge_color': 'purple', 'prob': m.p_c75ft, 'fair_odd': m.fair_c75ft})
         elif selected_market == 'lays':
-            if p_lay >= 92:
-                top_picks.append({'match': m, 'market_name': 'Lay Placar', 'badge_color': 'rose', 'prob': p_lay, 'fair_odd': fair_lay})
+            if m.p_lay >= 92:
+                top_picks.append({'match': m, 'market_name': 'Lay Placar', 'badge_color': 'rose', 'prob': m.p_lay, 'fair_odd': m.fair_lay})
         else:
             # Todos os mercados (Diversificado)
-            if h_prob_o15 >= 75:
-                top_picks.append({'match': m, 'market_name': 'Gols Mais de 1.5 FT', 'badge_color': 'emerald', 'prob': h_prob_o15, 'fair_odd': fair_odd_o15})
-            elif h_prob_c85 >= 65:
-                top_picks.append({'match': m, 'market_name': 'Escanteios Mais de 8.5 FT', 'badge_color': 'cyan', 'prob': h_prob_c85, 'fair_odd': fair_odd_c85})
-            elif h_prob_btts >= 55:
-                top_picks.append({'match': m, 'market_name': 'Ambos Marcam (BTTS)', 'badge_color': 'amber', 'prob': h_prob_btts, 'fair_odd': round(100 / h_prob_btts, 2)})
+            if m.p_o15 >= 75:
+                top_picks.append({'match': m, 'market_name': 'Gols Mais de 1.5 FT', 'badge_color': 'emerald', 'prob': m.p_o15, 'fair_odd': m.fair_o15})
+            elif m.p_c85 >= 65:
+                top_picks.append({'match': m, 'market_name': 'Escanteios Mais de 8.5 FT', 'badge_color': 'cyan', 'prob': m.p_c85, 'fair_odd': m.fair_c85})
+            elif m.p_btts >= 55:
+                top_picks.append({'match': m, 'market_name': 'Ambos Marcam (BTTS)', 'badge_color': 'amber', 'prob': m.p_btts, 'fair_odd': m.fair_btts})
 
     top_picks_sorted = sorted(top_picks, key=lambda x: x['prob'], reverse=True)[:5]
     if not top_picks_sorted and processed_matches:
@@ -560,33 +587,36 @@ def vip_games_list_view(request):
     else:
         market_sections = all_sections
 
-    # Lista de 7 dias contínuos estilo SofaScore (-2 dias no passado até +4 dias no futuro)
+    # Seletor de 3 Pilares Principais Executivos: ONTEM (-1), HOJE (0), AMANHÃ (+1)
     day_selectors = []
-    for delta in range(-2, 5):
+    pillar_configs = [
+        (-1, 'ONTEM', 'ontem'),
+        (0, 'HOJE', 'today'),
+        (1, 'AMANHÃ', 'tomorrow'),
+    ]
+    for delta, label, param_val in pillar_configs:
         d = now + timedelta(days=delta)
-        d_start = d.replace(hour=0, minute=0, second=0, microsecond=0)
-        d_end = d.replace(hour=23, minute=59, second=59, microsecond=999999)
+        d_start = datetime.combine(d.date(), datetime.min.time(), tzinfo=pytz.UTC)
+        d_end = datetime.combine(d.date(), datetime.max.time(), tzinfo=pytz.UTC)
         day_match_count = Match.objects.filter(date__range=(d_start, d_end)).count()
 
-        if delta == -2:
-            label = 'ANT'
-        elif delta == -1:
-            label = 'ONT'
-        elif delta == 0:
-            label = 'HOJE'
-        elif delta == 1:
-            label = 'AMAN'
-        else:
-            label = ['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB', 'DOM'][d.weekday()]
+        is_act = False
+        if delta == 0 and status_filter in ['today', None, '']:
+            is_act = True
+        elif delta == -1 and status_filter in ['yesterday', 'ontem', d.strftime('%Y-%m-%d')]:
+            is_act = True
+        elif delta == 1 and status_filter in ['tomorrow', 'amanha', d.strftime('%Y-%m-%d')]:
+            is_act = True
 
         day_selectors.append({
             'date_str': d.strftime('%Y-%m-%d'),
-            'day_num': d.strftime('%d'),
+            'param_val': param_val if delta >= 0 else d.strftime('%Y-%m-%d'),
+            'day_num': d.strftime('%d/%m'),
             'weekday': label,
             'is_today': delta == 0,
             'is_yesterday': delta == -1,
             'is_tomorrow': delta == 1,
-            'is_active': (delta == 0 and status_filter in ['today', None, '']) or (status_filter == d.strftime('%Y-%m-%d')) or (delta == 1 and status_filter in ['tomorrow', d.strftime('%Y-%m-%d')]),
+            'is_active': is_act,
             'match_count': day_match_count,
             'has_matches': day_match_count > 0,
         })
@@ -605,8 +635,8 @@ def vip_games_list_view(request):
         fin_today = list(Match.objects.filter(status__in=['Finished', 'FT'], home_score__isnull=False, away_score__isnull=False, date__gte=now - timedelta(hours=24)))
         day_period_label = "Hoje"
 
-    fin_7d = list(Match.objects.filter(status__in=['Finished', 'FT'], home_score__isnull=False, away_score__isnull=False, date__gte=now - timedelta(days=7)))
-    fin_30d = list(Match.objects.filter(status__in=['Finished', 'FT'], home_score__isnull=False, away_score__isnull=False, date__gte=now - timedelta(days=30)))
+    fin_7d = list(Match.objects.filter(status__in=['Finished', 'FT'], home_score__isnull=False, away_score__isnull=False, date__gte=now - timedelta(days=7)).only('home_score', 'away_score'))
+    fin_30d = list(Match.objects.filter(status__in=['Finished', 'FT'], home_score__isnull=False, away_score__isnull=False, date__gte=now - timedelta(days=30)).only('home_score', 'away_score'))
 
     n_today = len(fin_today) or 1
     n_7d = len(fin_7d) or 1

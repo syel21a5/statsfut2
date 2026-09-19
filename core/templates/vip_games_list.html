@@ -10,42 +10,38 @@
   <!-- ── 1. SIDEBAR LATERAL ESQUERDA (ESTILO CORNERPRO) ── -->
   <aside class="w-full xl:w-64 shrink-0 space-y-5">
     
-    <!-- (A) Bloco DIA com Navegação Estilo SofaScore/Flashscore -->
+    <!-- (A) Bloco DATA / RODADA: 3 Pilares Executivos (Ontem · Hoje · Amanhã) -->
     <div class="bg-[#14181f] border border-gray-800/60 rounded-xl p-3.5 shadow-lg">
       <div class="flex items-center justify-between mb-3 px-1">
         <div class="flex items-center gap-1.5">
           <i class="fa-solid fa-calendar-days text-cyan-400 text-xs"></i>
           <span class="text-[11px] font-mono font-bold text-gray-300 uppercase tracking-wider">Data / Rodada</span>
         </div>
-        <a href="?status=today{% if selected_market %}&market={{ selected_market }}{% endif %}" class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/20 transition" title="Ir para Hoje">
+        <a href="?status=today{% if selected_market %}&market={{ selected_market }}{% endif %}" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/20 transition" title="Ir para Hoje">
           HOJE
         </a>
       </div>
       
-      <!-- Carrossel de 7 Dias com Micro-Contador e Destaque Neon -->
-      <div class="grid grid-cols-7 gap-1">
+      <!-- Seletor em 3 Botões Imponentes -->
+      <div class="grid grid-cols-3 gap-1.5">
         {% for d in day_selectors %}
-        <a href="?status={% if d.is_today %}today{% elif d.is_tomorrow %}tomorrow{% else %}{{ d.date_str }}{% endif %}{% if selected_market %}&market={{ selected_market }}{% endif %}"
-           class="flex flex-col items-center justify-between py-2 px-0.5 rounded-lg text-center transition-all duration-150 relative group
-                  {% if d.is_active %}bg-gradient-to-b from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/30 font-bold scale-[1.03] z-10 border border-cyan-300/40{% else %}bg-[#0e1217] text-gray-400 hover:text-gray-100 hover:bg-gray-800/80 border border-gray-800/40{% endif %}">
-          <span class="text-[8px] font-mono tracking-tighter uppercase {% if d.is_active %}text-cyan-100 font-extrabold{% else %}text-gray-500 group-hover:text-gray-400{% endif %}">{{ d.weekday }}</span>
-          <span class="text-xs font-black leading-tight mt-0.5 {% if d.is_active %}text-white{% endif %}">{{ d.day_num }}</span>
+        <a href="?status={{ d.param_val }}{% if selected_market %}&market={{ selected_market }}{% endif %}"
+           class="flex flex-col items-center justify-between py-2.5 px-1 rounded-xl text-center transition-all duration-200 relative group
+                  {% if d.is_active %}bg-gradient-to-b from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/25 font-bold scale-[1.02] z-10 border border-cyan-300/40{% else %}bg-[#0e1217] text-gray-400 hover:text-gray-100 hover:bg-gray-800/80 border border-gray-800/60{% endif %}">
+          <span class="text-[10px] font-mono tracking-tight uppercase {% if d.is_active %}text-cyan-100 font-black{% else %}text-gray-500 group-hover:text-gray-300{% endif %}">{{ d.weekday }}</span>
+          <span class="text-xs font-black leading-tight my-1 {% if d.is_active %}text-white{% endif %}">{{ d.day_num }}</span>
           
-          <!-- Micro-Badge de Jogos do Dia -->
-          {% if d.has_matches %}
-            <span class="mt-1 text-[8px] font-mono font-bold px-1 rounded-full leading-none py-0.5
-                         {% if d.is_active %}bg-gray-950/70 text-cyan-300{% else %}bg-gray-800/90 text-gray-400 group-hover:text-emerald-400{% endif %}">
-              {{ d.match_count }}
-            </span>
-          {% else %}
-            <span class="mt-1 w-1.5 h-1.5 rounded-full {% if d.is_active %}bg-white{% else %}bg-gray-800{% endif %}"></span>
-          {% endif %}
+          <!-- Badge com Contagem de Jogos -->
+          <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full leading-none
+                       {% if d.is_active %}bg-gray-950/80 text-cyan-300 border border-cyan-400/30{% else %}bg-gray-800/90 text-gray-400 group-hover:text-emerald-400{% endif %}">
+            {{ d.match_count }}
+          </span>
         </a>
         {% endfor %}
       </div>
 
       <div class="mt-3 pt-2.5 border-t border-gray-800/60 flex items-center justify-between text-[11px] font-mono text-gray-400 px-1">
-        <span class="truncate pr-2">{% if selected_market and selected_market != 'all' %}{{ stats_kpi.market_label }}{% else %}Hoje &middot; {{ server_date }}{% endif %}</span>
+        <span class="truncate pr-2">{% if selected_market and selected_market != 'all' %}{{ stats_kpi.market_label }}{% else %}{{ server_date }}{% endif %}</span>
         <span class="text-emerald-400 font-bold shrink-0">{{ stats_kpi.kpi_count }} tips</span>
       </div>
     </div>
@@ -214,16 +210,13 @@
 
     </div>
 
-    <!-- ── (B) BARRA DE FILTROS RÁPIDOS & BUSCA INSTANTÂNEA ── -->
+    <!-- ── (B) BARRA DE STATUS DA RODADA, SNIPER & BUSCA INSTANTÂNEA ── -->
     {% if not is_historical_day %}
     <div class="flex flex-wrap items-center justify-between gap-3 bg-[#14181f] border border-gray-800/60 rounded-xl px-4 py-2.5 text-xs font-mono">
       <div class="flex flex-wrap items-center gap-2">
-        <span class="text-gray-400 font-mono text-[11px]">Filtros:</span>
-        <a href="?status=today{% if selected_market %}&market={{ selected_market }}{% endif %}" class="px-3 py-1.5 rounded-lg font-semibold transition {% if current_status == 'today' %}bg-cyan-500/20 text-cyan-300 border border-cyan-500/40{% else %}bg-[#0e1217] text-gray-400 hover:text-white border border-gray-800{% endif %}">
-          Hoje
-        </a>
-        <a href="?status=tomorrow{% if selected_market %}&market={{ selected_market }}{% endif %}" class="px-3 py-1.5 rounded-lg font-semibold transition {% if current_status == 'tomorrow' %}bg-cyan-500/20 text-cyan-300 border border-cyan-500/40{% else %}bg-[#0e1217] text-gray-400 hover:text-white border border-gray-800{% endif %}">
-          Amanhã
+        <span class="text-gray-400 font-mono text-[11px]">Partidas:</span>
+        <a href="?status={{ current_status|default:'today' }}{% if selected_market %}&market={{ selected_market }}{% endif %}" class="px-3 py-1.5 rounded-lg font-semibold transition {% if current_status != 'live' and current_status != 'finished' %}bg-cyan-500/20 text-cyan-300 border border-cyan-500/40{% else %}bg-[#0e1217] text-gray-400 hover:text-white border border-gray-800{% endif %}">
+          Todas
         </a>
         <a href="?status=live{% if selected_market %}&market={{ selected_market }}{% endif %}" class="px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1.5 {% if current_status == 'live' %}bg-rose-500/25 text-rose-300 border border-rose-500/50{% else %}bg-[#0e1217] text-rose-400 hover:text-rose-300 border border-rose-500/20{% endif %}">
           <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
@@ -233,7 +226,7 @@
           </span>
         </a>
         <a href="?status=finished{% if selected_market %}&market={{ selected_market }}{% endif %}" class="px-3 py-1.5 rounded-lg font-semibold transition {% if current_status == 'finished' %}bg-cyan-500/20 text-cyan-300 border border-cyan-500/40{% else %}bg-[#0e1217] text-gray-400 hover:text-white border border-gray-800{% endif %}">
-          Encerrados
+          Encerradas
         </a>
 
         <!-- Botão Filtro Sniper Só >= 80% -->
