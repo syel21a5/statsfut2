@@ -7246,6 +7246,40 @@ def live_radar_partial(request, match_id):
         (_("Full Match (FT)"), pressure_ft, "ft"),
     ]
 
+    # --- PONTOS DO GRÁFICO DE MOMENTUM (1º e 2º TEMPO) ---
+    sd = match.statistics_data or {}
+    raw_points = sd.get('graph_points') or []
+    
+    # Separar pontos do 1º Tempo (1-45') e 2º Tempo (46-90'+)
+    pts_1h = []
+    pts_2h = []
+    for p in raw_points:
+        m_num = p.get('minute', 0)
+        v = p.get('value', 0)
+        # Normalizar para escala visual max ~50px
+        # No SofaScore/Live, o value varia tipicamente de -100 a +100
+        val_clamped = max(-100, min(100, v))
+        item = {
+            'minute': m_num,
+            'value': val_clamped,
+            'is_home': val_clamped >= 0,
+            'height_pct': min(100, int((abs(val_clamped) / 100) * 100)) or 4
+        }
+        if m_num <= 45:
+            pts_1h.append(item)
+        else:
+            pts_2h.append(item)
+
+    # Buscar gols para plotar na timeline
+    goals_events = []
+    for g in match.goals.all():
+        is_home_goal = (g.team_id == match.home_team_id)
+        goals_events.append({
+            'minute': g.minute,
+            'is_home': is_home_goal,
+            'player': g.player_name
+        })
+
     context = {
         'match': match,
         'pressure_5': pressure_5,
@@ -7253,6 +7287,10 @@ def live_radar_partial(request, match_id):
         'pressure_15': pressure_15,
         'pressure_ft': pressure_ft,
         'pressure_windows': pressure_windows,
+        'has_momentum_graph': bool(raw_points),
+        'pts_1h': pts_1h,
+        'pts_2h': pts_2h,
+        'goals_events': goals_events,
         'stats_bars': {
             'possession': {'home': home_poss, 'away': away_poss},
             'shots': {'home': home_shots, 'away': away_shots, 'home_pct': home_shots_pct, 'away_pct': away_shots_pct},
