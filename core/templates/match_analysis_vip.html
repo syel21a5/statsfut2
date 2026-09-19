@@ -13,7 +13,7 @@
     <div class="flex items-center gap-4 flex-1 justify-end text-right">
       <div>
         <div class="flex items-center gap-2 justify-end">
-          <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Odd 2.20</span>
+          <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Mandante</span>
           <span class="text-[10px] font-mono text-gray-400">1.8 PPJ</span>
         </div>
         <h2 class="text-xl md:text-2xl font-black text-white tracking-tight mt-1">{{ match.home_team.name }}</h2>
@@ -25,8 +25,17 @@
           <span class="w-2.5 h-2.5 rounded-full bg-rose-500" title="Derrota"></span>
         </div>
       </div>
-      <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-gray-800 border border-cyan-500/30 flex items-center justify-center text-cyan-400 font-black text-xl shadow-lg">
-        {{ match.home_team.name|slice:":2"|upper }}
+      <div class="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-[#1c232d] to-[#0e1217] border border-gray-700/60 p-2 flex items-center justify-center shadow-xl shrink-0 group relative overflow-hidden">
+        {% if match.home_team.logo_url %}
+          <img src="https://statsfut.com{{ match.home_team.logo_url }}" alt="{{ match.home_team.name }}" class="w-full h-full object-contain filter drop-shadow-md transition-transform group-hover:scale-110 duration-300" onerror="this.style.display='none'; document.getElementById('ph-home-logo').style.display='flex';">
+          <div id="ph-home-logo" class="w-full h-full items-center justify-center text-cyan-400 font-black text-2xl hidden">
+            {{ match.home_team.name|slice:":2"|upper }}
+          </div>
+        {% else %}
+          <div class="w-full h-full flex items-center justify-center text-cyan-400 font-black text-2xl">
+            {{ match.home_team.name|slice:":2"|upper }}
+          </div>
+        {% endif %}
       </div>
     </div>
 
@@ -51,20 +60,29 @@
 
     <!-- Time Visitante -->
     <div class="flex items-center gap-4 flex-1 justify-start text-left">
-      <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-gray-800 border border-purple-500/30 flex items-center justify-center text-purple-400 font-black text-xl shadow-lg">
-        {{ match.away_team.name|slice:":2"|upper }}
+      <div class="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-[#1c232d] to-[#0e1217] border border-gray-700/60 p-2 flex items-center justify-center shadow-xl shrink-0 group relative overflow-hidden">
+        {% if match.away_team.logo_url %}
+          <img src="https://statsfut.com{{ match.away_team.logo_url }}" alt="{{ match.away_team.name }}" class="w-full h-full object-contain filter drop-shadow-md transition-transform group-hover:scale-110 duration-300" onerror="this.style.display='none'; document.getElementById('ph-away-logo').style.display='flex';">
+          <div id="ph-away-logo" class="w-full h-full items-center justify-center text-purple-400 font-black text-2xl hidden">
+            {{ match.away_team.name|slice:":2"|upper }}
+          </div>
+        {% else %}
+          <div class="w-full h-full flex items-center justify-center text-purple-400 font-black text-2xl">
+            {{ match.away_team.name|slice:":2"|upper }}
+          </div>
+        {% endif %}
       </div>
       <div>
         <div class="flex items-center gap-2 justify-start">
-          <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">Odd 3.10</span>
+          <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">Visitante</span>
           <span class="text-[10px] font-mono text-gray-400">1.2 PPJ</span>
         </div>
         <h2 class="text-xl md:text-2xl font-black text-white tracking-tight mt-1">{{ match.away_team.name }}</h2>
         <div class="flex items-center gap-1 justify-start mt-1">
-          <span class="w-2.5 h-2.5 rounded-full bg-amber-500" title="Empate"></span>
           <span class="w-2.5 h-2.5 rounded-full bg-rose-500" title="Derrota"></span>
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" title="Vitória"></span>
           <span class="w-2.5 h-2.5 rounded-full bg-amber-500" title="Empate"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" title="Vitória"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" title="Vitória"></span>
           <span class="w-2.5 h-2.5 rounded-full bg-rose-500" title="Derrota"></span>
         </div>
       </div>
@@ -200,8 +218,18 @@
             <h3 class="text-sm font-bold text-white uppercase tracking-wider">Últimos Confrontos &middot; Histórico Completo</h3>
           </div>
           <div class="flex items-center gap-2 font-mono text-xs">
-            <span class="px-2.5 py-1 rounded bg-[#1c232d] text-cyan-400 font-bold border border-cyan-500/30">{{ match.home_team.name }}</span>
-            <span class="px-2.5 py-1 rounded text-gray-400 hover:text-white transition cursor-pointer">{{ match.away_team.name }}</span>
+            <span class="px-2.5 py-1 rounded bg-[#1c232d] text-cyan-400 font-bold border border-cyan-500/30 flex items-center gap-1.5">
+              {% if match.home_team.logo_url %}
+                <img src="https://statsfut.com{{ match.home_team.logo_url }}" alt="" class="w-3.5 h-3.5 object-contain inline-block" onerror="this.style.display='none'">
+              {% endif %}
+              <span>{{ match.home_team.name }}</span>
+            </span>
+            <span class="px-2.5 py-1 rounded text-gray-400 hover:text-white transition cursor-pointer flex items-center gap-1.5">
+              {% if match.away_team.logo_url %}
+                <img src="https://statsfut.com{{ match.away_team.logo_url }}" alt="" class="w-3.5 h-3.5 object-contain inline-block" onerror="this.style.display='none'">
+              {% endif %}
+              <span>{{ match.away_team.name }}</span>
+            </span>
           </div>
         </div>
 
