@@ -138,7 +138,7 @@
         <div>
           <div class="flex items-center justify-between">
             <span class="text-[11px] font-medium text-gray-400 block">Jogos do Mercado</span>
-            <span class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 truncate max-w-[85px]">{{ stats_kpi.market_label }}</span>
+            <span class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 whitespace-nowrap">{{ stats_kpi.market_label }}</span>
           </div>
           <span class="text-2xl font-black text-white font-mono mt-1.5 block">{{ stats_kpi.kpi_count }}</span>
           <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">{% if is_future_day %}Tips para {{ stats_kpi.day_period_label }}{% elif is_historical_day %}Auditados no banco{% else %}Disponíveis hoje{% endif %}</span>

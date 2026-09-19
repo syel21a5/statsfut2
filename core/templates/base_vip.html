@@ -577,8 +577,8 @@
   </script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // 1. Detectar Idioma Ativo pelo Cookie ou Prefixo da URL
-      let currentLang = 'en'; // Padrão internacional é inglês
+      // 1. Detectar Idioma Ativo com prioridade para Django CURRENT_LANG
+      let currentLang = '{{ CURRENT_LANG|default:"en" }}'.toLowerCase();
       const path = window.location.pathname;
       const cookieMatch = document.cookie.match(/(?:^|;\s*)django_language=([^;]+)/);
       if (cookieMatch) {
@@ -589,7 +589,7 @@
         currentLang = 'es';
       } else if (path.startsWith('/de')) {
         currentLang = 'de';
-      } else {
+      } else if (path.startsWith('/en')) {
         currentLang = 'en';
       }
 
@@ -628,7 +628,10 @@
             node.childNodes.forEach(translateTextNodes);
           }
         }
+        // Tradução inicial
         translateTextNodes(document.body);
+        // Tradução em segundo ciclo para pegar elementos renderizados dinamicamente
+        setTimeout(() => translateTextNodes(document.body), 150);
       }
 
       // 3. Dropdown de Idiomas
