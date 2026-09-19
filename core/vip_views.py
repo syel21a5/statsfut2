@@ -912,7 +912,18 @@ def vip_live_radar_view(request):
         # Gráfico minuto a minuto (graph_points do SofaScore)
         sd = m.statistics_data or {}
         pts = sd.get('graph_points', []) if isinstance(sd, dict) else []
-        recent_pts = pts[-20:] if pts else []
+        recent_pts = []
+        if pts:
+            # Pegar os últimos 30 minutos jogados e enriquecer com percentual de altura relativo
+            for p in pts[-30:]:
+                v = p.get('value', 0)
+                clamped_v = max(-100, min(100, v))
+                recent_pts.append({
+                    'minute': p.get('minute', 0),
+                    'value': clamped_v,
+                    'is_home': clamped_v >= 0,
+                    'height_pct': min(100, max(6, int((abs(clamped_v) / 100) * 100)))
+                })
 
         # Cálculo do Índice de Intensidade / Pressão Global
         # Baseado no valor absoluto médio dos últimos minutos ou chutes + cantos

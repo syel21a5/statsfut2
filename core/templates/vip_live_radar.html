@@ -96,81 +96,136 @@
             </div>
 
             <!-- ═════════════════════════════════════════════════════════════
-                 BARRAS DE PRESSÃO (ÚLTIMOS 5 MINUTOS & ÚLTIMOS 15 MINUTOS)
+                 TELEMETRIA DE PRESSÃO & MOMENTUM TIMELINE
                  ═════════════════════════════════════════════════════════════ -->
-            <div class="bg-[#0b0e14] border border-gray-800/80 rounded-xl p-3.5 my-3 space-y-3 font-mono text-xs">
+            <div class="bg-[#0b0e14] border border-gray-800/90 rounded-2xl p-4 my-3 font-mono">
               
-              <!-- Janela 5 Minutos (Pressão Imediata / Calor do Jogo) -->
-              <div>
-                <div class="flex justify-between items-center text-[11px] mb-1">
-                  <span class="text-cyan-400 font-bold flex items-center gap-1.5">
-                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
-                    Last 5 Minutes Pressure
-                  </span>
-                  <span class="text-gray-400">
-                    {% if p5.status == 'dados_indisponiveis' %}
-                      <span class="text-gray-500 text-[10px]">Collecting telemetry...</span>
-                    {% else %}
-                      <strong class="text-white">{{ p5.home_pressure }}%</strong> vs <strong class="text-white">{{ p5.away_pressure }}%</strong>
-                      <span class="text-[10px] text-cyan-300 ml-1">({{ p5.status }})</span>
-                    {% endif %}
-                  </span>
-                </div>
+              <!-- Janelas de Pressão (5m & 15m) com Design Terminal Dark -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
                 
-                <div class="w-full h-2.5 bg-gray-800/80 rounded-full overflow-hidden flex">
-                  {% if p5.status == 'dados_indisponiveis' %}
-                    <div class="w-full bg-gray-800 flex items-center justify-center"></div>
-                  {% else %}
-                    <div style="width: {{ p5.home_pressure }}%;" class="bg-gradient-to-r from-cyan-500 to-blue-500 h-full transition-all duration-500"></div>
-                    <div style="width: {{ p5.away_pressure }}%;" class="bg-gradient-to-r from-amber-500 to-rose-500 h-full transition-all duration-500"></div>
-                  {% endif %}
-                </div>
-              </div>
-
-              <!-- Janela 15 Minutos (Tendência Tática) -->
-              <div>
-                <div class="flex justify-between items-center text-[11px] mb-1">
-                  <span class="text-purple-400 font-bold flex items-center gap-1.5">
-                    <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
-                    Last 15 Minutes Trend
-                  </span>
-                  <span class="text-gray-400">
-                    {% if p15.status == 'dados_indisponiveis' %}
-                      <span class="text-gray-500 text-[10px]">Awaiting live window</span>
-                    {% else %}
-                      <strong class="text-white">{{ p15.home_pressure }}%</strong> vs <strong class="text-white">{{ p15.away_pressure }}%</strong>
-                      <span class="text-[10px] text-purple-300 ml-1">({{ p15.status }})</span>
-                    {% endif %}
-                  </span>
-                </div>
-                
-                <div class="w-full h-2 bg-gray-800/80 rounded-full overflow-hidden flex">
-                  {% if p15.status == 'dados_indisponiveis' %}
-                    <div class="w-full bg-gray-800 flex items-center justify-center"></div>
-                  {% else %}
-                    <div style="width: {{ p15.home_pressure }}%;" class="bg-cyan-600 h-full transition-all duration-500"></div>
-                    <div style="width: {{ p15.away_pressure }}%;" class="bg-purple-500 h-full transition-all duration-500"></div>
-                  {% endif %}
-                </div>
-              </div>
-
-              <!-- Gráfico Sparkline de Momentum Minuto a Minuto (se disponível) -->
-              {% if item.recent_pts %}
-                <div class="pt-2 border-t border-gray-800/60">
-                  <div class="flex justify-between items-center text-[10px] text-gray-500 mb-1.5">
-                    <span>MOMENTUM TIMELINE (LAST 20 MIN)</span>
-                    <span class="text-[9px] text-gray-400">Cyan: Home Dominance | Red: Away Dominance</span>
+                <!-- Janela 5 Minutos (Calor Imediato) -->
+                <div class="p-2.5 rounded-xl bg-black/40 border border-gray-800/80">
+                  <div class="flex justify-between items-center text-[11px] mb-1.5">
+                    <span class="text-gray-300 font-bold flex items-center gap-1.5">
+                      <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                      5m Pressure
+                    </span>
+                    <div>
+                      {% if p5.status == 'dados_indisponiveis' %}
+                        <span class="text-gray-500 text-[10px]">Aguardando...</span>
+                      {% else %}
+                        <span class="text-cyan-400 font-bold">{{ p5.home_pressure }}%</span>
+                        <span class="text-gray-600 mx-1">vs</span>
+                        <span class="text-purple-400 font-bold">{{ p5.away_pressure }}%</span>
+                      {% endif %}
+                    </div>
                   </div>
-                  <div class="flex items-end gap-1 h-8 bg-black/40 p-1 rounded-lg border border-gray-800/40">
-                    {% for pt in item.recent_pts %}
-                      <div class="flex-1 flex flex-col justify-center items-center h-full relative group/bar">
-                        {% if pt.value >= 0 %}
-                          <div style="height: {{ pt.value|default:1 }}%;" class="w-full max-w-[6px] bg-cyan-400 rounded-t-sm transition-all"></div>
-                        {% else %}
-                          <div style="height: {% widthratio pt.value -1 1 %}%;" class="w-full max-w-[6px] bg-rose-400 rounded-b-sm transition-all"></div>
-                        {% endif %}
-                      </div>
-                    {% endfor %}
+                  <div class="w-full h-2.5 bg-gray-900 rounded-full overflow-hidden flex border border-gray-800/80">
+                    {% if p5.status == 'dados_indisponiveis' %}
+                      <div class="w-full bg-gray-800/50"></div>
+                    {% else %}
+                      <div style="width: {{ p5.home_pressure }}%;" class="bg-gradient-to-r from-cyan-600 to-cyan-400 h-full transition-all duration-500 shadow-sm shadow-cyan-500/50"></div>
+                      <div style="width: {{ p5.away_pressure }}%;" class="bg-gradient-to-r from-purple-600 to-purple-400 h-full transition-all duration-500 shadow-sm shadow-purple-500/50"></div>
+                    {% endif %}
+                  </div>
+                  <div class="mt-1.5 text-right">
+                    <span class="text-[9px] px-1.5 py-0.5 rounded {% if 'Home' in p5.status or 'Casa' in p5.status %}bg-cyan-500/10 text-cyan-400 border border-cyan-500/20{% elif 'Away' in p5.status or 'Fora' in p5.status %}bg-purple-500/10 text-purple-400 border border-purple-500/20{% else %}text-gray-500{% endif %}">
+                      {{ p5.status }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Janela 15 Minutos (Tendência Tática) -->
+                <div class="p-2.5 rounded-xl bg-black/40 border border-gray-800/80">
+                  <div class="flex justify-between items-center text-[11px] mb-1.5">
+                    <span class="text-gray-300 font-bold flex items-center gap-1.5">
+                      <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+                      15m Trend
+                    </span>
+                    <div>
+                      {% if p15.status == 'dados_indisponiveis' %}
+                        <span class="text-gray-500 text-[10px]">Aguardando...</span>
+                      {% else %}
+                        <span class="text-cyan-400 font-bold">{{ p15.home_pressure }}%</span>
+                        <span class="text-gray-600 mx-1">vs</span>
+                        <span class="text-purple-400 font-bold">{{ p15.away_pressure }}%</span>
+                      {% endif %}
+                    </div>
+                  </div>
+                  <div class="w-full h-2.5 bg-gray-900 rounded-full overflow-hidden flex border border-gray-800/80">
+                    {% if p15.status == 'dados_indisponiveis' %}
+                      <div class="w-full bg-gray-800/50"></div>
+                    {% else %}
+                      <div style="width: {{ p15.home_pressure }}%;" class="bg-gradient-to-r from-cyan-600 to-cyan-400 h-full transition-all duration-500"></div>
+                      <div style="width: {{ p15.away_pressure }}%;" class="bg-gradient-to-r from-purple-600 to-purple-400 h-full transition-all duration-500"></div>
+                    {% endif %}
+                  </div>
+                  <div class="mt-1.5 text-right">
+                    <span class="text-[9px] px-1.5 py-0.5 rounded {% if 'Home' in p15.status or 'Casa' in p15.status %}bg-cyan-500/10 text-cyan-400 border border-cyan-500/20{% elif 'Away' in p15.status or 'Fora' in p15.status %}bg-purple-500/10 text-purple-400 border border-purple-500/20{% else %}text-gray-500{% endif %}">
+                      {{ p15.status }}
+                    </span>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- ═══════════════════════════════════════════════════════════
+                   MOMENTUM TIMELINE PROFISSIONAL (BIFOCAL COM LINHA ZERO)
+                   ═══════════════════════════════════════════════════════════ -->
+              {% if item.recent_pts %}
+                <div class="pt-3 border-t border-gray-800/80">
+                  <div class="flex justify-between items-center text-[10px] mb-2">
+                    <span class="font-bold text-gray-400 tracking-wider flex items-center gap-1.5">
+                      <i class="fa-solid fa-chart-simple text-amber-400"></i>
+                      MOMENTUM TIMELINE (LAST 30 MIN)
+                    </span>
+                    <div class="flex items-center gap-3">
+                      <span class="flex items-center gap-1 text-cyan-400">
+                        <span class="w-1.5 h-1.5 rounded-sm bg-cyan-400"></span>
+                        {{ m.home_team.name }}
+                      </span>
+                      <span class="flex items-center gap-1 text-purple-400">
+                        <span class="w-1.5 h-1.5 rounded-sm bg-purple-400"></span>
+                        {{ m.away_team.name }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Container Gráfico com Linha Central Tracejada de Zero -->
+                  <div class="relative h-20 bg-black/60 rounded-xl border border-gray-800/80 p-2 overflow-hidden flex items-center">
+                    <!-- Linha Zero Central (Zero Equilibrium) -->
+                    <div class="absolute inset-x-0 top-1/2 border-b border-dashed border-gray-700/60 z-0"></div>
+                    
+                    <div class="w-full h-full flex items-center justify-between gap-1 z-10">
+                      {% for pt in item.recent_pts %}
+                        <div class="flex-1 h-full flex flex-col justify-center items-center relative group/bar">
+                          <!-- Tooltip no Hover com minuto e time atacante -->
+                          <div class="absolute bottom-full mb-1 hidden group-hover/bar:flex flex-col items-center bg-gray-900 border border-gray-700 px-1.5 py-0.5 rounded text-[9px] text-white whitespace-nowrap z-30 shadow-lg pointer-events-none">
+                            <span>{{ pt.minute }}': {% if pt.is_home %}+{{ pt.value }} ({{ m.home_team.name }}){% else %}{{ pt.value }} ({{ m.away_team.name }}){% endif %}</span>
+                          </div>
+
+                          {% if pt.is_home %}
+                            <!-- Barra Mandante (Para Cima da Linha Zero em Ciano) -->
+                            <div class="w-full flex flex-col justify-end items-center h-1/2">
+                              <div style="height: {{ pt.height_pct }}%;" class="w-full max-w-[6px] bg-gradient-to-t from-cyan-600 to-cyan-400 rounded-t-sm shadow-sm shadow-cyan-500/40 transition-all"></div>
+                            </div>
+                            <div class="w-full h-1/2"></div>
+                          {% else %}
+                            <!-- Barra Visitante (Para Baixo da Linha Zero em Roxo) -->
+                            <div class="w-full h-1/2"></div>
+                            <div class="w-full flex flex-col justify-start items-center h-1/2">
+                              <div style="height: {{ pt.height_pct }}%;" class="w-full max-w-[6px] bg-gradient-to-b from-purple-600 to-purple-400 rounded-b-sm shadow-sm shadow-purple-500/40 transition-all"></div>
+                            </div>
+                          {% endif %}
+                        </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                  
+                  <div class="flex justify-between items-center text-[9px] text-gray-500 mt-1 px-1">
+                    <span>-30 MIN</span>
+                    <span>-15 MIN</span>
+                    <span class="text-rose-400 font-bold">NOW ({{ m.elapsed_time|default:"LIVE" }}')</span>
                   </div>
                 </div>
               {% endif %}
