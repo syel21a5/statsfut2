@@ -536,16 +536,34 @@ def vip_games_list_view(request):
     else:
         market_sections = all_sections
 
-    # Lista de 7 dias contínuos começando pelo dia atual (Hoje + 6 dias à frente)
+    # Lista de 7 dias contínuos estilo SofaScore (-2 dias no passado até +4 dias no futuro)
     day_selectors = []
-    for delta in range(0, 7):
+    for delta in range(-2, 5):
         d = now + timedelta(days=delta)
+        d_start = d.replace(hour=0, minute=0, second=0, microsecond=0)
+        d_end = d.replace(hour=23, minute=59, second=59, microsecond=999999)
+        day_match_count = Match.objects.filter(date__range=(d_start, d_end)).count()
+
+        if delta == -2:
+            label = 'ANT'
+        elif delta == -1:
+            label = 'ONT'
+        elif delta == 0:
+            label = 'HOJE'
+        elif delta == 1:
+            label = 'AMAN'
+        else:
+            label = ['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB', 'DOM'][d.weekday()]
+
         day_selectors.append({
             'date_str': d.strftime('%Y-%m-%d'),
             'day_num': d.strftime('%d'),
-            'weekday': ['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB', 'DOM'][d.weekday()],
+            'weekday': label,
             'is_today': delta == 0,
-            'is_tomorrow': delta == 1
+            'is_yesterday': delta == -1,
+            'is_tomorrow': delta == 1,
+            'match_count': day_match_count,
+            'has_matches': day_match_count > 0,
         })
 
     # ── KPIs Estatísticos Auditados Reais (Global e por Mercado Selecionado) ──
