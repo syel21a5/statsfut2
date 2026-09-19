@@ -227,9 +227,18 @@ class VIPProxyHandler(http.server.BaseHTTPRequestHandler):
 
     def do_GET(self):
         # 1. Rota de logout
-        if self.path == "/vip-logout":
+        if self.path in ["/vip-logout", "/logout", "/logout/"]:
             self.send_response(302)
             self.send_header("Set-Cookie", f"{COOKIE_NAME}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax")
+            self.send_header("Location", "/vip-login")
+            self.send_header("Content-Length", "0")
+            self.send_no_cache_headers()
+            self.end_headers()
+            return
+
+        # Redirecionar /login e /login/ diretamente para a tela de login VIP
+        if self.path in ["/login", "/login/"]:
+            self.send_response(302)
             self.send_header("Location", "/vip-login")
             self.send_header("Content-Length", "0")
             self.send_no_cache_headers()
@@ -356,35 +365,33 @@ class VIPProxyHandler(http.server.BaseHTTPRequestHandler):
                 authenticated = True
                 user_plan = 'vip'
                 authenticated_user = 'admin'
-            elif DJANGO_AVAILABLE:
-                # B. Autenticação via Django (suporta username ou email)
-                django_user = None
-                # Se digitou email, buscar o username correspondente
-                if '@' in user_input:
-                    try:
+            else:
+                try:
+                    import django
+                    from django.contrib.auth import authenticate
+                    from django.contrib.auth.models import User
+                    from members.models import UserProfile
+                    django_user = None
+                    if '@' in user_input:
                         u = User.objects.filter(email__iexact=user_input).first()
                         if u:
                             django_user = authenticate(username=u.username, password=pwd_input)
-                    except Exception as e:
-                        print("Erro ao buscar usuário por email:", e)
-                
-                if not django_user:
-                    django_user = authenticate(username=user_input, password=pwd_input)
+                    if not django_user:
+                        django_user = authenticate(username=user_input, password=pwd_input)
 
-                if django_user and django_user.is_active:
-                    authenticated = True
-                    authenticated_user = django_user.username
-                    if django_user.is_superuser or django_user.is_staff:
-                        user_plan = 'vip'
-                    else:
-                        try:
+                    if django_user and django_user.is_active:
+                        authenticated = True
+                        authenticated_user = django_user.username
+                        if django_user.is_superuser or django_user.is_staff:
+                            user_plan = 'vip'
+                        else:
                             profile = UserProfile.objects.filter(user=django_user).first()
                             if profile and profile.is_premium:
-                                user_plan = profile.plan_type  # 'vip' ou 'popular'
+                                user_plan = profile.plan_type
                             else:
                                 user_plan = 'free'
-                        except Exception:
-                            user_plan = 'popular'
+                except Exception as auth_err:
+                    print("Erro durante autenticacao Django:", auth_err)
 
             if authenticated:
                 if user_plan == 'vip':
