@@ -305,9 +305,9 @@
               <th class="py-2.5 px-4 w-16">Hora</th>
               <th class="py-2.5 px-4 w-44">Campeonato</th>
               <th class="py-2.5 px-4">Jogo</th>
-              <th class="py-2.5 px-4 text-center w-28">Casa &middot; Fora</th>
-              <th class="py-2.5 px-4 text-center w-24">Previsão</th>
-              <th class="py-2.5 px-4 text-center w-20">Justa</th>
+              <th class="py-2.5 px-4 text-center min-w-[130px] whitespace-nowrap">Casa &middot; Fora</th>
+              <th class="py-2.5 px-4 text-center min-w-[100px] whitespace-nowrap">Previsão</th>
+              <th class="py-2.5 px-4 text-center min-w-[80px] whitespace-nowrap">Justa</th>
               <th class="py-2.5 px-4 text-right w-28">Ação</th>
             </tr>
           </thead>
@@ -336,14 +336,14 @@
               </td>
 
               <!-- Sinal Casa · Fora -->
-              <td class="py-3 px-4 text-center font-mono text-[11px]">
-                <span class="{% if m.home_spec_pct >= 70 %}text-emerald-400 font-bold{% elif m.home_spec_pct >= 50 %}text-cyan-400{% else %}text-gray-400{% endif %}">{{ m.home_spec_pct }}%</span>
-                <span class="text-gray-600 mx-1">&middot;</span>
-                <span class="{% if m.away_spec_pct >= 70 %}text-emerald-400 font-bold{% elif m.away_spec_pct >= 50 %}text-cyan-400{% else %}text-gray-400{% endif %}">{{ m.away_spec_pct }}%</span>
+              <td class="py-3 px-4 text-center font-mono text-[11px] whitespace-nowrap">
+                <span class="inline-block min-w-[34px] text-right {% if m.home_spec_pct >= 70 %}text-emerald-400 font-bold{% elif m.home_spec_pct >= 50 %}text-cyan-400{% else %}text-gray-400{% endif %}">{{ m.home_spec_pct }}%</span>
+                <span class="text-gray-600 mx-1.5">&middot;</span>
+                <span class="inline-block min-w-[34px] text-left {% if m.away_spec_pct >= 70 %}text-emerald-400 font-bold{% elif m.away_spec_pct >= 50 %}text-cyan-400{% else %}text-gray-400{% endif %}">{{ m.away_spec_pct }}%</span>
               </td>
 
               <!-- Previsão com Barra Sutil -->
-              <td class="py-3 px-4 text-center font-mono">
+              <td class="py-3 px-4 text-center font-mono whitespace-nowrap">
                 {% if sec.type == 'gols' %}
                   <span class="text-[#00d26a] font-bold text-sm">{{ m.p_o15 }}%</span>
                 {% elif sec.id == 'cantos_75ft' %}
@@ -356,7 +356,7 @@
               </td>
 
               <!-- Odd Justa -->
-              <td class="py-3 px-4 text-center font-mono text-gray-400 text-xs">
+              <td class="py-3 px-4 text-center font-mono text-gray-400 text-xs whitespace-nowrap">
                 {% if sec.type == 'gols' %}{{ m.fair_o15 }}{% elif sec.id == 'cantos_75ft' %}{{ m.fair_c75ft }}{% elif sec.id == 'cantos_o85' %}{{ m.fair_c85 }}{% else %}{{ m.fair_lay }}{% endif %}
               </td>
 
