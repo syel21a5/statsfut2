@@ -82,11 +82,17 @@
                 </div>
               </div>
 
-              <!-- Atalho para Análise Profunda -->
-              <a href="{{ lang_prefix }}/vip/analise/{{ m.id }}/" class="shrink-0 p-2 rounded-xl bg-gray-900/80 border border-gray-800 hover:border-cyan-500/50 hover:text-cyan-300 text-gray-400 text-xs font-mono transition flex items-center gap-1.5" title="Full Match Analytics">
-                <span>Analytics</span>
-                <i class="fa-solid fa-arrow-right text-[10px]"></i>
-              </a>
+              <!-- Atalho para Análise Profunda e Popup Modal Completo -->
+              <div class="flex items-center gap-1.5 shrink-0">
+                <button onclick="openVipLiveRadarModal({{ m.id }})" class="p-2 rounded-xl bg-rose-500/15 border border-rose-500/40 hover:bg-rose-500/25 text-rose-300 text-xs font-mono transition flex items-center gap-1.5 shadow-sm" title="Open Radar Pro Modal">
+                  <i class="fa-solid fa-satellite-dish text-[11px] animate-pulse"></i>
+                  <span class="hidden sm:inline">Radar Pro</span>
+                </button>
+                <a href="{{ lang_prefix }}/vip/analise/{{ m.id }}/" class="p-2 rounded-xl bg-gray-900/80 border border-gray-800 hover:border-cyan-500/50 hover:text-cyan-300 text-gray-400 text-xs font-mono transition flex items-center gap-1.5" title="Full Match Analytics">
+                  <span>Analytics</span>
+                  <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </a>
+              </div>
             </div>
 
             <!-- ═════════════════════════════════════════════════════════════
@@ -245,10 +251,58 @@
 
 </div>
 
-<!-- Auto-refresh a cada 30 segundos -->
+<!-- Modal Container para o Radar Pro Completo -->
+<div id="vipRadarModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div class="relative w-full max-w-2xl bg-[#0b0f19] border border-gray-800 rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+    <div id="vipRadarModalContent" class="overflow-y-auto">
+      <div class="p-8 text-center text-gray-400 font-mono text-xs">
+        <i class="fa-solid fa-spinner animate-spin text-cyan-400 text-lg mb-2"></i>
+        <div>Carregando telemetria ao vivo do Radar Pro...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
+  function openVipLiveRadarModal(matchId) {
+    const modal = document.getElementById('vipRadarModal');
+    const content = document.getElementById('vipRadarModalContent');
+    modal.classList.remove('hidden');
+    content.innerHTML = `
+      <div class="p-12 text-center text-gray-400 font-mono text-xs">
+        <i class="fa-solid fa-spinner animate-spin text-cyan-400 text-2xl mb-3"></i>
+        <div>Conectando aos feeds ao vivo do Radar Pro...</div>
+      </div>
+    `;
+
+    // Buscar o template oficial do radar (/live-radar/<id>/)
+    fetch(`/live-radar/${matchId}/`)
+      .then(r => r.text())
+      .then(html => {
+        content.innerHTML = html;
+        // Vincular fechamento do modal
+        const closeBtn = content.querySelector('[data-bs-dismiss="modal"]');
+        if (closeBtn) {
+          closeBtn.onclick = () => modal.classList.add('hidden');
+        }
+      })
+      .catch(err => {
+        content.innerHTML = `<div class="p-6 text-center text-rose-400 font-mono text-xs">Erro ao carregar telemetria. Tente novamente.</div>`;
+      });
+  }
+
+  // Fechar ao clicar fora
+  document.getElementById('vipRadarModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+      this.classList.add('hidden');
+    }
+  });
+
+  // Auto-refresh a cada 30 segundos
   setTimeout(function() {
-    window.location.reload();
+    if (document.getElementById('vipRadarModal').classList.contains('hidden')) {
+      window.location.reload();
+    }
   }, 30000);
 </script>
 {% endblock %}

@@ -367,7 +367,7 @@
               <th class="py-2.5 px-4 text-center min-w-[130px] whitespace-nowrap">Home &middot; Away</th>
               <th class="py-2.5 px-4 text-center min-w-[100px] whitespace-nowrap">Prediction</th>
               <th class="py-2.5 px-4 text-center min-w-[80px] whitespace-nowrap">Fair</th>
-              <th class="py-2.5 px-4 text-right w-28">Action</th>
+              <th class="py-2.5 px-4 text-right w-36">Action</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-800/40 text-gray-200" id="tbody-{{ sec.id }}">
@@ -579,11 +579,21 @@
                     <i class="fa-solid fa-arrow-right text-[10px]"></i>
                   </a>
                 {% else %}
-                  <a href="{{ lang_prefix }}/vip/analise/{{ m.id }}/"
-                     class="inline-flex items-center gap-1 bg-[#1c232d] hover:bg-cyan-600 hover:text-white text-gray-300 text-[10px] font-mono font-bold px-2.5 py-1 rounded border border-gray-700 hover:border-cyan-500 transition">
-                    Analyze
-                    <i class="fa-solid fa-arrow-right text-[9px]"></i>
-                  </a>
+                  <div class="inline-flex items-center gap-1.5 justify-end">
+                    {% if m.status in '1H 2H HT LIVE' or m.is_live %}
+                    <button onclick="openVipLiveRadarModal({{ m.id }})" 
+                            class="inline-flex items-center gap-1 bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 text-[10px] font-mono font-bold px-2 py-1 rounded border border-rose-500/30 transition shadow-sm"
+                            title="Radar Pro In-Play">
+                      <i class="fa-solid fa-satellite-dish text-[9px] animate-pulse"></i>
+                      <span>Radar</span>
+                    </button>
+                    {% endif %}
+                    <a href="{{ lang_prefix }}/vip/analise/{{ m.id }}/"
+                       class="inline-flex items-center gap-1 bg-[#1c232d] hover:bg-cyan-600 hover:text-white text-gray-300 text-[10px] font-mono font-bold px-2.5 py-1 rounded border border-gray-700 hover:border-cyan-500 transition">
+                      Analyze
+                      <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                    </a>
+                  </div>
                 {% endif %}
               </td>
 
@@ -641,6 +651,52 @@
     }
 
     applyFilters();
+  }
+
+  // ── (G) Modal e Telemetria do Radar Pro Ao Vivo ──
+  function openVipLiveRadarModal(matchId) {
+    let modal = document.getElementById('vipRadarModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'vipRadarModal';
+      modal.className = 'fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+      modal.innerHTML = `
+        <div class="relative w-full max-w-2xl bg-[#0b0f19] border border-gray-800 rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+          <div id="vipRadarModalContent" class="overflow-y-auto">
+            <div class="p-12 text-center text-gray-400 font-mono text-xs">
+              <i class="fa-solid fa-spinner animate-spin text-cyan-400 text-2xl mb-3"></i>
+              <div>Carregando telemetria ao vivo do Radar Pro...</div>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      modal.addEventListener('click', function(e) {
+        if (e.target === this) this.classList.add('hidden');
+      });
+    }
+
+    modal.classList.remove('hidden');
+    const content = document.getElementById('vipRadarModalContent');
+    content.innerHTML = `
+      <div class="p-12 text-center text-gray-400 font-mono text-xs">
+        <i class="fa-solid fa-spinner animate-spin text-cyan-400 text-2xl mb-3"></i>
+        <div>Conectando aos feeds ao vivo do Radar Pro...</div>
+      </div>
+    `;
+
+    fetch('/live-radar/' + matchId + '/')
+      .then(r => r.text())
+      .then(html => {
+        content.innerHTML = html;
+        const closeBtn = content.querySelector('[data-bs-dismiss="modal"]');
+        if (closeBtn) {
+          closeBtn.onclick = () => modal.classList.add('hidden');
+        }
+      })
+      .catch(err => {
+        content.innerHTML = '<div class="p-6 text-center text-rose-400 font-mono text-xs">Erro ao carregar telemetria. Tente novamente.</div>';
+      });
   }
 
   function filterMatchesLive() {
