@@ -7,6 +7,19 @@ import pytz
 from matches.models import Match, League
 from matches.services.advanced_stats import MatchAnalyzer
 
+
+def get_lang_prefix(request):
+    """Return the URL language prefix based on the current request language.
+    English has no prefix (default), others get /pt-br/, /es/, /de/."""
+    lang = getattr(request, 'LANGUAGE_CODE', 'en')
+    if lang and lang.startswith('pt'):
+        return '/pt-br'
+    elif lang and lang.startswith('es'):
+        return '/es'
+    elif lang and lang.startswith('de'):
+        return '/de'
+    return ''
+
 def get_match_full_stats(match):
     """
     Motor Estatístico Rigoroso do StatsFut VIP:
@@ -455,37 +468,37 @@ def vip_games_list_view(request):
                 top_picks.append({'match': m, 'market_name': 'Over 2.5 FT', 'badge_color': 'emerald', 'prob': m.p_o25, 'fair_odd': m.fair_o25})
         elif selected_market == 'gols_btts':
             if m.p_btts >= 50:
-                top_picks.append({'match': m, 'market_name': 'Ambos Marcam', 'badge_color': 'amber', 'prob': m.p_btts, 'fair_odd': m.fair_btts})
+                top_picks.append({'match': m, 'market_name': 'Both Teams to Score', 'badge_color': 'amber', 'prob': m.p_btts, 'fair_odd': m.fair_btts})
         elif selected_market == 'gols_u35':
             if m.p_u35 >= 75:
                 top_picks.append({'match': m, 'market_name': 'Under 3.5 FT', 'badge_color': 'blue', 'prob': m.p_u35, 'fair_odd': m.fair_u35})
         elif selected_market == 'cantos_o75':
             if m.p_c75 >= 75:
-                top_picks.append({'match': m, 'market_name': 'Cantos +7.5 FT', 'badge_color': 'cyan', 'prob': m.p_c75, 'fair_odd': m.fair_c75})
+                top_picks.append({'match': m, 'market_name': 'Corners Over 7.5 FT', 'badge_color': 'cyan', 'prob': m.p_c75, 'fair_odd': m.fair_c75})
         elif selected_market == 'cantos_o85':
             if m.p_c85 >= 65:
-                top_picks.append({'match': m, 'market_name': 'Cantos +8.5 FT', 'badge_color': 'cyan', 'prob': m.p_c85, 'fair_odd': m.fair_c85})
+                top_picks.append({'match': m, 'market_name': 'Corners Over 8.5 FT', 'badge_color': 'cyan', 'prob': m.p_c85, 'fair_odd': m.fair_c85})
         elif selected_market == 'cantos_75ft':
             if m.p_c75ft >= 75:
-                top_picks.append({'match': m, 'market_name': 'Cantos 75\' FT', 'badge_color': 'purple', 'prob': m.p_c75ft, 'fair_odd': m.fair_c75ft})
+                top_picks.append({'match': m, 'market_name': 'Late Corners 75\' FT', 'badge_color': 'purple', 'prob': m.p_c75ft, 'fair_odd': m.fair_c75ft})
         elif selected_market == 'lays':
             if m.p_lay >= 92:
-                top_picks.append({'match': m, 'market_name': 'Lay Placar', 'badge_color': 'rose', 'prob': m.p_lay, 'fair_odd': m.fair_lay})
+                top_picks.append({'match': m, 'market_name': 'Lay Correct Score', 'badge_color': 'rose', 'prob': m.p_lay, 'fair_odd': m.fair_lay})
         else:
             # Todos os mercados (Diversificado)
             if m.p_o15 >= 75:
-                top_picks.append({'match': m, 'market_name': 'Gols Mais de 1.5 FT', 'badge_color': 'emerald', 'prob': m.p_o15, 'fair_odd': m.fair_o15})
+                top_picks.append({'match': m, 'market_name': 'Over 1.5 Goals FT', 'badge_color': 'emerald', 'prob': m.p_o15, 'fair_odd': m.fair_o15})
             elif m.p_c85 >= 65:
-                top_picks.append({'match': m, 'market_name': 'Escanteios Mais de 8.5 FT', 'badge_color': 'cyan', 'prob': m.p_c85, 'fair_odd': m.fair_c85})
+                top_picks.append({'match': m, 'market_name': 'Corners Over 8.5 FT', 'badge_color': 'cyan', 'prob': m.p_c85, 'fair_odd': m.fair_c85})
             elif m.p_btts >= 55:
-                top_picks.append({'match': m, 'market_name': 'Ambos Marcam (BTTS)', 'badge_color': 'amber', 'prob': m.p_btts, 'fair_odd': m.fair_btts})
+                top_picks.append({'match': m, 'market_name': 'Both Teams to Score (BTTS)', 'badge_color': 'amber', 'prob': m.p_btts, 'fair_odd': m.fair_btts})
 
     top_picks_sorted = sorted(top_picks, key=lambda x: x['prob'], reverse=True)[:5]
     if not top_picks_sorted and processed_matches:
         for m in processed_matches[:5]:
             top_picks_sorted.append({
                 'match': m,
-                'market_name': 'Gols Mais de 1.5 FT',
+                'market_name': 'Over 1.5 Goals FT',
                 'badge_color': 'emerald',
                 'prob': m.p_o15,
                 'fair_odd': m.fair_o15
@@ -803,7 +816,8 @@ def vip_games_list_view(request):
         'is_historical_day': is_historical_day,
         'is_future_day': is_future_day,
         'total_count': len(processed_matches),
-        'server_date': date_badge_label
+        'server_date': date_badge_label,
+        'lang_prefix': get_lang_prefix(request),
     })
 
 def vip_hub_view(request):
@@ -854,14 +868,15 @@ def vip_match_analysis_view(request, match_id):
         'p_c75ft': p_c75ft,
         'p_37ht': p_37ht,
         'live_count': live_count,
-        'players': players
+        'players': players,
+        'lang_prefix': get_lang_prefix(request),
     })
 
 def vip_live_radar_view(request):
-    return render(request, 'base_vip.html')
+    return render(request, 'base_vip.html', {'lang_prefix': get_lang_prefix(request)})
 
 def vip_tickets_view(request):
-    return render(request, 'base_vip.html')
+    return render(request, 'base_vip.html', {'lang_prefix': get_lang_prefix(request)})
 
 def vip_management_view(request):
-    return render(request, 'base_vip.html')
+    return render(request, 'base_vip.html', {'lang_prefix': get_lang_prefix(request)})
