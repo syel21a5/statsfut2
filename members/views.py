@@ -81,6 +81,8 @@ def logout_view(request):
     # Deletar cookies de sessão explicitamente
     response.delete_cookie('sessionid')
     response.delete_cookie('csrftoken')
+    response.delete_cookie('vip_session', path='/')
+    response.delete_cookie('vip_session', path='/', domain='.statsfut.com')
     
     return response
 
