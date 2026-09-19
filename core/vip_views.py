@@ -293,9 +293,10 @@ def vip_games_list_view(request):
             
             # Lay Bets Reais
             lays = analyzer.get_lay_bets()
-            best_lay = lays[0] if lays else {'prob': 96, 'back_odd': 25.0}
+            best_lay = lays[0] if lays else {'prob': 96, 'back_odd': 25.0, 'market': 'Lay Score 3-0'}
             p_lay = best_lay.get('prob', 96)
             fair_lay = best_lay.get('back_odd', 25.0)
+            lay_score = best_lay.get('market', '').replace('Lay Score ', '').strip()
 
         except Exception:
             h_prob_o15 = 74
@@ -315,6 +316,7 @@ def vip_games_list_view(request):
             away_btts_pct = 48
             p_lay = 96
             fair_lay = 25.0
+            lay_score = '3-0'
 
         fair_odd_o15 = round(100 / h_prob_o15, 2) if h_prob_o15 > 0 else 1.35
         fair_odd_o25 = round(100 / h_prob_o25, 2) if h_prob_o25 > 0 else 1.95
@@ -361,6 +363,7 @@ def vip_games_list_view(request):
 
         m.p_lay = p_lay
         m.fair_lay = fair_lay
+        m.lay_score = lay_score
         m.home_lay_pct = min(100, max(50, p_lay))
         m.away_lay_pct = min(100, max(50, p_lay - 2))
 
@@ -381,7 +384,10 @@ def vip_games_list_view(request):
         m.res_c75 = 'green' if (tot_corners is not None and tot_corners >= 8) else ('red' if (tot_corners is not None) else ('green' if is_finished and tot_goals >= 2 else None))
         m.res_c85 = 'green' if (tot_corners is not None and tot_corners >= 9) else ('red' if (tot_corners is not None) else ('green' if is_finished and tot_goals >= 3 else None))
         m.res_c75ft = 'green' if (tot_corners is not None and tot_corners >= 8) else ('green' if is_finished else None)
-        m.res_lay = 'green' if is_finished else None
+        
+        # Lay: Se o placar final NÃO foi o placar improvável contra o qual apostamos -> GREEN! Se terminou naquele placar -> RED!
+        final_score_str = f"{m.home_score}-{m.away_score}" if is_finished else ""
+        m.res_lay = ('red' if (is_finished and lay_score == final_score_str) else 'green') if is_finished else None
 
         processed_matches.append(m)
 

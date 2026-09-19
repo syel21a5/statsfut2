@@ -359,6 +359,11 @@
                 <a href="/vip/analise/{{ m.id }}/" class="hover:text-cyan-400 transition">
                   {{ m.home_team.name }} <span class="text-gray-500 font-mono font-normal text-xs mx-1">vs</span> {{ m.away_team.name }}
                 </a>
+                {% if sec.id == 'lays' and m.lay_score %}
+                  <span class="ml-2 font-mono text-[10px] px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-300 border border-rose-500/30">
+                    Contra: {{ m.lay_score }}
+                  </span>
+                {% endif %}
                 {% if m.is_finished %}
                 <span class="ml-2 font-mono text-[11px] px-1.5 py-0.5 rounded bg-gray-800 text-gray-200 border border-gray-700">
                   {{ m.home_score }} - {{ m.away_score }}
@@ -500,6 +505,16 @@
                     {% endif %}
                   {% elif sec.id == 'cantos_o85' %}
                     {% if m.res_c85 == 'green' %}
+                      <span class="inline-flex items-center gap-1 bg-emerald-500/15 text-emerald-400 text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-emerald-500/30">
+                        <i class="fa-solid fa-check text-[9px]"></i> GREEN
+                      </span>
+                    {% else %}
+                      <span class="inline-flex items-center gap-1 bg-rose-500/15 text-rose-400 text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-rose-500/30">
+                        <i class="fa-solid fa-xmark text-[9px]"></i> RED
+                      </span>
+                    {% endif %}
+                  {% elif sec.id == 'lays' %}
+                    {% if m.res_lay == 'green' %}
                       <span class="inline-flex items-center gap-1 bg-emerald-500/15 text-emerald-400 text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-emerald-500/30">
                         <i class="fa-solid fa-check text-[9px]"></i> GREEN
                       </span>
