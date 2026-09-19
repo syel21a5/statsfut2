@@ -113,6 +113,11 @@
           <span>BOT STUDIO</span>
         </a>
 
+        <a href="{{ lang_prefix }}/vip/ferramentas/" class="{% if request.resolver_match.url_name in 'vip_tools vip_tools_i18n' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1 font-bold{% else %}text-gray-400 hover:text-white{% endif %} transition flex items-center gap-1.5">
+          <i class="fa-solid fa-calculator text-[11px] text-amber-400"></i>
+          <span>HEDGE & +EV</span>
+        </a>
+
         <a href="{{ lang_prefix }}/vip/jogos/?market=gols" class="{% if selected_market == 'gols' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-gray-400 hover:text-white{% endif %} transition">GOALS</a>
         <a href="{{ lang_prefix }}/vip/jogos/?market=cantos" class="{% if selected_market == 'cantos' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-gray-400 hover:text-white{% endif %} transition">CORNERS</a>
         <a href="{{ lang_prefix }}/vip/jogos/?market=lays" class="{% if selected_market == 'lays' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-gray-400 hover:text-white{% endif %} transition">LAY MARKETS</a>

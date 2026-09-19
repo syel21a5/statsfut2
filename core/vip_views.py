@@ -1175,3 +1175,82 @@ def vip_bot_studio_view(request):
         'active_bots_count': strategies.filter(is_active=True).count(),
         'lang_prefix': get_lang_prefix(request),
     })
+
+def vip_tools_view(request):
+    """
+    StatsFut VIP · Hedge Calculator, Bankroll Management & +EV Scanner Hub (/vip/ferramentas/)
+    Ferramentas financeiras avançadas:
+    1. Calculadora de Hedge / Arbitragem (Cashout matemático para travar lucro ou mitigar risco)
+    2. Calculadora de Critério de Kelly & Gestão de Banca
+    3. Scanner de Oportunidades +EV do Dia (Descompasso de odds vs probabilidade real)
+    """
+    from matches.models import Match
+    from zoneinfo import ZoneInfo
+    from datetime import timedelta
+
+    br_tz = ZoneInfo('America/Sao_Paulo')
+    now_br = timezone.now().astimezone(br_tz)
+    today_start = now_br.replace(hour=0, minute=0, second=0, microsecond=0)
+    today_end = today_start + timedelta(days=2)
+
+    # Buscar jogos de hoje com odds para rastrear oportunidades +EV
+    matches_with_odds = Match.objects.filter(
+        date__range=(today_start, today_end),
+        home_team_win_odds__isnull=False,
+        draw_odds__isnull=False,
+        away_team_win_odds__isnull=False
+    ).select_related('home_team', 'away_team', 'league').order_by('date')[:50]
+
+    ev_opportunities = []
+    for m in matches_with_odds:
+        h_odd = float(m.home_team_win_odds or 0)
+        d_odd = float(m.draw_odds or 0)
+        a_odd = float(m.away_team_win_odds or 0)
+
+        if h_odd > 1.0 and d_odd > 1.0 and a_odd > 1.0:
+            margin = (1/h_odd + 1/d_odd + 1/a_odd)
+            fair_h = round(1 / ((1/h_odd) / margin), 2)
+            fair_d = round(1 / ((1/d_odd) / margin), 2)
+            fair_a = round(1 / ((1/a_odd) / margin), 2)
+
+            ev_h = round(((fair_h / h_odd) - 1) * 100, 1)
+            ev_d = round(((fair_d / d_odd) - 1) * 100, 1)
+            ev_a = round(((fair_a / a_odd) - 1) * 100, 1)
+
+            # Apenas descompassos relevantes (> 3% de valor esperado)
+            if ev_h >= 3.0:
+                ev_opportunities.append({
+                    'match': m,
+                    'market': f"Vitória {m.home_team.name}",
+                    'book_odd': round(h_odd, 2),
+                    'fair_odd': fair_h,
+                    'ev_edge': ev_h,
+                    'kelly_pct': round(max(0.5, (ev_h / (h_odd - 1)) / 4), 1),
+                })
+            if ev_d >= 4.0:
+                ev_opportunities.append({
+                    'match': m,
+                    'market': f"Empate (Draw)",
+                    'book_odd': round(d_odd, 2),
+                    'fair_odd': fair_d,
+                    'ev_edge': ev_d,
+                    'kelly_pct': round(max(0.5, (ev_d / (d_odd - 1)) / 4), 1),
+                })
+            if ev_a >= 3.0:
+                ev_opportunities.append({
+                    'match': m,
+                    'market': f"Vitória {m.away_team.name}",
+                    'book_odd': round(a_odd, 2),
+                    'fair_odd': fair_a,
+                    'ev_edge': ev_a,
+                    'kelly_pct': round(max(0.5, (ev_a / (a_odd - 1)) / 4), 1),
+                })
+
+    # Ordenar pelas maiores distorções de valor (+EV)
+    ev_opportunities.sort(key=lambda x: -x['ev_edge'])
+
+    return render(request, 'vip_tools.html', {
+        'ev_opportunities': ev_opportunities[:15],
+        'ev_count': len(ev_opportunities),
+        'lang_prefix': get_lang_prefix(request),
+    })

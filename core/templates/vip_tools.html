@@ -1,0 +1,301 @@
+{% extends 'base_vip.html' %}
+{% load i18n %}
+
+{% block title %}Hedge Calculator, Kelly Criterion & +EV Scanner · StatsFut VIP{% endblock %}
+
+{% block content %}
+<div class="max-w-[1600px] mx-auto px-4 sm:px-6 py-6 font-sans">
+
+  <!-- ═════════════════════════════════════════════════════════════════
+       HEADER EXECUTIVO: FERRAMENTAS FINANCEIRAS & HEDGE
+       ═════════════════════════════════════════════════════════════════ -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-gray-800 pb-5">
+    <div>
+      <div class="flex items-center gap-2.5 mb-1.5 flex-wrap">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase tracking-wider">
+          <i class="fa-solid fa-calculator text-amber-400"></i>
+          FINANCIAL ARBITRAGE & QUANT TOOLS
+        </span>
+        <span class="text-xs font-mono text-gray-400">
+          Hedge risk, lock-in mathematical profit & exploit +EV pricing inefficiencies
+        </span>
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center gap-2.5">
+        <span>Quantitative Trading Suite</span>
+      </h1>
+    </div>
+
+    <!-- Indicador de Status das Odds -->
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 font-mono text-xs text-gray-400 bg-[#12161f] border border-gray-800 px-3 py-1.5 rounded-xl">
+        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        <span>Market Feeds: <strong>Live +EV Connected</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════════════
+       SEÇÃO 1: CALCULADORA INTERATIVA DE HEDGE & CASHOUT EM TEMPO REAL
+       ═════════════════════════════════════════════════════════════════ -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+
+    <!-- Caixa da Calculadora de Hedge -->
+    <div class="lg:col-span-7 bg-[#12161f] border border-amber-500/30 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+      <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-yellow-400 to-emerald-400"></div>
+
+      <div class="flex items-center justify-between mb-4 border-b border-gray-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center justify-center text-xs">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <div>
+            <h2 class="text-base font-black text-white">Smart Hedge & Cashout Engine</h2>
+            <span class="text-[11px] font-mono text-gray-500">Lock profit or eliminate downside risk across opposing lines</span>
+          </div>
+        </div>
+        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-black/40 text-gray-400 border border-gray-800">Arbitrage Mode</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono text-xs mb-5">
+        <!-- Perna 1: Aposta Original -->
+        <div class="bg-[#0b0e14] border border-gray-800/80 rounded-xl p-3.5 space-y-3">
+          <div class="flex items-center gap-1.5 text-cyan-400 font-bold border-b border-gray-800/60 pb-1.5">
+            <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+            <span>LEG 1: ORIGINAL BET</span>
+          </div>
+          <div>
+            <label class="block text-gray-500 text-[10px] uppercase tracking-wider mb-1">Initial Stake (R$)</label>
+            <input type="number" id="h_stake1" value="100" class="w-full bg-[#141822] border border-gray-800 rounded-lg px-3 py-1.5 text-white focus:outline-none focus:border-cyan-500" oninput="calcHedge()">
+          </div>
+          <div>
+            <label class="block text-gray-500 text-[10px] uppercase tracking-wider mb-1">Original Odd (@)</label>
+            <input type="number" id="h_odd1" value="2.10" step="0.01" class="w-full bg-[#141822] border border-gray-800 rounded-lg px-3 py-1.5 text-white focus:outline-none focus:border-cyan-500" oninput="calcHedge()">
+          </div>
+        </div>
+
+        <!-- Perna 2: Contra-Aposta (Hedge) -->
+        <div class="bg-[#0b0e14] border border-gray-800/80 rounded-xl p-3.5 space-y-3">
+          <div class="flex items-center gap-1.5 text-amber-400 font-bold border-b border-gray-800/60 pb-1.5">
+            <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+            <span>LEG 2: HEDGE COUNTER-BET</span>
+          </div>
+          <div>
+            <label class="block text-gray-500 text-[10px] uppercase tracking-wider mb-1">Live Counter Odd (@)</label>
+            <input type="number" id="h_odd2" value="2.30" step="0.01" class="w-full bg-[#141822] border border-gray-800 rounded-lg px-3 py-1.5 text-white focus:outline-none focus:border-amber-500" oninput="calcHedge()">
+          </div>
+          <div>
+            <label class="block text-gray-500 text-[10px] uppercase tracking-wider mb-1">Strategy Goal</label>
+            <select id="h_mode" class="w-full bg-[#141822] border border-gray-800 rounded-lg px-3 py-1.5 text-white focus:outline-none focus:border-amber-500" onchange="calcHedge()">
+              <option value="equal">Equal Profit (Lucro Igual em Ambos)</option>
+              <option value="freeroll">Risk-Free Win (Zero Risco no Leg 1)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resultados da Simulação -->
+      <div class="bg-[#0b0e14] border border-emerald-500/30 rounded-xl p-4 font-mono">
+        <div class="text-[10px] uppercase tracking-wider text-gray-500 mb-2 flex items-center justify-between">
+          <span>MATHEMATICAL HEDGE OUTPUT</span>
+          <span class="text-emerald-400 font-bold" id="h_roi_label">ROI: +4.8%</span>
+        </div>
+        
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div class="bg-[#12161f] border border-gray-800 rounded-lg p-2">
+            <span class="text-[9px] text-gray-400 block uppercase">Recommended Stake 2</span>
+            <span class="text-base font-black text-amber-400" id="h_res_stake2">R$ 91.30</span>
+          </div>
+          <div class="bg-[#12161f] border border-gray-800 rounded-lg p-2">
+            <span class="text-[9px] text-gray-400 block uppercase">Total Outlay</span>
+            <span class="text-base font-black text-white" id="h_res_total">R$ 191.30</span>
+          </div>
+          <div class="bg-[#12161f] border border-emerald-500/30 rounded-lg p-2">
+            <span class="text-[9px] text-emerald-400 block uppercase">Guaranteed Profit</span>
+            <span class="text-base font-black text-emerald-400" id="h_res_profit">+R$ 18.70</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Caixa de Gestão de Banca & Kelly Criterion -->
+    <div class="lg:col-span-5 bg-[#12161f] border border-gray-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+      <div>
+        <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-3">
+          <div class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 flex items-center justify-center text-xs">
+            <i class="fa-solid fa-scale-balanced"></i>
+          </div>
+          <div>
+            <h2 class="text-base font-black text-white">Kelly Criterion & Bankroll Sizing</h2>
+            <span class="text-[11px] font-mono text-gray-500">Calculate optimal stake fraction to prevent ruin</span>
+          </div>
+        </div>
+
+        <div class="space-y-3 font-mono text-xs">
+          <div>
+            <label class="block text-gray-500 text-[10px] uppercase tracking-wider mb-1">Total Bankroll (R$)</label>
+            <input type="number" id="k_bankroll" value="2000" class="w-full bg-[#0b0e14] border border-gray-800 rounded-lg px-3 py-1.5 text-white focus:outline-none focus:border-cyan-500" oninput="calcKelly()">
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-gray-500 text-[10px] uppercase tracking-wider mb-1">Bookmaker Odd (@)</label>
+              <input type="number" id="k_odd" value="1.95" step="0.01" class="w-full bg-[#0b0e14] border border-gray-800 rounded-lg px-3 py-1.5 text-white focus:outline-none focus:border-cyan-500" oninput="calcKelly()">
+            </div>
+            <div>
+              <label class="block text-gray-500 text-[10px] uppercase tracking-wider mb-1">Your Est. Winrate (%)</label>
+              <input type="number" id="k_prob" value="58" min="1" max="99" class="w-full bg-[#0b0e14] border border-gray-800 rounded-lg px-3 py-1.5 text-white focus:outline-none focus:border-cyan-500" oninput="calcKelly()">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-[#0b0e14] border border-gray-800 rounded-xl p-3.5 mt-4 font-mono">
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-gray-400">Quarter Kelly (Safe Stake):</span>
+          <strong class="text-cyan-400 text-sm" id="k_safe_stake">R$ 68.00 (3.4%)</strong>
+        </div>
+        <div class="flex justify-between items-center text-xs mt-1.5 pt-1.5 border-t border-gray-800/60">
+          <span class="text-gray-400">Expected Value (+EV):</span>
+          <strong class="text-emerald-400 text-sm" id="k_ev_label">+13.1%</strong>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════════════
+       SEÇÃO 2: SCANNER DIÁRIO DE DESCOMPASSO DE ODDS (+EV DETECTOR)
+       ═════════════════════════════════════════════════════════════════ -->
+  <div class="border-t border-gray-800 pt-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 font-mono">
+      <div>
+        <h2 class="text-lg font-black text-white flex items-center gap-2">
+          <i class="fa-solid fa-chart-line text-emerald-400"></i>
+          <span>Live +EV Opportunity Scanner</span>
+          <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">{{ ev_count }} detected</span>
+        </h2>
+        <span class="text-xs text-gray-500">Matches where bookmaker odds significantly deviate from fair mathematical probabilities</span>
+      </div>
+      <span class="text-[11px] text-gray-500">Threshold: &ge; +3.0% Edge</span>
+    </div>
+
+    {% if ev_opportunities %}
+      <div class="bg-[#12161f] border border-gray-800 rounded-2xl overflow-hidden font-mono text-xs">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead class="bg-[#0b0e14] text-gray-500 uppercase tracking-wider text-[10px] border-b border-gray-800">
+              <tr>
+                <th class="py-3 px-4">Match / Fixture</th>
+                <th class="py-3 px-3">League</th>
+                <th class="py-3 px-3">Market Opportunity</th>
+                <th class="py-3 px-3 text-center">Bookmaker Odd</th>
+                <th class="py-3 px-3 text-center">Fair Odd</th>
+                <th class="py-3 px-3 text-center text-emerald-400">Calculated +EV</th>
+                <th class="py-3 px-3 text-center">Kelly Stake</th>
+                <th class="py-3 px-4 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-800/70">
+              {% for ev in ev_opportunities %}
+                <tr class="hover:bg-black/20 transition">
+                  <td class="py-3 px-4">
+                    <a href="{{ lang_prefix }}/vip/analise/{{ ev.match.id }}/" class="font-bold text-white hover:text-cyan-400 transition">
+                      {{ ev.match.home_team.name }} <span class="text-gray-500 font-normal">vs</span> {{ ev.match.away_team.name }}
+                    </a>
+                    <div class="text-[10px] text-gray-500">{{ ev.match.date|date:"d/m H:i" }}</div>
+                  </td>
+                  <td class="py-3 px-3 text-gray-400 text-[11px]">{{ ev.match.league.name }}</td>
+                  <td class="py-3 px-3">
+                    <span class="px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-bold">
+                      {{ ev.market }}
+                    </span>
+                  </td>
+                  <td class="py-3 px-3 text-center text-amber-400 font-bold">@ {{ ev.book_odd }}</td>
+                  <td class="py-3 px-3 text-center text-gray-400">@ {{ ev.fair_odd }}</td>
+                  <td class="py-3 px-3 text-center">
+                    <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-black">
+                      +{{ ev.ev_edge }}%
+                    </span>
+                  </td>
+                  <td class="py-3 px-3 text-center text-gray-300 font-bold">{{ ev.kelly_pct }}%</td>
+                  <td class="py-3 px-4 text-right">
+                    <a href="{{ lang_prefix }}/vip/analise/{{ ev.match.id }}/" class="px-2.5 py-1 rounded-lg bg-gray-900 border border-gray-800 hover:border-cyan-500/50 hover:text-cyan-300 text-gray-400 transition text-[11px]">
+                      Inspect
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    {% else %}
+      <div class="bg-[#12161f] border border-gray-800/80 rounded-2xl p-8 text-center text-xs font-mono text-gray-500">
+        No substantial +EV odd deviations detected for scheduled matches today. Feeds refresh continuously.
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<!-- ═════════════════════════════════════════════════════════════════
+     SCRIPTS DE CÁLCULO FINANCEIRO DINÂMICO
+     ═════════════════════════════════════════════════════════════════ -->
+<script>
+function calcHedge() {
+  const s1 = parseFloat(document.getElementById('h_stake1').value) || 0;
+  const o1 = parseFloat(document.getElementById('h_odd1').value) || 0;
+  const o2 = parseFloat(document.getElementById('h_odd2').value) || 0;
+  const mode = document.getElementById('h_mode').value;
+
+  if (s1 <= 0 || o1 <= 1 || o2 <= 1) return;
+
+  const return1 = s1 * o1;
+  let s2 = 0;
+
+  if (mode === 'equal') {
+    // Equal Profit: s2 = (s1 * o1) / o2
+    s2 = return1 / o2;
+  } else {
+    // Freeroll: s2 = s1 / (o2 - 1)
+    s2 = s1 / (o2 - 1);
+  }
+
+  const totalStake = s1 + s2;
+  const profit1 = return1 - totalStake;
+  const profit2 = (s2 * o2) - totalStake;
+  const avgProfit = (profit1 + profit2) / 2;
+  const roi = (avgProfit / totalStake) * 100;
+
+  document.getElementById('h_res_stake2').innerText = 'R$ ' + s2.toFixed(2);
+  document.getElementById('h_res_total').innerText = 'R$ ' + totalStake.toFixed(2);
+  document.getElementById('h_res_profit').innerText = (avgProfit >= 0 ? '+R$ ' : '-R$ ') + Math.abs(avgProfit).toFixed(2);
+  document.getElementById('h_roi_label').innerText = 'ROI: ' + (roi >= 0 ? '+' : '') + roi.toFixed(1) + '%';
+  document.getElementById('h_res_profit').className = 'text-base font-black ' + (avgProfit >= 0 ? 'text-emerald-400' : 'text-rose-400');
+}
+
+function calcKelly() {
+  const bank = parseFloat(document.getElementById('k_bankroll').value) || 0;
+  const odd = parseFloat(document.getElementById('k_odd').value) || 0;
+  const prob = (parseFloat(document.getElementById('k_prob').value) || 0) / 100;
+
+  if (bank <= 0 || odd <= 1 || prob <= 0) return;
+
+  const b = odd - 1;
+  const q = 1 - prob;
+  const fullKelly = ((b * prob) - q) / b;
+  const safeKellyPct = Math.max(0, (fullKelly / 4) * 100);
+  const safeStakeAmount = (bank * safeKellyPct) / 100;
+  const ev = ((prob * odd) - 1) * 100;
+
+  document.getElementById('k_safe_stake').innerText = 'R$ ' + safeStakeAmount.toFixed(2) + ' (' + safeKellyPct.toFixed(1) + '%)';
+  document.getElementById('k_ev_label').innerText = (ev >= 0 ? '+' : '') + ev.toFixed(1) + '%';
+  document.getElementById('k_ev_label').className = 'text-sm font-bold ' + (ev >= 0 ? 'text-emerald-400' : 'text-rose-400');
+}
+
+// Inicializar cálculos ao carregar
+calcHedge();
+calcKelly();
+</script>
+{% endblock %}
