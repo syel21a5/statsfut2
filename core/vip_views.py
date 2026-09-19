@@ -250,7 +250,8 @@ def vip_games_list_view(request):
         except ValueError:
             qs = qs.order_by('date')
 
-    raw_matches = list(qs[:120])
+    total_day_matches = qs.count()
+    raw_matches = list(qs[:250])
     
     # Fallback se não encontrar partidas ao vivo no status exato, traz as mais recentes em andamento
     if status_filter == 'live' and not raw_matches:
@@ -736,7 +737,7 @@ def vip_games_list_view(request):
         winrate_30d = round((greens_30d / n_30d) * 100, 1) if n_30d > 0 else 71.8
 
         market_label = "Todos os Mercados"
-        kpi_count = len(processed_matches)
+        kpi_count = total_day_matches if total_day_matches > 0 else len(processed_matches)
         avg_odd = "1.52"
         roi = "+12.4%"
 
