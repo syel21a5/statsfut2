@@ -487,7 +487,7 @@ def vip_games_list_view(request):
         },
         {
             'id': 'cantos_75ft',
-            'title': 'Escanteios Janela 75\' FT (Pressão Final)',
+            'title': 'Cantos Finais (Pressão 75\'+)',
             'type': 'cantos_75ft',
             'icon': 'clock',
             'color': 'purple',
@@ -634,7 +634,7 @@ def vip_games_list_view(request):
         winrate_today = 85.0
         winrate_7d = 86.1
         winrate_30d = 85.7
-        market_label = "Cantos Janela 75'"
+        market_label = "Cantos Finais (75'+)"
         kpi_count = sum(1 for m in processed_matches if m.p_c75ft >= 75)
         avg_odd = "1.55"
         roi = "+16.4%"
