@@ -124,16 +124,16 @@
           </button>
 
           <div id="langDropdownMenu" class="hidden absolute right-0 mt-1.5 w-36 bg-[#14181f] border border-gray-800 rounded-xl shadow-2xl py-1 z-50 font-mono text-xs">
-            <a href="/vip/jogos/" class="w-full text-left px-3 py-1.5 flex items-center gap-2 hover:bg-gray-800/60 text-gray-300 hover:text-cyan-400">
+            <a href="#" onclick="switchPageLanguage('en'); return false;" class="w-full text-left px-3 py-1.5 flex items-center gap-2 hover:bg-gray-800/60 text-gray-300 hover:text-cyan-400">
               <span class="fi fi-us rounded-sm"></span> <span>English</span>
             </a>
-            <a href="/pt-br/vip/jogos/" class="w-full text-left px-3 py-1.5 flex items-center gap-2 hover:bg-gray-800/60 text-gray-300 hover:text-cyan-400">
+            <a href="#" onclick="switchPageLanguage('pt-br'); return false;" class="w-full text-left px-3 py-1.5 flex items-center gap-2 hover:bg-gray-800/60 text-gray-300 hover:text-cyan-400">
               <span class="fi fi-br rounded-sm"></span> <span>Português</span>
             </a>
-            <a href="/es/vip/jogos/" class="w-full text-left px-3 py-1.5 flex items-center gap-2 hover:bg-gray-800/60 text-gray-300 hover:text-cyan-400">
+            <a href="#" onclick="switchPageLanguage('es'); return false;" class="w-full text-left px-3 py-1.5 flex items-center gap-2 hover:bg-gray-800/60 text-gray-300 hover:text-cyan-400">
               <span class="fi fi-es rounded-sm"></span> <span>Español</span>
             </a>
-            <a href="/de/vip/jogos/" class="w-full text-left px-3 py-1.5 flex items-center gap-2 hover:bg-gray-800/60 text-gray-300 hover:text-cyan-400">
+            <a href="#" onclick="switchPageLanguage('de'); return false;" class="w-full text-left px-3 py-1.5 flex items-center gap-2 hover:bg-gray-800/60 text-gray-300 hover:text-cyan-400">
               <span class="fi fi-de rounded-sm"></span> <span>Deutsch</span>
             </a>
           </div>
@@ -279,7 +279,26 @@
         'Against:': 'Contra:',
         'No live matches at this exact moment': 'Nenhum jogo ao vivo no momento exato',
         'Live radar feeds and telemetry update automatically every 60 seconds as soon as matches kick off.': 'As transmissões e feeds de radar ao vivo atualizam automaticamente a cada 60 segundos assim que uma partida inicia.',
-        'View Today\'s Matches': 'Ver Jogos de Hoje'
+        'View Today\'s Matches': 'Ver Jogos de Hoje',
+
+        // Abas e Seções da Tela de Análise de Partida (/vip/analise/)
+        'Global Analysis': 'Análise Global',
+        'Shots & Attack': 'Chutes & Ataque',
+        'Cards & Fouls': 'Cartões & Faltas',
+        'Odds Analysis': 'Análise de Odds',
+        'Momentum Charts': 'Gráficos de Pressão',
+        'Model Conclusion:': 'Conclusão do Modelo:',
+        'Home favorite playing at home (1.8 PPG) vs 1.2 away. Pressure expected in the 2nd half.': 'Mandante favorito em casa (1.8 PPJ) contra 1.2 do visitante fora. Pressão prevista no 2º tempo.',
+        'Home': 'Mandante',
+        'Away': 'Visitante',
+        'Win': 'Vitória',
+        'Draw': 'Empate',
+        'Loss': 'Derrota',
+        'PPG': 'PPJ',
+        'Target Profit (Back Stake):': 'Lucro Desejado (Back Stake):',
+        'Lay Odds:': 'Odd do Placar (Lay Odd):',
+        'Profit if Score Does NOT Happen': 'Lucro se o Placar NÃO Ocorrer',
+        'Maximum Liability': 'Responsabilidade Máxima'
       },
       'es': {
         // Menu Superior
@@ -522,6 +541,22 @@
     };
   </script>
   <script>
+    function switchPageLanguage(targetLang) {
+      let path = window.location.pathname;
+      const search = window.location.search;
+      const hash = window.location.hash;
+
+      // Remover prefixo de idioma atual (/pt-br, /pt, /es, /de)
+      path = path.replace(/^\/(pt-br|pt|es|de)(\/|$)/, '/');
+      if (!path.startsWith('/')) path = '/' + path;
+
+      if (targetLang === 'en') {
+        window.location.href = path + search + hash;
+      } else {
+        window.location.href = '/' + targetLang + path + search + hash;
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       // 1. REGRA ABSOLUTA DE IDIOMA:
       // Se a URL não tem prefixo (/pt-br/, /es/, /de/), é OBRIGATORIAMENTE INGLÊS (DEFAULT).

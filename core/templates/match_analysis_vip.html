@@ -13,16 +13,16 @@
     <div class="flex items-center gap-4 flex-1 justify-end text-right">
       <div>
         <div class="flex items-center gap-2 justify-end">
-          <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Mandante</span>
-          <span class="text-[10px] font-mono text-gray-400">1.8 PPJ</span>
+          <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Home</span>
+          <span class="text-[10px] font-mono text-gray-400">1.8 PPG</span>
         </div>
         <h2 class="text-xl md:text-2xl font-black text-white tracking-tight mt-1">{{ match.home_team.name }}</h2>
         <div class="flex items-center gap-1 justify-end mt-1">
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" title="Vitória"></span>
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" title="Vitória"></span>
-          <span class="w-2.5 h-2.5 rounded-full bg-amber-500" title="Empate"></span>
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" title="Vitória"></span>
-          <span class="w-2.5 h-2.5 rounded-full bg-rose-500" title="Derrota"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" title="Win"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" title="Win"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-500" title="Draw"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" title="Win"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-rose-500" title="Loss"></span>
         </div>
       </div>
       <div class="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-[#1c232d] to-[#0e1217] border border-gray-700/60 p-2 flex items-center justify-center shadow-xl shrink-0 group relative overflow-hidden">
@@ -43,7 +43,7 @@
     <div class="flex flex-col items-center justify-center px-6 py-2 bg-[#0e1217] rounded-xl border border-gray-800/80 min-w-[170px] shadow-inner">
       {% if match.status == 'Live' %}
         <span class="flex items-center gap-1.5 text-rose-500 font-mono text-xs font-bold animate-pulse mb-1">
-          <span class="w-2 h-2 rounded-full bg-rose-500"></span> AO VIVO
+          <span class="w-2 h-2 rounded-full bg-rose-500"></span> LIVE
         </span>
         <div class="text-3xl font-black font-mono text-white tracking-widest">
           {{ match.home_score|default:0 }} - {{ match.away_score|default:0 }}
@@ -55,7 +55,6 @@
         <span class="text-xl font-black font-mono text-gray-400">VS</span>
       {% endif %}
       <span class="text-[10px] text-gray-500 font-mono mt-1 truncate max-w-[150px] text-center">{{ match.league.name }}</span>
-      <span class="text-[9px] text-gray-600 font-mono">Árbitro: Miguel Ángel Ortiz Arias</span>
     </div>
 
     <!-- Time Visitante -->
@@ -74,16 +73,16 @@
       </div>
       <div>
         <div class="flex items-center gap-2 justify-start">
-          <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">Visitante</span>
-          <span class="text-[10px] font-mono text-gray-400">1.2 PPJ</span>
+          <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">Away</span>
+          <span class="text-[10px] font-mono text-gray-400">1.2 PPG</span>
         </div>
         <h2 class="text-xl md:text-2xl font-black text-white tracking-tight mt-1">{{ match.away_team.name }}</h2>
         <div class="flex items-center gap-1 justify-start mt-1">
-          <span class="w-2.5 h-2.5 rounded-full bg-rose-500" title="Derrota"></span>
-          <span class="w-2.5 h-2.5 rounded-full bg-amber-500" title="Empate"></span>
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" title="Vitória"></span>
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" title="Vitória"></span>
-          <span class="w-2.5 h-2.5 rounded-full bg-rose-500" title="Derrota"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-rose-500" title="Loss"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-500" title="Draw"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" title="Win"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" title="Win"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-rose-500" title="Loss"></span>
         </div>
       </div>
     </div>
@@ -93,13 +92,13 @@
   <!-- Barra de Conclusão do Modelo (Exato analise global 1.png) -->
   <div class="mt-4 pt-3 border-t border-gray-800/70 flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
     <p class="text-gray-400">
-      <span class="text-cyan-400 font-bold font-mono">Conclusão do Modelo:</span> Mandante favorito em casa (1.8 PPJ) contra 1.2 do visitante fora. Pressão prevista no 2º tempo.
+      <span class="text-cyan-400 font-bold font-mono">Model Conclusion:</span> Home favorite playing at home (1.8 PPG) vs 1.2 away. Pressure expected in the 2nd half.
     </p>
     <div class="flex items-center gap-2 font-mono text-[10px]">
-      <span class="px-2 py-0.5 rounded bg-rose-500/15 text-rose-400 font-bold">Vence {{ match.home_team.name|slice:":10" }} 46%</span>
+      <span class="px-2 py-0.5 rounded bg-rose-500/15 text-rose-400 font-bold">Win {{ match.home_team.name|slice:":10" }} 46%</span>
       <span class="px-2 py-0.5 rounded bg-emerald-500/15 text-[#00d26a] font-bold">Over 1.5 FT {{ p_o15 }}%</span>
       <span class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 font-bold">BTTS {{ p_btts }}%</span>
-      <span class="px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-400 font-bold">Cantos 8.5+ {{ p_c85 }}%</span>
+      <span class="px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-400 font-bold">Corners 8.5+ {{ p_c85 }}%</span>
     </div>
   </div>
 </div>
@@ -107,18 +106,17 @@
 <!-- ── BARRA DE ABAS HORIZONTAIS INTERATIVAS ── -->
 <div class="bg-[#121518] border border-gray-800/80 rounded-xl px-3 py-2 mb-6 flex items-center justify-between overflow-x-auto shadow-md">
   <div class="flex items-center gap-1 sm:gap-2 font-mono text-xs" id="tabsNav">
-    <button onclick="switchTab('global')" id="tabBtn-global" class="tab-btn px-3.5 py-1.5 rounded-lg font-bold transition bg-[#00b4d8] text-gray-950 shadow-sm shadow-cyan-500/30">Análise Global</button>
+    <button onclick="switchTab('global')" id="tabBtn-global" class="tab-btn px-3.5 py-1.5 rounded-lg font-bold transition bg-[#00b4d8] text-gray-950 shadow-sm shadow-cyan-500/30">Global Analysis</button>
     <button onclick="switchTab('lays')" id="tabBtn-lays" class="tab-btn px-3.5 py-1.5 rounded-lg text-emerald-400 hover:text-white hover:bg-gray-800/60 transition flex items-center gap-1">
       <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-      Lay Placar (95%+)
+      Lay Correct Score (95%+)
     </button>
-    <button onclick="switchTab('gols')" id="tabBtn-gols" class="tab-btn px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Gols</button>
-    <button onclick="switchTab('escanteios')" id="tabBtn-escanteios" class="tab-btn px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Escanteios</button>
-    <button onclick="switchTab('chutes')" id="tabBtn-chutes" class="tab-btn px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Chutes &amp; Ataque</button>
-    <button onclick="switchTab('cartoes')" id="tabBtn-cartoes" class="tab-btn px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Cartões</button>
-    <button onclick="switchTab('odds')" id="tabBtn-odds" class="tab-btn px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Análise de Odds</button>
-    <button onclick="switchTab('graficos')" id="tabBtn-graficos" class="tab-btn px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Gráficos</button>
-    <button onclick="switchTab('jogadores')" id="tabBtn-jogadores" class="tab-btn px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Dados de Jogadores</button>
+    <button onclick="switchTab('gols')" id="tabBtn-gols" class="tab-btn px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Goals</button>
+    <button onclick="switchTab('escanteios')" id="tabBtn-escanteios" class="tab-btn px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Corners</button>
+    <button onclick="switchTab('chutes')" id="tabBtn-chutes" class="tab-btn px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Shots &amp; Attack</button>
+    <button onclick="switchTab('cartoes')" id="tabBtn-cartoes" class="tab-btn px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Cards &amp; Fouls</button>
+    <button onclick="switchTab('odds')" id="tabBtn-odds" class="tab-btn px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Odds Analysis</button>
+    <button onclick="switchTab('graficos')" id="tabBtn-graficos" class="tab-btn px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/60 transition">Momentum Charts</button>
   </div>
 
   <div class="flex items-center gap-2 font-mono text-[11px] text-gray-400">
@@ -460,14 +458,14 @@
 
         <div class="grid grid-cols-2 gap-4 font-mono text-xs">
           <div>
-            <label class="text-gray-400 block mb-1">Lucro Desejado (Back Stake):</label>
+            <label class="text-gray-400 block mb-1">Target Profit (Back Stake):</label>
             <div class="flex items-center bg-[#0e1217] border border-gray-800 rounded-lg px-3 py-2">
-              <span class="text-gray-500 mr-2">R$</span>
+              <span class="text-gray-500 mr-2">$</span>
               <input type="number" id="layProfitInput" value="50" class="bg-transparent text-white font-bold w-full outline-none" oninput="calcLayLiability()">
             </div>
           </div>
           <div>
-            <label class="text-gray-400 block mb-1">Odd do Placar (Lay Odd):</label>
+            <label class="text-gray-400 block mb-1">Lay Odds:</label>
             <div class="flex items-center bg-[#0e1217] border border-gray-800 rounded-lg px-3 py-2">
               <span class="text-gray-500 mr-2">@</span>
               <input type="number" id="layOddInput" value="25.00" step="0.5" class="bg-transparent text-white font-bold w-full outline-none" oninput="calcLayLiability()">
@@ -477,12 +475,12 @@
 
         <div class="grid grid-cols-2 gap-3 pt-2 font-mono text-center">
           <div class="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-            <span class="text-[11px] text-emerald-400 block">Lucro se o Placar NÃO Ocorrer</span>
-            <span id="layProfitDisplay" class="text-xl font-black text-[#00d26a] mt-1 block">R$ 50,00</span>
+            <span class="text-[11px] text-emerald-400 block">Profit if Score Does NOT Happen</span>
+            <span id="layProfitDisplay" class="text-xl font-black text-[#00d26a] mt-1 block">$ 50.00</span>
           </div>
           <div class="p-3 rounded-lg bg-[#0e1217] border border-gray-800">
-            <span class="text-[11px] text-gray-400 block">Responsabilidade Máxima</span>
-            <span id="layLiabilityDisplay" class="text-xl font-black text-rose-500 mt-1 block">R$ 1.200,00</span>
+            <span class="text-[11px] text-gray-400 block">Maximum Liability</span>
+            <span id="layLiabilityDisplay" class="text-xl font-black text-rose-500 mt-1 block">$ 1,200.00</span>
           </div>
         </div>
       </div>
@@ -1972,8 +1970,8 @@
     const odd = parseFloat(document.getElementById('layOddInput').value) || 1.0;
     const liability = profit * (odd - 1.0);
     
-    document.getElementById('layProfitDisplay').innerText = 'R$ ' + profit.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-    document.getElementById('layLiabilityDisplay').innerText = 'R$ ' + liability.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    document.getElementById('layProfitDisplay').innerText = '$ ' + profit.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    document.getElementById('layLiabilityDisplay').innerText = '$ ' + liability.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
   }
 </script>
 
