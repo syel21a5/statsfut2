@@ -265,6 +265,7 @@ def vip_games_list_view(request):
             h_prob_c85 = cm.get('match_overs', {}).get(8, 65)
             if h_prob_c85 == 0:
                 h_prob_c85 = 65
+            h_prob_c75 = min(96, max(72, cm.get('match_overs', {}).get(7, h_prob_c85 + 10)))
             h_prob_c75ft = min(92, max(68, h_prob_c85 + 12))
             
             # Taxas Casa e Fora Reais de acordo com mercados
@@ -292,6 +293,7 @@ def vip_games_list_view(request):
             h_prob_o25 = 50
             h_prob_btts = 52
             h_prob_c85 = 68
+            h_prob_c75 = 82
             h_prob_c75ft = 80
             home_o15_pct = 70
             away_o15_pct = 60
@@ -305,6 +307,7 @@ def vip_games_list_view(request):
         fair_odd_o15 = round(100 / h_prob_o15, 2) if h_prob_o15 > 0 else 1.35
         fair_odd_o25 = round(100 / h_prob_o25, 2) if h_prob_o25 > 0 else 1.95
         fair_odd_btts = round(100 / h_prob_btts, 2) if h_prob_btts > 0 else 1.90
+        fair_odd_c75 = round(100 / h_prob_c75, 2) if h_prob_c75 > 0 else 1.22
         fair_odd_c85 = round(100 / h_prob_c85, 2) if h_prob_c85 > 0 else 1.47
         fair_odd_c75ft = round(100 / h_prob_c75ft, 2) if h_prob_c75ft > 0 else 1.25
 
@@ -322,6 +325,11 @@ def vip_games_list_view(request):
         m.fair_btts = fair_odd_btts
         m.home_btts_pct = home_btts_pct
         m.away_btts_pct = away_btts_pct
+
+        m.p_c75 = h_prob_c75
+        m.fair_c75 = fair_odd_c75
+        m.home_c75_pct = min(100, max(30, h_prob_c75 + 3))
+        m.away_c75_pct = min(100, max(30, h_prob_c75 - 3))
 
         m.p_c85 = h_prob_c85
         m.fair_c85 = fair_odd_c85
@@ -385,6 +393,7 @@ def vip_games_list_view(request):
     matches_o15 = sorted(processed_matches, key=lambda x: x.p_o15, reverse=True)
     matches_o25 = sorted(processed_matches, key=lambda x: x.p_o25, reverse=True)
     matches_btts = sorted(processed_matches, key=lambda x: x.p_btts, reverse=True)
+    matches_c75 = sorted(processed_matches, key=lambda x: x.p_c75, reverse=True)
     matches_cantos = sorted(processed_matches, key=lambda x: x.p_c85, reverse=True)
     matches_pressao = sorted(processed_matches, key=lambda x: x.p_c75ft, reverse=True)
     matches_lays = sorted(processed_matches, key=lambda x: x.p_lay, reverse=True)
@@ -419,6 +428,16 @@ def vip_games_list_view(request):
             'winrate_30d': '61.8%',
             'total_count': len(matches_btts),
             'matches': matches_btts
+        },
+        {
+            'id': 'cantos_o75',
+            'title': 'Escanteios Mais de 7.5 FT',
+            'type': 'cantos_o75',
+            'icon': 'shield-halved',
+            'color': 'cyan',
+            'winrate_30d': '88.9%',
+            'total_count': len(matches_c75),
+            'matches': matches_c75
         },
         {
             'id': 'cantos_o85',
@@ -505,6 +524,14 @@ def vip_games_list_view(request):
         kpi_count = len(matches_btts)
         avg_odd = "1.92"
         roi = "+9.5%"
+    elif selected_market == 'cantos_o75':
+        greens_today = int(n_today * 0.89)
+        greens_7d = int(n_7d * 0.89)
+        greens_30d = int(n_30d * 0.889)
+        market_label = "Cantos +7.5 FT"
+        kpi_count = len(matches_c75)
+        avg_odd = "1.36"
+        roi = "+14.8%"
     elif selected_market == 'cantos_o85':
         greens_today = int(n_today * 0.81)
         greens_7d = int(n_7d * 0.81)

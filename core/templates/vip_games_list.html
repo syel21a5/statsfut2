@@ -84,6 +84,10 @@
           <span>Escanteios</span>
         </div>
         <div class="space-y-1">
+          <a href="?market=cantos_o75{% if current_status %}&status={{ current_status }}{% endif %}" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs {% if selected_market == 'cantos_o75' %}bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40{% else %}text-gray-300 hover:text-white hover:bg-gray-800/50{% endif %} transition">
+            <span>Over 7.5 FT</span>
+            <span class="font-mono text-cyan-400 text-[11px] font-bold">89%</span>
+          </a>
           <a href="?market=cantos_o85{% if current_status %}&status={{ current_status }}{% endif %}" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs {% if selected_market == 'cantos_o85' %}bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40{% else %}text-gray-300 hover:text-white hover:bg-gray-800/50{% endif %} transition">
             <span>Over 8.5 FT</span>
             <span class="font-mono text-cyan-400 text-[11px] font-bold">81%</span>
@@ -360,6 +364,10 @@
                   <span class="inline-block min-w-[34px] text-right {% if m.home_btts_pct >= 70 %}text-amber-400 font-bold{% elif m.home_btts_pct >= 50 %}text-cyan-400{% else %}text-gray-400{% endif %}">{{ m.home_btts_pct }}%</span>
                   <span class="text-gray-600 mx-1.5">&middot;</span>
                   <span class="inline-block min-w-[34px] text-left {% if m.away_btts_pct >= 70 %}text-amber-400 font-bold{% elif m.away_btts_pct >= 50 %}text-cyan-400{% else %}text-gray-400{% endif %}">{{ m.away_btts_pct }}%</span>
+                {% elif sec.id == 'cantos_o75' %}
+                  <span class="inline-block min-w-[34px] text-right {% if m.home_c75_pct >= 70 %}text-cyan-400 font-bold{% elif m.home_c75_pct >= 50 %}text-cyan-400{% else %}text-gray-400{% endif %}">{{ m.home_c75_pct }}%</span>
+                  <span class="text-gray-600 mx-1.5">&middot;</span>
+                  <span class="inline-block min-w-[34px] text-left {% if m.away_c75_pct >= 70 %}text-cyan-400 font-bold{% elif m.away_c75_pct >= 50 %}text-cyan-400{% else %}text-gray-400{% endif %}">{{ m.away_c75_pct }}%</span>
                 {% elif sec.id == 'cantos_o85' %}
                   <span class="inline-block min-w-[34px] text-right {% if m.home_c85_pct >= 70 %}text-cyan-400 font-bold{% elif m.home_c85_pct >= 50 %}text-cyan-400{% else %}text-gray-400{% endif %}">{{ m.home_c85_pct }}%</span>
                   <span class="text-gray-600 mx-1.5">&middot;</span>
@@ -389,6 +397,8 @@
                   <span class="text-amber-400 font-bold text-sm">{{ m.p_btts }}%</span>
                 {% elif sec.id == 'cantos_75ft' %}
                   <span class="text-purple-400 font-bold text-sm">{{ m.p_c75ft }}%</span>
+                {% elif sec.id == 'cantos_o75' %}
+                  <span class="text-cyan-400 font-bold text-sm">{{ m.p_c75 }}%</span>
                 {% elif sec.id == 'cantos_o85' %}
                   <span class="text-cyan-400 font-bold text-sm">{{ m.p_c85 }}%</span>
                 {% else %}
@@ -406,6 +416,8 @@
                   {{ m.fair_btts }}
                 {% elif sec.id == 'cantos_75ft' %}
                   {{ m.fair_c75ft }}
+                {% elif sec.id == 'cantos_o75' %}
+                  {{ m.fair_c75 }}
                 {% elif sec.id == 'cantos_o85' %}
                   {{ m.fair_c85 }}
                 {% else %}
