@@ -250,7 +250,10 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
         {% for pick in top_picks %}
-        <div class="bg-[#14181f] border border-gray-800/70 hover:border-cyan-500/40 rounded-xl p-3.5 flex flex-col justify-between shadow-lg transition-all duration-200">
+        <div class="top-pick-card bg-[#14181f] border border-gray-800/70 hover:border-cyan-500/40 rounded-xl p-3.5 flex flex-col justify-between shadow-lg transition-all duration-200"
+             data-teams="{{ pick.match.home_team.name|lower }} {{ pick.match.away_team.name|lower }}"
+             data-league="{{ pick.match.league.name|lower }}"
+             data-prob="{{ pick.prob }}">
           
           <!-- Topo do Card: Badge do Mercado + Hora -->
           <div class="flex items-center justify-between gap-1 mb-2.5">
@@ -509,6 +512,7 @@
   function applyFilters() {
     const term = (document.getElementById('matchSearchInput').value || '').toLowerCase().trim();
     const rows = document.querySelectorAll('.match-row');
+    const cards = document.querySelectorAll('.top-pick-card');
 
     rows.forEach(row => {
       const teams = row.getAttribute('data-teams') || '';
@@ -529,6 +533,28 @@
         row.style.display = '';
       } else {
         row.style.display = 'none';
+      }
+    });
+
+    cards.forEach(card => {
+      const teams = card.getAttribute('data-teams') || '';
+      const league = card.getAttribute('data-league') || '';
+      const prob = parseInt(card.getAttribute('data-prob')) || 0;
+
+      let matchSearch = true;
+      if (term) {
+        matchSearch = teams.includes(term) || league.includes(term);
+      }
+
+      let matchSniper = true;
+      if (sniperActive) {
+        matchSniper = prob >= 80;
+      }
+
+      if (matchSearch && matchSniper) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
       }
     });
   }

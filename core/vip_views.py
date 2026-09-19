@@ -220,7 +220,8 @@ def vip_games_list_view(request):
     elif status_filter == 'tomorrow':
         qs = qs.filter(date__gte=now + timedelta(hours=24), date__lte=now + timedelta(hours=48)).order_by('date')
     elif status_filter == 'finished':
-        qs = qs.filter(status__in=['Finished', 'FT']).order_by('-date')
+        # Partidas encerradas recentemente (últimas 24 horas)
+        qs = qs.filter(status__in=['Finished', 'FT'], date__gte=now - timedelta(hours=24)).order_by('-date')
     elif status_filter == 'live':
         qs = qs.filter(status__iexact='Live').order_by('date')
     else:
