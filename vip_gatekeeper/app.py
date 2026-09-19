@@ -278,7 +278,7 @@ class VIPProxyHandler(http.server.BaseHTTPRequestHandler):
             self.wfile.write(content)
             return
 
-        # 4. Verificação de Acesso / Paywall
+        # 4. Verificação de Acesso / Bloqueio por Rota
         valid, username, plan_type = self.check_auth()
         if not valid:
             self.send_response(302)
@@ -288,14 +288,19 @@ class VIPProxyHandler(http.server.BaseHTTPRequestHandler):
             self.end_headers()
             return
 
-        # Usuário autenticado, mas com Plano Popular -> Exibir tela de Upgrade Paywall!
+        # Assinante Popular: Tem acesso liberado à Lista de Jogos e Análises Estatísticas (/vip/jogos/),
+        # mas as ferramentas exclusivas de alta tecnologia (Radar, Bots, Calculadora Hedge e Bilhetes) bloqueiam e mostram a tela de Upgrade!
         if plan_type != 'vip':
-            self.send_response(302)
-            self.send_header("Location", "/vip-upgrade")
-            self.send_header("Content-Length", "0")
-            self.send_no_cache_headers()
-            self.end_headers()
-            return
+            restricted_vip_routes = ['/vip/radar/', '/vip/live-radar/', '/vip/bots/', '/vip/ferramentas/', '/vip/bilhetes/']
+            # Se tentar acessar uma das ferramentas High Ticket do VIP Total:
+            for route in restricted_vip_routes:
+                if self.path.startswith(route) or f"/{route.strip('/')}" in self.path:
+                    self.send_response(302)
+                    self.send_header("Location", "/vip-upgrade")
+                    self.send_header("Content-Length", "0")
+                    self.send_no_cache_headers()
+                    self.end_headers()
+                    return
 
         # 5. Redirecionar raiz para /vip/jogos/
         if self.path == "/":
@@ -394,20 +399,11 @@ class VIPProxyHandler(http.server.BaseHTTPRequestHandler):
                     print("Erro durante autenticacao Django:", auth_err)
 
             if authenticated:
-                if user_plan == 'vip':
-                    session_token = generate_session_token(authenticated_user, plan_type='vip')
+                if user_plan in ['vip', 'popular']:
+                    session_token = generate_session_token(authenticated_user, plan_type=user_plan)
                     self.send_response(302)
                     self.send_header("Set-Cookie", f"{COOKIE_NAME}={session_token}; Path=/; HttpOnly; SameSite=Lax")
                     self.send_header("Location", "/vip/jogos/")
-                    self.send_header("Content-Length", "0")
-                    self.send_no_cache_headers()
-                    self.end_headers()
-                elif user_plan == 'popular':
-                    # Assinante Popular tentando entrar no VIP -> Gerar sessão com role popular para cair no Upgrade Paywall
-                    session_token = generate_session_token(authenticated_user, plan_type='popular')
-                    self.send_response(302)
-                    self.send_header("Set-Cookie", f"{COOKIE_NAME}={session_token}; Path=/; HttpOnly; SameSite=Lax")
-                    self.send_header("Location", "/vip-upgrade")
                     self.send_header("Content-Length", "0")
                     self.send_no_cache_headers()
                     self.end_headers()
