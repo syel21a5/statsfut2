@@ -159,12 +159,12 @@
         </div>
       </div>
 
-      <!-- Card 2: Acerto Hoje (Tempo Real) -->
+      <!-- Card 2: Acerto do Período -->
       <div class="bg-[#14181f] border border-gray-800/60 rounded-xl p-3.5 flex flex-col justify-between shadow-lg relative overflow-hidden">
         <div>
           <div class="flex items-center justify-between">
-            <span class="text-[11px] font-medium text-gray-400 block">Acerto Hoje</span>
-            <span class="text-[9px] font-mono text-gray-500">24h</span>
+            <span class="text-[11px] font-medium text-gray-400 block">Acerto {{ stats_kpi.day_period_label }}</span>
+            <span class="text-[9px] font-mono text-gray-500">{% if is_historical_day %}Histórico{% else %}24h{% endif %}</span>
           </div>
           <span class="text-2xl font-black text-[#00d26a] font-mono mt-1.5 block">{{ stats_kpi.winrate_today }}%</span>
           <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">{{ stats_kpi.greens_today }} / {{ stats_kpi.resolved_today }} resolvidos</span>
@@ -222,23 +222,24 @@
     </div>
 
     <!-- ── (B) BARRA DE FILTROS RÁPIDOS & BUSCA INSTANTÂNEA ── -->
+    {% if not is_historical_day %}
     <div class="flex flex-wrap items-center justify-between gap-3 bg-[#14181f] border border-gray-800/60 rounded-xl px-4 py-2.5 text-xs font-mono">
       <div class="flex flex-wrap items-center gap-2">
         <span class="text-gray-400 font-mono text-[11px]">Filtros:</span>
-        <a href="?status=today" class="px-3 py-1.5 rounded-lg font-semibold transition {% if current_status == 'today' %}bg-cyan-500/20 text-cyan-300 border border-cyan-500/40{% else %}bg-[#0e1217] text-gray-400 hover:text-white border border-gray-800{% endif %}">
+        <a href="?status=today{% if selected_market %}&market={{ selected_market }}{% endif %}" class="px-3 py-1.5 rounded-lg font-semibold transition {% if current_status == 'today' %}bg-cyan-500/20 text-cyan-300 border border-cyan-500/40{% else %}bg-[#0e1217] text-gray-400 hover:text-white border border-gray-800{% endif %}">
           Hoje
         </a>
-        <a href="?status=tomorrow" class="px-3 py-1.5 rounded-lg font-semibold transition {% if current_status == 'tomorrow' %}bg-cyan-500/20 text-cyan-300 border border-cyan-500/40{% else %}bg-[#0e1217] text-gray-400 hover:text-white border border-gray-800{% endif %}">
+        <a href="?status=tomorrow{% if selected_market %}&market={{ selected_market }}{% endif %}" class="px-3 py-1.5 rounded-lg font-semibold transition {% if current_status == 'tomorrow' %}bg-cyan-500/20 text-cyan-300 border border-cyan-500/40{% else %}bg-[#0e1217] text-gray-400 hover:text-white border border-gray-800{% endif %}">
           Amanhã
         </a>
-        <a href="?status=live" class="px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1.5 {% if current_status == 'live' %}bg-rose-500/25 text-rose-300 border border-rose-500/50{% else %}bg-[#0e1217] text-rose-400 hover:text-rose-300 border border-rose-500/20{% endif %}">
+        <a href="?status=live{% if selected_market %}&market={{ selected_market }}{% endif %}" class="px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1.5 {% if current_status == 'live' %}bg-rose-500/25 text-rose-300 border border-rose-500/50{% else %}bg-[#0e1217] text-rose-400 hover:text-rose-300 border border-rose-500/20{% endif %}">
           <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
           <span>Ao Vivo</span>
           <span class="px-1.5 py-0.2 rounded-full bg-rose-500 text-white font-bold text-[10px]">
             {{ live_count|default:"8" }}
           </span>
         </a>
-        <a href="?status=finished" class="px-3 py-1.5 rounded-lg font-semibold transition {% if current_status == 'finished' %}bg-cyan-500/20 text-cyan-300 border border-cyan-500/40{% else %}bg-[#0e1217] text-gray-400 hover:text-white border border-gray-800{% endif %}">
+        <a href="?status=finished{% if selected_market %}&market={{ selected_market }}{% endif %}" class="px-3 py-1.5 rounded-lg font-semibold transition {% if current_status == 'finished' %}bg-cyan-500/20 text-cyan-300 border border-cyan-500/40{% else %}bg-[#0e1217] text-gray-400 hover:text-white border border-gray-800{% endif %}">
           Encerrados
         </a>
 
@@ -257,6 +258,24 @@
         </div>
       </div>
     </div>
+    {% else %}
+    <!-- Barra Simplificada para Dias Passados (Apenas Busca Instantânea & Selo de Histórico) -->
+    <div class="flex flex-wrap items-center justify-between gap-3 bg-[#14181f] border border-gray-800/60 rounded-xl px-4 py-2.5 text-xs font-mono">
+      <div class="flex items-center gap-2 text-gray-300 font-bold">
+        <i class="fa-solid fa-clock-rotate-left text-cyan-400 text-sm"></i>
+        <span>Histórico de Resultados &middot; {{ server_date }}</span>
+        <span class="text-[10px] text-gray-500 font-mono font-normal">({{ stats_kpi.kpi_count }} partidas auditadas)</span>
+      </div>
+
+      <!-- Barra de Busca Instantânea -->
+      <div class="flex items-center gap-2">
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-500 text-xs"></i>
+          <input type="text" id="matchSearchInput" oninput="filterMatchesLive()" placeholder="Buscar time ou liga..." class="bg-[#0e1217] border border-gray-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-gray-500 outline-none focus:border-cyan-500 transition w-48 sm:w-56 font-sans">
+        </div>
+      </div>
+    </div>
+    {% endif %}
 
     <!-- ── (C) SEÇÃO: MELHORES APOSTAS DO DIA (CARROSSEL DE 5 CARDS IGUAL CORNERPRO) ── -->
     <div class="space-y-3">

@@ -214,18 +214,31 @@ def vip_games_list_view(request):
 
     # 1. Filtro Temporal
     live_count = Match.objects.filter(status__iexact='Live').count()
-    
+    is_historical_day = False
+    query_date = now.date()
+
     if status_filter == 'today':
         qs = qs.filter(date__gte=now - timedelta(hours=3), date__lte=now + timedelta(hours=24)).order_by('date')
     elif status_filter == 'tomorrow':
         qs = qs.filter(date__gte=now + timedelta(hours=24), date__lte=now + timedelta(hours=48)).order_by('date')
+        query_date = (now + timedelta(days=1)).date()
     elif status_filter == 'finished':
         # Partidas encerradas recentemente (últimas 24 horas)
         qs = qs.filter(status__in=['Finished', 'FT'], date__gte=now - timedelta(hours=24)).order_by('-date')
     elif status_filter == 'live':
         qs = qs.filter(status__iexact='Live').order_by('date')
     else:
-        qs = qs.order_by('date')
+        # Se for uma data específica como YYYY-MM-DD
+        try:
+            parsed_d = datetime.strptime(status_filter, '%Y-%m-%d').date()
+            query_date = parsed_d
+            start_d = datetime.combine(parsed_d, datetime.min.time(), tzinfo=pytz.UTC)
+            end_d = datetime.combine(parsed_d, datetime.max.time(), tzinfo=pytz.UTC)
+            qs = qs.filter(date__range=(start_d, end_d)).order_by('date')
+            if parsed_d < now.date():
+                is_historical_day = True
+        except ValueError:
+            qs = qs.order_by('date')
 
     raw_matches = list(qs[:120])
     
@@ -568,8 +581,16 @@ def vip_games_list_view(request):
         })
 
     # ── KPIs Estatísticos Auditados Reais (Global e por Mercado Selecionado) ──
-    # Amostragens de jogos resolvidos (24h, 7d e 30d)
-    fin_today = list(Match.objects.filter(status__in=['Finished', 'FT'], home_score__isnull=False, away_score__isnull=False, date__gte=now - timedelta(hours=24)))
+    # Amostragens de jogos resolvidos para o período selecionado
+    if is_historical_day:
+        start_q = datetime.combine(query_date, datetime.min.time(), tzinfo=pytz.UTC)
+        end_q = datetime.combine(query_date, datetime.max.time(), tzinfo=pytz.UTC)
+        fin_today = list(Match.objects.filter(status__in=['Finished', 'FT'], home_score__isnull=False, away_score__isnull=False, date__range=(start_q, end_q)))
+        day_period_label = f"Em {query_date.strftime('%d/%m')}"
+    else:
+        fin_today = list(Match.objects.filter(status__in=['Finished', 'FT'], home_score__isnull=False, away_score__isnull=False, date__gte=now - timedelta(hours=24)))
+        day_period_label = "Hoje"
+
     fin_7d = list(Match.objects.filter(status__in=['Finished', 'FT'], home_score__isnull=False, away_score__isnull=False, date__gte=now - timedelta(days=7)))
     fin_30d = list(Match.objects.filter(status__in=['Finished', 'FT'], home_score__isnull=False, away_score__isnull=False, date__gte=now - timedelta(days=30)))
 
@@ -708,6 +729,8 @@ def vip_games_list_view(request):
 
     stats_kpi = {
         'market_label': market_label,
+        'day_period_label': day_period_label,
+        'is_historical_day': is_historical_day,
         'kpi_count': kpi_count,
         'resolved_today': resolved_m_today,
         'greens_today': greens_m_today,
@@ -718,6 +741,10 @@ def vip_games_list_view(request):
         'roi': roi
     }
 
+    # Data formatada para a barra lateral
+    display_date = query_date.strftime('%d/%m') if (is_historical_day or status_filter not in ['today', None, '']) else now.strftime('%d set.')
+    date_badge_label = f"Em {display_date}" if is_historical_day else (f"Amanhã · {display_date}" if status_filter == 'tomorrow' else f"Hoje · {display_date}")
+
     return render(request, 'vip_games_list.html', {
         'top_picks': top_picks_sorted,
         'market_sections': market_sections,
@@ -726,8 +753,9 @@ def vip_games_list_view(request):
         'selected_market': selected_market,
         'live_count': live_count,
         'stats_kpi': stats_kpi,
+        'is_historical_day': is_historical_day,
         'total_count': len(processed_matches),
-        'server_date': now.strftime('%d set.')
+        'server_date': date_badge_label
     })
 
 def vip_hub_view(request):
