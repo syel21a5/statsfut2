@@ -21,13 +21,13 @@
       </div>
       
       <!-- Carrossel de Dias -->
-      <div class="grid grid-cols-4 sm:grid-cols-7 xl:grid-cols-4 gap-1.5">
+      <div class="grid grid-cols-7 gap-1">
         {% for d in day_selectors %}
-        <a href="?status={% if d.is_today %}today{% else %}tomorrow{% endif %}"
-           class="flex flex-col items-center justify-center py-2 px-1 rounded-lg text-center transition-all duration-150
-                  {% if d.is_today %}bg-[#00b4d8] text-white shadow-md shadow-[#00b4d8]/20 font-bold{% else %}bg-[#0e1217] text-gray-400 hover:text-gray-200 hover:bg-gray-800/80{% endif %}">
+        <a href="?status={% if d.is_today %}today{% elif d.is_tomorrow %}tomorrow{% else %}{{ d.date_str }}{% endif %}"
+           class="flex flex-col items-center justify-center py-2 px-0.5 rounded-lg text-center transition-all duration-150
+                  {% if d.is_today and current_status == 'today' or current_status == d.date_str %}bg-[#00b4d8] text-white shadow-md shadow-[#00b4d8]/20 font-bold{% else %}bg-[#0e1217] text-gray-400 hover:text-gray-200 hover:bg-gray-800/80{% endif %}">
           <span class="text-[9px] font-mono tracking-tighter uppercase">{{ d.weekday }}</span>
-          <span class="text-sm font-extrabold leading-tight mt-0.5">{{ d.day_num }}</span>
+          <span class="text-xs font-extrabold leading-tight mt-0.5">{{ d.day_num }}</span>
           {% if d.is_today %}<span class="w-1 h-1 rounded-full bg-white mt-1"></span>{% endif %}
         </a>
         {% endfor %}
@@ -47,7 +47,7 @@
       </div>
 
       <!-- Item Todos -->
-      <a href="?market=all" class="flex items-center justify-between px-3 py-2 rounded-lg bg-[#1c232d] text-white font-medium text-xs border border-cyan-500/30">
+      <a href="?market=all{% if current_status %}&status={{ current_status }}{% endif %}" class="flex items-center justify-between px-3 py-2 rounded-lg {% if not selected_market or selected_market == 'all' %}bg-[#1c232d] text-white border border-cyan-500/40 font-bold{% else %}text-gray-400 hover:text-white hover:bg-gray-800/50{% endif %} font-medium text-xs">
         <div class="flex items-center gap-2">
           <i class="fa-solid fa-layer-group text-cyan-400 text-xs"></i>
           <span>Todos os mercados</span>
@@ -62,17 +62,17 @@
           <span>Gols</span>
         </div>
         <div class="space-y-1">
-          <a href="#gols_o15" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs text-gray-300 hover:text-white hover:bg-gray-800/50 transition">
+          <a href="?market=gols_o15{% if current_status %}&status={{ current_status }}{% endif %}" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs {% if selected_market == 'gols_o15' %}bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40{% else %}text-gray-300 hover:text-white hover:bg-gray-800/50{% endif %} transition">
             <span>Over 1.5 FT</span>
-            <span class="font-mono text-gray-500 text-[11px]">88%</span>
+            <span class="font-mono text-emerald-400 text-[11px] font-bold">88%</span>
           </a>
-          <a href="#gols_o25" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs text-gray-300 hover:text-white hover:bg-gray-800/50 transition">
+          <a href="?market=gols_o25{% if current_status %}&status={{ current_status }}{% endif %}" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs {% if selected_market == 'gols_o25' %}bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40{% else %}text-gray-300 hover:text-white hover:bg-gray-800/50{% endif %} transition">
             <span>Over 2.5 FT</span>
-            <span class="font-mono text-gray-500 text-[11px]">62%</span>
+            <span class="font-mono text-gray-400 text-[11px]">62%</span>
           </a>
-          <a href="#gols_btts" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs text-gray-300 hover:text-white hover:bg-gray-800/50 transition">
+          <a href="?market=gols_btts{% if current_status %}&status={{ current_status }}{% endif %}" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs {% if selected_market == 'gols_btts' %}bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40{% else %}text-gray-300 hover:text-white hover:bg-gray-800/50{% endif %} transition">
             <span>Ambos marcam</span>
-            <span class="font-mono text-gray-500 text-[11px]">59%</span>
+            <span class="font-mono text-amber-400 text-[11px] font-bold">59%</span>
           </a>
         </div>
       </div>
@@ -84,17 +84,13 @@
           <span>Escanteios</span>
         </div>
         <div class="space-y-1">
-          <a href="#cantos_o85" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs text-gray-300 hover:text-white hover:bg-gray-800/50 transition">
+          <a href="?market=cantos_o85{% if current_status %}&status={{ current_status }}{% endif %}" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs {% if selected_market == 'cantos_o85' %}bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40{% else %}text-gray-300 hover:text-white hover:bg-gray-800/50{% endif %} transition">
             <span>Over 8.5 FT</span>
-            <span class="font-mono text-gray-500 text-[11px]">81%</span>
+            <span class="font-mono text-cyan-400 text-[11px] font-bold">81%</span>
           </a>
-          <a href="#cantos_75ft" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs text-gray-300 hover:text-white hover:bg-gray-800/50 transition">
+          <a href="?market=cantos_75ft{% if current_status %}&status={{ current_status }}{% endif %}" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs {% if selected_market == 'cantos_75ft' %}bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40{% else %}text-gray-300 hover:text-white hover:bg-gray-800/50{% endif %} transition">
             <span>Janela 75' FT</span>
-            <span class="font-mono text-gray-500 text-[11px]">85%</span>
-          </a>
-          <a href="#cantos_37ht" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs text-gray-300 hover:text-white hover:bg-gray-800/50 transition">
-            <span>Janela 37' HT</span>
-            <span class="font-mono text-gray-500 text-[11px]">72%</span>
+            <span class="font-mono text-purple-400 text-[11px] font-bold">85%</span>
           </a>
         </div>
       </div>
@@ -106,13 +102,9 @@
           <span>Resultado / Lay</span>
         </div>
         <div class="space-y-1">
-          <a href="#lay_placar" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs text-gray-300 hover:text-white hover:bg-gray-800/50 transition">
-            <span>Lay 0-1 (96%+)</span>
+          <a href="?market=lays{% if current_status %}&status={{ current_status }}{% endif %}" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs {% if selected_market == 'lays' %}bg-rose-500/20 text-rose-300 font-bold border border-rose-500/40{% else %}text-gray-300 hover:text-white hover:bg-gray-800/50{% endif %} transition">
+            <span>Lay Placar (95%+)</span>
             <span class="font-mono text-emerald-400 text-[11px] font-bold">96.8%</span>
-          </a>
-          <a href="#casa_vence" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs text-gray-300 hover:text-white hover:bg-gray-800/50 transition">
-            <span>Dupla Chance 1X</span>
-            <span class="font-mono text-gray-500 text-[11px]">91%</span>
           </a>
         </div>
       </div>
@@ -142,11 +134,11 @@
       <div class="bg-[#14181f] border border-gray-800/60 rounded-xl p-3.5 flex flex-col justify-between shadow-lg relative overflow-hidden">
         <div>
           <span class="text-[11px] font-medium text-gray-400 block">Acerto hoje</span>
-          <span class="text-2xl font-black text-[#00d26a] font-mono mt-1 block">86%</span>
-          <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">Bilhetes &amp; Sniper</span>
+          <span class="text-2xl font-black text-[#00d26a] font-mono mt-1 block">{{ stats_kpi.winrate_today|default:"78" }}%</span>
+          <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">{{ stats_kpi.greens_today|default:"18" }} / {{ stats_kpi.resolved_today|default:"23" }} resolvidos</span>
         </div>
         <div class="w-full bg-gray-800 h-1 rounded-full mt-3 overflow-hidden">
-          <div class="bg-[#00d26a] h-full w-[86%]"></div>
+          <div class="bg-[#00d26a] h-full w-[78%]"></div>
         </div>
       </div>
 
@@ -154,11 +146,11 @@
       <div class="bg-[#14181f] border border-gray-800/60 rounded-xl p-3.5 flex flex-col justify-between shadow-lg relative overflow-hidden">
         <div>
           <span class="text-[11px] font-medium text-gray-400 block">Acerto 7 dias</span>
-          <span class="text-2xl font-black text-white font-mono mt-1 block">84.2%</span>
-          <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">Média móvel consolidada</span>
+          <span class="text-2xl font-black text-white font-mono mt-1 block">81.4%</span>
+          <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">Média móvel 7d</span>
         </div>
         <div class="w-full bg-gray-800 h-1 rounded-full mt-3 overflow-hidden">
-          <div class="bg-cyan-500 h-full w-[84%]"></div>
+          <div class="bg-cyan-500 h-full w-[81%]"></div>
         </div>
       </div>
 
@@ -166,11 +158,11 @@
       <div class="bg-[#14181f] border border-gray-800/60 rounded-xl p-3.5 flex flex-col justify-between shadow-lg relative overflow-hidden">
         <div>
           <span class="text-[11px] font-medium text-gray-400 block">Acerto 30 dias</span>
-          <span class="text-2xl font-black text-white font-mono mt-1 block">82.8%</span>
+          <span class="text-2xl font-black text-white font-mono mt-1 block">79.6%</span>
           <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">Todos os mercados</span>
         </div>
         <div class="w-full bg-gray-800 h-1 rounded-full mt-3 overflow-hidden">
-          <div class="bg-purple-500 h-full w-[82%]"></div>
+          <div class="bg-purple-500 h-full w-[80%]"></div>
         </div>
       </div>
 
@@ -178,7 +170,7 @@
       <div class="bg-[#14181f] border border-gray-800/60 rounded-xl p-3.5 flex flex-col justify-between shadow-lg relative overflow-hidden col-span-2 md:col-span-1">
         <div>
           <span class="text-[11px] font-medium text-gray-400 block">ROI Odd Justa</span>
-          <span class="text-2xl font-black text-[#00d26a] font-mono mt-1 block">+14.8%</span>
+          <span class="text-2xl font-black text-[#00d26a] font-mono mt-1 block">+12.4%</span>
           <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">Stake fixa 1 unid.</span>
         </div>
         <div class="w-full bg-gray-800 h-1 rounded-full mt-3 overflow-hidden">
@@ -345,9 +337,9 @@
 
               <!-- Sinal Casa · Fora -->
               <td class="py-3 px-4 text-center font-mono text-[11px]">
-                <span class="text-emerald-400 font-bold">100%</span>
+                <span class="{% if m.home_spec_pct >= 70 %}text-emerald-400 font-bold{% elif m.home_spec_pct >= 50 %}text-cyan-400{% else %}text-gray-400{% endif %}">{{ m.home_spec_pct }}%</span>
                 <span class="text-gray-600 mx-1">&middot;</span>
-                <span class="text-emerald-400 font-bold">90%</span>
+                <span class="{% if m.away_spec_pct >= 70 %}text-emerald-400 font-bold{% elif m.away_spec_pct >= 50 %}text-cyan-400{% else %}text-gray-400{% endif %}">{{ m.away_spec_pct }}%</span>
               </td>
 
               <!-- Previsão com Barra Sutil -->
@@ -356,14 +348,16 @@
                   <span class="text-[#00d26a] font-bold text-sm">{{ m.p_o15 }}%</span>
                 {% elif sec.id == 'cantos_75ft' %}
                   <span class="text-purple-400 font-bold text-sm">{{ m.p_c75ft }}%</span>
-                {% else %}
+                {% elif sec.id == 'cantos_o85' %}
                   <span class="text-cyan-400 font-bold text-sm">{{ m.p_c85 }}%</span>
+                {% else %}
+                  <span class="text-emerald-400 font-bold text-sm">{{ m.p_lay }}%</span>
                 {% endif %}
               </td>
 
               <!-- Odd Justa -->
               <td class="py-3 px-4 text-center font-mono text-gray-400 text-xs">
-                {% if sec.type == 'gols' %}{{ m.fair_o15 }}{% elif sec.id == 'cantos_75ft' %}{{ m.fair_c75ft }}{% else %}{{ m.fair_c85 }}{% endif %}
+                {% if sec.type == 'gols' %}{{ m.fair_o15 }}{% elif sec.id == 'cantos_75ft' %}{{ m.fair_c75ft }}{% elif sec.id == 'cantos_o85' %}{{ m.fair_c85 }}{% else %}{{ m.fair_lay }}{% endif %}
               </td>
 
               <!-- Ação / Status -->

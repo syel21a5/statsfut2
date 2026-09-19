@@ -87,18 +87,17 @@
 
       <!-- Links de Navegação Principal (Estilo CornerPro) -->
       <nav class="hidden lg:flex items-center gap-6 font-mono text-xs font-semibold tracking-wider">
-        <a href="/vip/jogos/" class="text-white hover:text-[#00b4d8] transition">TODOS JOGOS</a>
-        <a href="/vip/jogos/?status=live" class="text-rose-400 hover:text-rose-300 transition flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-500/10 border border-rose-500/20 shadow-sm">
+        <a href="/vip/jogos/" class="{% if not current_status or current_status == 'today' or current_status == 'tomorrow' or current_status == 'finished' %}{% if not selected_market or selected_market == 'all' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-white hover:text-[#00b4d8]{% endif %}{% else %}text-white hover:text-[#00b4d8]{% endif %} transition">TODOS JOGOS</a>
+        <a href="/vip/jogos/?status=live" class="{% if current_status == 'live' %}text-rose-300 bg-rose-500/25 border-rose-500/50{% else %}text-rose-400 hover:text-rose-300 bg-rose-500/10 border-rose-500/20{% endif %} transition flex items-center gap-1.5 px-2.5 py-1 rounded-lg border shadow-sm">
           <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
           <span>AO VIVO</span>
           <span class="ml-0.5 px-1.5 py-0.2 rounded-full bg-rose-500 text-white font-bold text-[10px]">
-            {{ live_count|default:"8" }}
+            {{ live_count|default:"0" }}
           </span>
         </a>
-        <a href="/" class="text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1">PREVISÕES</a>
-        <a href="/vip/jogos/?market=gols" class="text-gray-400 hover:text-white transition">GOLS</a>
-        <a href="/vip/jogos/?market=cantos" class="text-gray-400 hover:text-white transition">ESCANTEIOS</a>
-        <a href="/vip/jogos/?market=lays" class="text-gray-400 hover:text-white transition">LAY MERCADOS</a>
+        <a href="/vip/jogos/?market=gols" class="{% if selected_market == 'gols' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-gray-400 hover:text-white{% endif %} transition">GOLS</a>
+        <a href="/vip/jogos/?market=cantos" class="{% if selected_market == 'cantos' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-gray-400 hover:text-white{% endif %} transition">ESCANTEIOS</a>
+        <a href="/vip/jogos/?market=lays" class="{% if selected_market == 'lays' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-gray-400 hover:text-white{% endif %} transition">LAY MERCADOS</a>
       </nav>
 
       <!-- Lado Direito: Status / Sair -->
