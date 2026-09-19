@@ -766,7 +766,7 @@
             </tr>
             <tr>
               <td class="py-2.5 font-bold text-white">+0.5 AH</td>
-              <td class="py-2.5 text-center font-bold text-[#00d26a] text-sm">90% (Forte)</td>
+              <td class="py-2.5 text-center font-bold text-[#00d26a] text-sm">90% (Strong)</td>
               <td class="py-2.5 text-center text-gray-400">60%</td>
             </tr>
             <tr>
@@ -792,7 +792,7 @@
           <thead class="border-b border-gray-800/60 text-gray-500 text-[10px] uppercase">
             <tr>
               <th class="py-2">Goal Range</th>
-              <th class="py-2 text-center">Probabilidade</th>
+              <th class="py-2 text-center">Probability</th>
               <th class="py-2 text-right">Fair Odd</th>
             </tr>
           </thead>
@@ -826,27 +826,27 @@
         </table>
       </div>
 
-      <!-- 4. Primeiro a Marcar e Desfecho -->
+      <!-- 4. First to Score & Outcome -->
       <div class="bg-[#14181f] border border-gray-800/70 rounded-xl p-5 shadow-lg space-y-4">
         <div class="flex items-center gap-2 border-b border-gray-800/70 pb-3">
           <span class="w-1.5 h-4 bg-[#00b4d8] rounded-full"></span>
-          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Primeiro a Marcar e Desfecho</h3>
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider">First to Score & Outcome</h3>
         </div>
 
         <div class="grid grid-cols-2 gap-3 font-mono text-xs">
           <div class="p-3 rounded bg-[#0e1217] border border-gray-800 space-y-1.5">
             <span class="text-cyan-400 font-bold block">{{ match.home_team.name }}</span>
             <div class="flex justify-between text-gray-300"><span>Opens score:</span> <strong class="text-white">68%</strong></div>
-            <div class="flex justify-between text-emerald-400"><span>... e vence:</span> <strong>80%</strong></div>
-            <div class="flex justify-between text-amber-400"><span>... e empata:</span> <strong>20%</strong></div>
-            <div class="flex justify-between text-rose-400"><span>... e perde:</span> <strong>0%</strong></div>
+            <div class="flex justify-between text-emerald-400"><span>... and wins:</span> <strong>80%</strong></div>
+            <div class="flex justify-between text-amber-400"><span>... and draws:</span> <strong>20%</strong></div>
+            <div class="flex justify-between text-rose-400"><span>... and loses:</span> <strong>0%</strong></div>
           </div>
           <div class="p-3 rounded bg-[#0e1217] border border-gray-800 space-y-1.5">
             <span class="text-purple-400 font-bold block">{{ match.away_team.name }}</span>
             <div class="flex justify-between text-gray-300"><span>Opens score:</span> <strong class="text-white">32%</strong></div>
-            <div class="flex justify-between text-emerald-400"><span>... e vence:</span> <strong>33%</strong></div>
-            <div class="flex justify-between text-amber-400"><span>... e empata:</span> <strong>67%</strong></div>
-            <div class="flex justify-between text-rose-400"><span>... e perde:</span> <strong>0%</strong></div>
+            <div class="flex justify-between text-emerald-400"><span>... and wins:</span> <strong>33%</strong></div>
+            <div class="flex justify-between text-amber-400"><span>... and draws:</span> <strong>67%</strong></div>
+            <div class="flex justify-between text-rose-400"><span>... and loses:</span> <strong>0%</strong></div>
           </div>
         </div>
       </div>
@@ -942,7 +942,7 @@
           </div>
           <div class="grid grid-cols-3 py-2 px-3 rounded bg-emerald-500/10 border border-emerald-500/20 items-center text-center">
             <span class="text-left text-[#00d26a] font-bold">60% (2M/2S)</span>
-            <span class="font-bold text-[#00d26a]">76' - FT (PICO FINAL)</span>
+            <span class="font-bold text-[#00d26a]">76' - FT (PEAK WINDOW)</span>
             <span class="text-right text-[#00d26a] font-bold">70% (3M/4S)</span>
           </div>
         </div>
@@ -955,7 +955,7 @@
             <span class="w-1.5 h-4 bg-cyan-400 rounded-full"></span>
             <h3 class="text-sm font-bold text-white uppercase tracking-wider">Half Distribution &amp; Winning Margins</h3>
           </div>
-          <span class="text-xs font-mono text-cyan-400">1ºT vs 2ºT</span>
+          <span class="text-xs font-mono text-cyan-400">1H vs 2H</span>
         </div>
 
         <div class="space-y-2 font-mono text-xs">
@@ -1003,7 +1003,7 @@
             <span class="w-1.5 h-4 bg-purple-400 rounded-full"></span>
             <h3 class="text-sm font-bold text-white uppercase tracking-wider">Combos &middot; Winner + Goals</h3>
           </div>
-          <span class="text-xs font-mono text-purple-400">Alta Odd</span>
+          <span class="text-xs font-mono text-purple-400">High Odds</span>
         </div>
 
         <table class="w-full font-mono text-xs text-left">
@@ -1295,30 +1295,30 @@
           <thead class="border-b border-gray-800/60 text-gray-500 text-[10px] uppercase">
             <tr>
               <th class="py-2">Target Race</th>
-              <th class="py-2 text-center text-cyan-400">{{ match.home_team.name|slice:":10" }} Vence</th>
-              <th class="py-2 text-center text-purple-400">{{ match.away_team.name|slice:":10" }} Vence</th>
+              <th class="py-2 text-center text-cyan-400">{{ match.home_team.name|slice:":10" }} Wins</th>
+              <th class="py-2 text-center text-purple-400">{{ match.away_team.name|slice:":10" }} Wins</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-800/40 text-gray-200">
             <tr>
               <td class="py-2.5 font-bold text-white">Race to 3 Corners</td>
-              <td class="py-2.5 text-center font-bold text-emerald-400">80% Vence</td>
-              <td class="py-2.5 text-center text-gray-400">30% Vence</td>
+              <td class="py-2.5 text-center font-bold text-emerald-400">80% Wins</td>
+              <td class="py-2.5 text-center text-gray-400">30% Wins</td>
             </tr>
             <tr>
               <td class="py-2.5 font-bold text-white">Race to 5 Corners</td>
-              <td class="py-2.5 text-center font-bold text-cyan-400">60% Vence</td>
-              <td class="py-2.5 text-center text-gray-400">40% Vence</td>
+              <td class="py-2.5 text-center font-bold text-cyan-400">60% Wins</td>
+              <td class="py-2.5 text-center text-gray-400">40% Wins</td>
             </tr>
             <tr>
               <td class="py-2.5 font-bold text-white">Race to 7 Corners</td>
-              <td class="py-2.5 text-center font-bold text-white">40% Vence</td>
-              <td class="py-2.5 text-center text-gray-400">30% Vence</td>
+              <td class="py-2.5 text-center font-bold text-white">40% Wins</td>
+              <td class="py-2.5 text-center text-gray-400">30% Wins</td>
             </tr>
             <tr>
               <td class="py-2.5 font-bold text-white">Race to 9 Corners</td>
-              <td class="py-2.5 text-center font-bold text-gray-400">20% Vence</td>
-              <td class="py-2.5 text-center text-gray-400">30% Vence</td>
+              <td class="py-2.5 text-center font-bold text-gray-400">20% Wins</td>
+              <td class="py-2.5 text-center text-gray-400">30% Wins</td>
             </tr>
           </tbody>
         </table>
@@ -1411,7 +1411,7 @@
           <thead class="border-b border-gray-800/60 text-gray-500 text-[10px] uppercase">
             <tr>
               <th class="py-2">Finishing Line</th>
-              <th class="py-2 text-center">Probabilidade</th>
+              <th class="py-2 text-center">Probability</th>
               <th class="py-2 text-right">Veredicto</th>
             </tr>
           </thead>
@@ -1710,7 +1710,7 @@
             <td class="py-3 px-4 text-center text-cyan-400 font-bold">&bull;&bull;&bull;&bull;&bull;</td>
           </tr>
           <tr class="hover:bg-gray-800/30 transition">
-            <td class="py-3 px-4 font-bold text-white">Home Vence (1X2)</td>
+            <td class="py-3 px-4 font-bold text-white">Home Win (1X2)</td>
             <td class="py-3 px-4 text-center text-gray-300">46%</td>
             <td class="py-3 px-4 text-center font-bold text-white">2.20</td>
             <td class="py-3 px-4 text-center text-gray-400">2.17</td>
