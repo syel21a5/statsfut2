@@ -790,7 +790,7 @@ def vip_games_list_view(request):
 
     # Data formatada para a barra lateral
     display_date = query_date.strftime('%d/%m') if (is_historical_day or status_filter not in ['today', None, '']) else now.strftime('%d set.')
-    date_badge_label = f"Em {display_date}" if is_historical_day else (f"Amanhã · {display_date}" if status_filter == 'tomorrow' else f"Hoje · {display_date}")
+    date_badge_label = f"On {display_date}" if is_historical_day else (f"Tomorrow · {display_date}" if status_filter == 'tomorrow' else f"Today · {display_date}")
 
     return render(request, 'vip_games_list.html', {
         'top_picks': top_picks_sorted,
