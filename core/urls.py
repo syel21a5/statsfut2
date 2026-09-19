@@ -43,6 +43,12 @@ urlpatterns += [
 i18n_routes = [
     path('admin/', admin.site.urls),
     path('members/', include('members.urls')),
+    path('vip/', vip_views.vip_games_list_view, name='vip_hub_i18n'),
+    path('vip/jogos/', vip_views.vip_games_list_view, name='vip_games_list_i18n'),
+    path('vip/analise/<int:match_id>/', vip_views.vip_match_analysis_view, name='vip_match_analysis_i18n'),
+    path('vip/live-radar/', vip_views.vip_live_radar_view, name='vip_live_radar_i18n'),
+    path('vip/bilhetes/', vip_views.vip_tickets_view, name='vip_tickets_i18n'),
+    path('vip/gestao/', vip_views.vip_management_view, name='vip_management_i18n'),
 ]
 
 if 'video_maker' in settings.INSTALLED_APPS:
