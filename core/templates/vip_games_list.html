@@ -377,9 +377,16 @@
                 data-league="{{ m.league.name|lower }}"
                 data-prob="{% if sec.id == 'gols_o15' %}{{ m.p_o15 }}{% elif sec.id == 'gols_o25' %}{{ m.p_o25 }}{% elif sec.id == 'gols_btts' %}{{ m.p_btts }}{% elif sec.id == 'gols_u35' %}{{ m.p_u35 }}{% elif sec.id == 'cantos_o75' %}{{ m.p_c75 }}{% elif sec.id == 'cantos_o85' %}{{ m.p_c85 }}{% elif sec.id == 'cantos_75ft' %}{{ m.p_c75ft }}{% else %}{{ m.p_lay }}{% endif %}">
               
-              <!-- Hora -->
+              <!-- Hora & Status Ao Vivo Pulsante -->
               <td class="py-3 px-4 font-mono text-gray-300 text-[11px] whitespace-nowrap">
-                <span data-utc-time="{{ m.date|date:'c' }}">{{ m.date|date:"H:i" }}</span>
+                {% if m.status in '1H 2H HT LIVE' or m.is_live %}
+                  <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-400 font-bold text-[10px]">
+                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+                    <span>LIVE {% if m.elapsed_time %}{{ m.elapsed_time }}'{% endif %}</span>
+                  </div>
+                {% else %}
+                  <span data-utc-time="{{ m.date|date:'c' }}">{{ m.date|date:"H:i" }}</span>
+                {% endif %}
               </td>
 
               <!-- Campeonato -->
@@ -411,7 +418,12 @@
                     Against: {{ m.lay_score }}
                   </span>
                 {% endif %}
-                {% if m.is_finished %}
+                {% if m.status in '1H 2H HT LIVE' or m.is_live %}
+                  <span class="ml-2 font-mono text-[11px] px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold inline-flex items-center gap-1.5 shadow-sm">
+                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+                    <span>{{ m.home_score|default:"0" }} - {{ m.away_score|default:"0" }}</span>
+                  </span>
+                {% elif m.is_finished %}
                 <span class="ml-2 font-mono text-[11px] px-1.5 py-0.5 rounded bg-gray-800 text-gray-200 border border-gray-700">
                   {{ m.home_score }} - {{ m.away_score }}
                 </span>
@@ -686,8 +698,15 @@
     `;
 
     fetch('/live-radar/' + matchId + '/')
-      .then(r => r.text())
+      .then(r => {
+        if (r.status === 403 || r.redirected || r.url.includes('vip-upgrade')) {
+          window.location.href = '/vip-upgrade';
+          return null;
+        }
+        return r.text();
+      })
       .then(html => {
+        if (!html) return;
         content.innerHTML = html;
         const closeBtn = content.querySelector('[data-bs-dismiss="modal"]');
         if (closeBtn) {

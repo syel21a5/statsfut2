@@ -291,7 +291,7 @@ class VIPProxyHandler(http.server.BaseHTTPRequestHandler):
         # Assinante Popular: Tem acesso liberado à Lista de Jogos e Análises Estatísticas (/vip/jogos/),
         # mas as ferramentas exclusivas de alta tecnologia (Radar, Bots, Calculadora Hedge e Bilhetes) bloqueiam e mostram a tela de Upgrade!
         if plan_type != 'vip':
-            restricted_vip_routes = ['/vip/radar/', '/vip/live-radar/', '/vip/bots/', '/vip/ferramentas/', '/vip/bilhetes/']
+            restricted_vip_routes = ['/vip/radar/', '/vip/live-radar/', '/vip/bots/', '/vip/ferramentas/', '/vip/bilhetes/', '/live-radar/']
             # Se tentar acessar uma das ferramentas High Ticket do VIP Total:
             for route in restricted_vip_routes:
                 if self.path.startswith(route) or f"/{route.strip('/')}" in self.path:
