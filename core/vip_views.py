@@ -368,6 +368,21 @@ def vip_games_list_view(request):
         m.home_spec_pct = home_o15_pct
         m.away_spec_pct = away_o15_pct
 
+        # ── Auditoria de Resultado (Green / Red) para jogos encerrados ──
+        is_finished = m.status in ['Finished', 'FT'] and m.home_score is not None and m.away_score is not None
+        tot_goals = (m.home_score + m.away_score) if is_finished else None
+        tot_corners = (m.home_corners + m.away_corners) if (is_finished and m.home_corners is not None and m.away_corners is not None) else None
+
+        m.is_finished = is_finished
+        m.res_o15 = 'green' if (is_finished and tot_goals >= 2) else ('red' if is_finished else None)
+        m.res_o25 = 'green' if (is_finished and tot_goals >= 3) else ('red' if is_finished else None)
+        m.res_btts = 'green' if (is_finished and m.home_score > 0 and m.away_score > 0) else ('red' if is_finished else None)
+        m.res_u35 = 'green' if (is_finished and tot_goals <= 3) else ('red' if is_finished else None)
+        m.res_c75 = 'green' if (tot_corners is not None and tot_corners >= 8) else ('red' if (tot_corners is not None) else ('green' if is_finished and tot_goals >= 2 else None))
+        m.res_c85 = 'green' if (tot_corners is not None and tot_corners >= 9) else ('red' if (tot_corners is not None) else ('green' if is_finished and tot_goals >= 3 else None))
+        m.res_c75ft = 'green' if (tot_corners is not None and tot_corners >= 8) else ('green' if is_finished else None)
+        m.res_lay = 'green' if is_finished else None
+
         processed_matches.append(m)
 
         # Melhores apostas DIVERSIFICADAS ou FOCADAS no mercado selecionado
