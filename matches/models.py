@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.utils.text import slugify
 from django.core.cache import cache
 
@@ -596,3 +597,60 @@ class LiveMatchSnapshot(models.Model):
 
     def __str__(self):
         return f"Snapshot {self.match} at {self.minute}'"
+
+
+class UserBotStrategy(models.Model):
+    """
+    Estratégia personalizada de robô ao vivo criada pelo assinante VIP (Bot Studio).
+    Dispara alertas privados no Telegram do usuário quando as condições in-play batem.
+    """
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='bot_strategies', null=True, blank=True)
+    title = models.CharField(max_length=150, help_text="Nome da Estratégia (ex: Sniper de Gol no Final)")
+    telegram_chat_id = models.CharField(max_length=100, help_text="Chat ID ou @username do Telegram")
+    is_active = models.BooleanField(default=True)
+
+    # Critérios de tempo de jogo
+    min_minute = models.IntegerField(default=70, help_text="Minuto mínimo da partida")
+    max_minute = models.IntegerField(default=85, help_text="Minuto máximo da partida")
+
+    # Critérios de placar
+    SCORE_CONDITION_CHOICES = [
+        ('any', 'Qualquer Placar'),
+        ('draw', 'Apenas Jogos Empatados (0x0, 1x1, 2x2)'),
+        ('home_losing_1', 'Mandante Perdendo por 1 Gol'),
+        ('away_losing_1', 'Visitante Perdendo por 1 Gol'),
+        ('fav_losing', 'Favorito Pré-Jogo Perdendo'),
+    ]
+    score_condition = models.CharField(max_length=25, choices=SCORE_CONDITION_CHOICES, default='any')
+    max_total_goals = models.IntegerField(null=True, blank=True, help_text="Máximo de gols na partida (ex: 2 para jogos Under)")
+
+    # Critérios de telemetria / pressão in-play
+    min_pressure_5m = models.IntegerField(default=60, help_text="Pressão mínima nos últimos 5 min (%)")
+    min_total_corners = models.IntegerField(default=0, help_text="Mínimo de escanteios totais")
+    min_total_shots = models.IntegerField(default=0, help_text="Mínimo de finalizações totais")
+    min_shots_per_minute = models.FloatField(default=0.0, help_text="Ritmo mínimo de finalizações por minuto (APM)")
+
+    # Mercado e recomendação sugerida no alerta
+    market_suggestion = models.CharField(max_length=100, default="Over Gols Limite", help_text="Sugestão de entrada (ex: Over 0.5 FT, Over Cantos)")
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    total_alerts_sent = models.IntegerField(default=0)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.title} ({self.telegram_chat_id}) - {'Ativo' if self.is_active else 'Pausado'}"
+
+
+class UserBotAlertLog(models.Model):
+    """Registro de alertas já disparados para evitar spam na mesma partida."""
+    strategy = models.ForeignKey(UserBotStrategy, on_delete=models.CASCADE, related_name='alert_logs')
+    match = models.ForeignKey(Match, on_delete=models.CASCADE, related_name='bot_alert_logs')
+    minute_sent = models.IntegerField(default=0)
+    sent_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('strategy', 'match')
+

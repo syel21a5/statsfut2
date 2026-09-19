@@ -36,6 +36,7 @@ urlpatterns += [
     path('vip/analise/<int:match_id>/', vip_views.vip_match_analysis_view, name='vip_match_analysis'),
     path('vip/live-radar/', vip_views.vip_live_radar_view, name='vip_live_radar'),
     path('vip/radar/', vip_views.vip_live_radar_view, name='vip_radar'),
+    path('vip/bots/', vip_views.vip_bot_studio_view, name='vip_bots'),
     path('vip/bilhetes/', vip_views.vip_tickets_view, name='vip_tickets'),
     path('vip/gestao/', vip_views.vip_management_view, name='vip_management'),
 ]
@@ -49,6 +50,7 @@ i18n_routes = [
     path('vip/analise/<int:match_id>/', vip_views.vip_match_analysis_view, name='vip_match_analysis_i18n'),
     path('vip/live-radar/', vip_views.vip_live_radar_view, name='vip_live_radar_i18n'),
     path('vip/radar/', vip_views.vip_live_radar_view, name='vip_radar_i18n'),
+    path('vip/bots/', vip_views.vip_bot_studio_view, name='vip_bots_i18n'),
     path('vip/bilhetes/', vip_views.vip_tickets_view, name='vip_tickets_i18n'),
     path('vip/gestao/', vip_views.vip_management_view, name='vip_management_i18n'),
 ]

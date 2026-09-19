@@ -1109,3 +1109,69 @@ def vip_tickets_view(request):
 
 def vip_management_view(request):
     return render(request, 'base_vip.html', {'lang_prefix': get_lang_prefix(request)})
+
+def vip_bot_studio_view(request):
+    """
+    StatsFut VIP · Bot Studio & Telegram Alerter Hub (/vip/bots/)
+    Permite ao assinante VIP criar, pausar e gerenciar robôs com critérios ao vivo
+    de pressão, minutos, escanteios e placar para receber notificações no Telegram pessoal.
+    """
+    from matches.models import UserBotStrategy, UserBotAlertLog
+    from django.shortcuts import redirect
+    from django.contrib import messages
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        
+        if action == 'create':
+            title = request.POST.get('title', 'Meu Robô VIP')
+            telegram_chat_id = request.POST.get('telegram_chat_id', '').strip()
+            min_min = int(request.POST.get('min_minute') or 70)
+            max_min = int(request.POST.get('max_minute') or 88)
+            score_cond = request.POST.get('score_condition', 'any')
+            max_goals = request.POST.get('max_total_goals')
+            max_goals = int(max_goals) if max_goals else None
+            min_p5 = int(request.POST.get('min_pressure_5m') or 60)
+            min_corners = int(request.POST.get('min_total_corners') or 0)
+            min_shots = int(request.POST.get('min_total_shots') or 0)
+            market_sugg = request.POST.get('market_suggestion', 'Gol Limite / Cantos')
+
+            if telegram_chat_id:
+                UserBotStrategy.objects.create(
+                    user=request.user if request.user.is_authenticated else None,
+                    title=title,
+                    telegram_chat_id=telegram_chat_id,
+                    min_minute=min_min,
+                    max_minute=max_min,
+                    score_condition=score_cond,
+                    max_total_goals=max_goals,
+                    min_pressure_5m=min_p5,
+                    min_total_corners=min_corners,
+                    min_total_shots=min_shots,
+                    market_suggestion=market_sugg,
+                    is_active=True
+                )
+            return redirect(f"{get_lang_prefix(request)}/vip/bots/")
+
+        elif action == 'toggle':
+            bot_id = request.POST.get('bot_id')
+            bot = UserBotStrategy.objects.filter(id=bot_id).first()
+            if bot:
+                bot.is_active = not bot.is_active
+                bot.save(update_fields=['is_active'])
+            return redirect(f"{get_lang_prefix(request)}/vip/bots/")
+
+        elif action == 'delete':
+            bot_id = request.POST.get('bot_id')
+            UserBotStrategy.objects.filter(id=bot_id).delete()
+            return redirect(f"{get_lang_prefix(request)}/vip/bots/")
+
+    strategies = UserBotStrategy.objects.all().order_by('-created_at')
+    recent_logs = UserBotAlertLog.objects.select_related('strategy', 'match__home_team', 'match__away_team', 'match__league').order_by('-sent_at')[:15]
+
+    return render(request, 'vip_bot_studio.html', {
+        'strategies': strategies,
+        'recent_logs': recent_logs,
+        'active_bots_count': strategies.filter(is_active=True).count(),
+        'lang_prefix': get_lang_prefix(request),
+    })

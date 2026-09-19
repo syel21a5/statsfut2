@@ -1,0 +1,269 @@
+{% extends 'base_vip.html' %}
+{% load i18n %}
+
+{% block title %}Bot Studio & Live Strategy Automations · StatsFut VIP{% endblock %}
+
+{% block content %}
+<div class="max-w-[1600px] mx-auto px-4 sm:px-6 py-6 font-sans">
+
+  <!-- ═════════════════════════════════════════════════════════════════
+       HEADER EXECUTIVO: BOT STUDIO VIP
+       ═════════════════════════════════════════════════════════════════ -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-gray-800 pb-5">
+    <div>
+      <div class="flex items-center gap-2.5 mb-1.5 flex-wrap">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40 uppercase tracking-wider">
+          <i class="fa-solid fa-robot text-purple-400"></i>
+          BOT STUDIO & TELEGRAM ALERTER
+        </span>
+        <span class="text-xs font-mono text-gray-400">
+          Build custom in-play scanners & trigger instant private alerts
+        </span>
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center gap-2.5">
+        <span>Strategy Automations</span>
+        <span class="text-cyan-400 text-base font-mono font-normal">({{ active_bots_count }} bots active)</span>
+      </h1>
+    </div>
+
+    <!-- Botão de Criar Nova Estratégia -->
+    <div class="flex items-center gap-3">
+      <a href="#create-bot-modal" class="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold transition text-xs font-mono shadow-lg shadow-purple-950/40 flex items-center gap-2">
+        <i class="fa-solid fa-plus"></i>
+        <span>Create New Strategy Bot</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- ═════════════════════════════════════════════════════════════════
+         COLUNA ESQUERDA: LISTA DE ROBÔS ATIVOS (2 COLUNAS)
+         ═════════════════════════════════════════════════════════════════ -->
+    <div class="lg:col-span-2 space-y-4">
+      <div class="flex items-center justify-between font-mono text-xs text-gray-400 border-b border-gray-800/80 pb-2">
+        <span class="uppercase tracking-wider">Your Active In-Play Automations</span>
+        <span>Scanning live matches every 2 min</span>
+      </div>
+
+      {% if strategies %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {% for bot in strategies %}
+            <div class="bg-[#12161f] border {% if bot.is_active %}border-purple-500/40 shadow-purple-950/10{% else %}border-gray-800/80 opacity-70{% endif %} rounded-2xl p-5 shadow-xl transition relative overflow-hidden flex flex-col justify-between">
+              
+              <div class="absolute top-0 left-0 right-0 h-1 {% if bot.is_active %}bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-400{% else %}bg-gray-700{% endif %}"></div>
+
+              <div>
+                <div class="flex items-start justify-between gap-2 mb-2 pt-1">
+                  <div>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider {% if bot.is_active %}bg-emerald-500/15 text-emerald-400 border border-emerald-500/30{% else %}bg-gray-800 text-gray-400 border border-gray-700{% endif %}">
+                      {% if bot.is_active %}ACTIVE SCANNING{% else %}PAUSED{% endif %}
+                    </span>
+                    <h3 class="text-base font-black text-white mt-1.5">{{ bot.title }}</h3>
+                  </div>
+
+                  <div class="text-right shrink-0">
+                    <span class="text-[10px] font-mono text-gray-500 uppercase tracking-wider block">Target Channel</span>
+                    <span class="text-xs font-mono font-bold text-cyan-300">{{ bot.telegram_chat_id }}</span>
+                  </div>
+                </div>
+
+                <!-- Critérios da Regra -->
+                <div class="bg-[#0b0e14] border border-gray-800/80 rounded-xl p-3 my-3 font-mono text-xs space-y-1.5 text-gray-300">
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">Minute Window:</span>
+                    <strong class="text-white">{{ bot.min_minute }}' - {{ bot.max_minute }}'</strong>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">Score Rule:</span>
+                    <strong class="text-cyan-400">{{ bot.get_score_condition_display }}</strong>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">Min 5m Pressure:</span>
+                    <strong class="text-rose-400">&ge; {{ bot.min_pressure_5m }}%</strong>
+                  </div>
+                  {% if bot.min_total_corners %}
+                    <div class="flex justify-between">
+                      <span class="text-gray-500">Min Corners:</span>
+                      <strong class="text-amber-400">&ge; {{ bot.min_total_corners }}</strong>
+                    </div>
+                  {% endif %}
+                  {% if bot.min_total_shots %}
+                    <div class="flex justify-between">
+                      <span class="text-gray-500">Min Shots:</span>
+                      <strong class="text-emerald-400">&ge; {{ bot.min_total_shots }}</strong>
+                    </div>
+                  {% endif %}
+                  <div class="flex justify-between pt-1 border-t border-gray-800/60">
+                    <span class="text-gray-500">Suggested Bet:</span>
+                    <strong class="text-purple-300">{{ bot.market_suggestion }}</strong>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Ações do Robô: Pausar / Excluir / Estatísticas -->
+              <div class="pt-3 border-t border-gray-800/80 flex items-center justify-between text-xs font-mono">
+                <span class="text-gray-500 text-[11px]">
+                  Alerts fired: <strong class="text-white">{{ bot.total_alerts_sent }}</strong>
+                </span>
+
+                <div class="flex items-center gap-2">
+                  <form method="POST" action="">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="toggle">
+                    <input type="hidden" name="bot_id" value="{{ bot.id }}">
+                    <button type="submit" class="px-2.5 py-1 rounded-lg border border-gray-800 bg-gray-900 hover:bg-gray-800 text-gray-300 hover:text-white transition text-[11px]">
+                      {% if bot.is_active %}<i class="fa-solid fa-pause"></i> Pause{% else %}<i class="fa-solid fa-play"></i> Resume{% endif %}
+                    </button>
+                  </form>
+
+                  <form method="POST" action="" onsubmit="return confirm('Delete this strategy bot?');">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="bot_id" value="{{ bot.id }}">
+                    <button type="submit" class="px-2 py-1 rounded-lg border border-rose-900/40 bg-rose-950/20 hover:bg-rose-900/40 text-rose-400 transition text-[11px]">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="bg-[#12161f] border border-gray-800 rounded-2xl p-8 text-center">
+          <p class="text-sm font-mono text-gray-400">No strategy bots created yet.</p>
+        </div>
+      {% endif %}
+
+      <!-- ═════════════════════════════════════════════════════════════
+           LOGS DE ALERTAS DISPARADOS RECENTEMENTE
+           ═════════════════════════════════════════════════════════════ -->
+      <div class="mt-8">
+        <div class="flex items-center justify-between font-mono text-xs text-gray-400 border-b border-gray-800/80 pb-2 mb-3">
+          <span class="uppercase tracking-wider">Live Audit Trail (Last Telegram Alerts)</span>
+          <span class="text-purple-400">Real-time Telegram Dispatches</span>
+        </div>
+
+        {% if recent_logs %}
+          <div class="bg-[#12161f] border border-gray-800 rounded-2xl overflow-hidden font-mono text-xs">
+            <div class="divide-y divide-gray-800/80">
+              {% for log in recent_logs %}
+                <div class="p-3.5 flex items-center justify-between gap-3 hover:bg-black/20 transition">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-8 h-8 rounded-lg bg-purple-500/15 border border-purple-500/30 text-purple-300 flex items-center justify-center shrink-0">
+                      <i class="fa-brands fa-telegram"></i>
+                    </div>
+                    <div class="min-w-0">
+                      <div class="font-bold text-white truncate">
+                        {{ log.match.home_team.name }} vs {{ log.match.away_team.name }}
+                        <span class="text-gray-500 font-normal">({{ log.minute_sent }}')</span>
+                      </div>
+                      <div class="text-[11px] text-gray-400 truncate">
+                        Bot: <strong class="text-purple-300">{{ log.strategy.title }}</strong> &bull; {{ log.match.league.name }}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-right shrink-0 text-[11px] text-gray-500">
+                    {{ log.sent_at|date:"H:i:s" }}
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% else %}
+          <div class="bg-[#12161f] border border-gray-800/80 rounded-2xl p-6 text-center text-xs font-mono text-gray-500">
+            No live alerts fired yet today. When a match matches your rules, dispatches will appear here instantly.
+          </div>
+        {% endif %}
+      </div>
+
+    </div>
+
+    <!-- ═════════════════════════════════════════════════════════════════
+         COLUNA DIREITA: FORMULÁRIO DE CRIAÇÃO DE ROBÔ
+         ═════════════════════════════════════════════════════════════════ -->
+    <div class="bg-[#12161f] border border-purple-500/30 rounded-2xl p-5 shadow-2xl relative overflow-hidden h-fit" id="create-bot-modal">
+      <div class="flex items-center gap-2 mb-4 border-b border-gray-800 pb-3">
+        <div class="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-300 border border-purple-500/40 flex items-center justify-center text-xs">
+          <i class="fa-solid fa-plus"></i>
+        </div>
+        <h2 class="text-base font-black text-white">Create In-Play Bot</h2>
+      </div>
+
+      <form method="POST" action="" class="space-y-4 font-mono text-xs">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="create">
+
+        <div>
+          <label class="block text-gray-400 text-[11px] uppercase tracking-wider mb-1">Bot Strategy Title</label>
+          <input type="text" name="title" required placeholder="ex: Late Game Goal Sniper" class="w-full bg-[#0b0e14] border border-gray-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500 transition">
+        </div>
+
+        <div>
+          <label class="block text-gray-400 text-[11px] uppercase tracking-wider mb-1">Your Telegram Chat ID or @Channel</label>
+          <input type="text" name="telegram_chat_id" required placeholder="@my_alerts_channel or ID" class="w-full bg-[#0b0e14] border border-gray-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500 transition">
+          <span class="text-[10px] text-gray-500 mt-1 block">Your bot token sends alerts privately to this destination.</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-gray-400 text-[11px] uppercase tracking-wider mb-1">Min Minute</label>
+            <input type="number" name="min_minute" value="70" min="1" max="90" class="w-full bg-[#0b0e14] border border-gray-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500 transition">
+          </div>
+          <div>
+            <label class="block text-gray-400 text-[11px] uppercase tracking-wider mb-1">Max Minute</label>
+            <input type="number" name="max_minute" value="85" min="1" max="100" class="w-full bg-[#0b0e14] border border-gray-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500 transition">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-gray-400 text-[11px] uppercase tracking-wider mb-1">Score Condition</label>
+          <select name="score_condition" class="w-full bg-[#0b0e14] border border-gray-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500 transition">
+            <option value="any">Any Score</option>
+            <option value="draw" selected>Drawn Match (0-0, 1-1, 2-2)</option>
+            <option value="home_losing_1">Home Team Losing by 1 Goal</option>
+            <option value="away_losing_1">Away Team Losing by 1 Goal</option>
+            <option value="fav_losing">Pre-Match Favorite Losing/Drawing</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-gray-400 text-[11px] uppercase tracking-wider mb-1">Min 5m Pressure (%)</label>
+            <input type="number" name="min_pressure_5m" value="65" min="0" max="100" class="w-full bg-[#0b0e14] border border-gray-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500 transition">
+          </div>
+          <div>
+            <label class="block text-gray-400 text-[11px] uppercase tracking-wider mb-1">Max Goals in Match</label>
+            <input type="number" name="max_total_goals" placeholder="Leave empty for any" class="w-full bg-[#0b0e14] border border-gray-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500 transition">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-gray-400 text-[11px] uppercase tracking-wider mb-1">Min Corners Total</label>
+            <input type="number" name="min_total_corners" value="5" min="0" class="w-full bg-[#0b0e14] border border-gray-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500 transition">
+          </div>
+          <div>
+            <label class="block text-gray-400 text-[11px] uppercase tracking-wider mb-1">Min Shots Total</label>
+            <input type="number" name="min_total_shots" value="8" min="0" class="w-full bg-[#0b0e14] border border-gray-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500 transition">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-gray-400 text-[11px] uppercase tracking-wider mb-1">Suggested Market / Bet</label>
+          <input type="text" name="market_suggestion" value="Over 0.5 FT Goals / Next Goal" class="w-full bg-[#0b0e14] border border-gray-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500 transition">
+        </div>
+
+        <button type="submit" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold transition shadow-lg shadow-purple-950/40 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-bolt"></i>
+          <span>Save & Activate Bot</span>
+        </button>
+      </form>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
