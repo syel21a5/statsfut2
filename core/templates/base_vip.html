@@ -106,8 +106,14 @@
         <a href="/vip/jogos/?market=lays" class="{% if selected_market == 'lays' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-gray-400 hover:text-white{% endif %} transition">LAY MARKETS</a>
       </nav>
 
-      <!-- Lado Direito: Seletor de Idioma + Status + Sair -->
+      <!-- Lado Direito: Badge Fuso Horário + Seletor de Idioma + Status + Sair -->
       <div class="flex items-center gap-2.5">
+
+        <!-- Badge de Timezone Local Detectado -->
+        <div id="userTzBadge" class="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-lg bg-[#14181f] border border-gray-800 text-[11px] font-mono text-gray-400" title="Local timezone automatically detected from your device">
+          <i class="fa-regular fa-clock text-cyan-400 text-[10px]"></i>
+          <span id="userTzCity" class="font-semibold text-gray-300">--:--</span>
+        </div>
         
         <!-- Dropdown de Idiomas (PT, EN, ES, DE) -->
         <div class="relative" id="langDropdownContainer">
@@ -612,13 +618,19 @@
 
       // 4. Ajuste Dinâmico de Horário Local do Visitante (Intl API)
       try {
-        const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+        const tzShort = userTz.split('/').pop().replace(/_/g, ' ');
+        const tzEl = document.getElementById('userTzCity');
+        if (tzEl) {
+          tzEl.textContent = tzShort;
+        }
+
         document.querySelectorAll('[data-utc-time]').forEach(el => {
           const utcIso = el.getAttribute('data-utc-time');
           if (utcIso) {
             const dateObj = new Date(utcIso);
             if (!isNaN(dateObj)) {
-              const formattedTime = new Intl.DateTimeFormat(navigator.language || 'pt-BR', {
+              const formattedTime = new Intl.DateTimeFormat(navigator.language || 'en-GB', {
                 hour: '2-digit',
                 minute: '2-digit',
                 hour12: false
