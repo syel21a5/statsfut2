@@ -952,25 +952,29 @@ def vip_tickets_view(request):
     )
 
     # Querysets por data (Apenas Elite)
-    today_qs = BetTicket.objects.filter(
+    # Exige estritamente pelo menos 2 seleções (evita bilhetes corrompidos/incompletos)
+    from django.db.models import Count
+    valid_ticket_filter = Q(num_selections__gte=2)
+
+    today_qs = BetTicket.objects.annotate(num_selections=Count('selections')).filter(
         date_target=today_date,
         ticket_type__in=['Double', 'Treble']
-    ).filter(elite_filter).prefetch_related('selections__match__home_team', 'selections__match__away_team', 'selections__match__league').order_by('-average_probability', '-created_at')
+    ).filter(elite_filter).filter(valid_ticket_filter).prefetch_related('selections__match__home_team', 'selections__match__away_team', 'selections__match__league').order_by('-average_probability', '-created_at')
 
-    tomorrow_qs = BetTicket.objects.filter(
+    tomorrow_qs = BetTicket.objects.annotate(num_selections=Count('selections')).filter(
         date_target=tomorrow_date,
         ticket_type__in=['Double', 'Treble']
-    ).filter(elite_filter).prefetch_related('selections__match__home_team', 'selections__match__away_team', 'selections__match__league').order_by('-average_probability', '-created_at')
+    ).filter(elite_filter).filter(valid_ticket_filter).prefetch_related('selections__match__home_team', 'selections__match__away_team', 'selections__match__league').order_by('-average_probability', '-created_at')
 
-    next_qs = BetTicket.objects.filter(
+    next_qs = BetTicket.objects.annotate(num_selections=Count('selections')).filter(
         date_target__gt=tomorrow_date,
         ticket_type__in=['Double', 'Treble']
-    ).filter(elite_filter).prefetch_related('selections__match__home_team', 'selections__match__away_team', 'selections__match__league').order_by('date_target', '-average_probability')
+    ).filter(elite_filter).filter(valid_ticket_filter).prefetch_related('selections__match__home_team', 'selections__match__away_team', 'selections__match__league').order_by('date_target', '-average_probability')
 
-    history_qs = BetTicket.objects.filter(
+    history_qs = BetTicket.objects.annotate(num_selections=Count('selections')).filter(
         status__in=['Green', 'Red'],
         ticket_type__in=['Double', 'Treble']
-    ).filter(elite_filter).prefetch_related('selections__match__home_team', 'selections__match__away_team', 'selections__match__league').order_by('-date_target', '-id')[:24]
+    ).filter(elite_filter).filter(valid_ticket_filter).prefetch_related('selections__match__home_team', 'selections__match__away_team', 'selections__match__league').order_by('-date_target', '-id')[:24]
 
     # Escolher lista ativa baseada no filtro de data
     if selected_date == 'tomorrow':
@@ -997,11 +1001,13 @@ def vip_tickets_view(request):
 
     # KPIs estatísticos
     all_today_list = list(today_qs)
+    today_doubles_count = sum(1 for t in all_today_list if t.ticket_type == 'Double')
+    today_trebles_count = sum(1 for t in all_today_list if t.ticket_type == 'Treble')
     active_count = len(all_today_list)
     avg_odd = round(sum(float(t.total_odd or 1.0) for t in all_today_list) / max(len(all_today_list), 1), 2) if all_today_list else 1.18
 
     # Winrate do histórico recente de bilhetes de elite
-    sample_resolved = BetTicket.objects.filter(status__in=['Green', 'Red']).filter(elite_filter)[:100]
+    sample_resolved = BetTicket.objects.annotate(num_selections=Count('selections')).filter(status__in=['Green', 'Red']).filter(elite_filter).filter(valid_ticket_filter)[:100]
     greens_count = sum(1 for b in sample_resolved if b.status == 'Green')
     winrate = round((greens_count / max(len(sample_resolved), 1)) * 100) if sample_resolved else 92
 
@@ -1013,6 +1019,8 @@ def vip_tickets_view(request):
         'selected_date': selected_date,
         'selected_type': selected_type,
         'active_count': active_count,
+        'today_doubles_count': today_doubles_count,
+        'today_trebles_count': today_trebles_count,
         'avg_odd': avg_odd,
         'winrate': winrate,
         'lang_prefix': get_lang_prefix(request),
