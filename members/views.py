@@ -1078,7 +1078,7 @@ def kiwify_webhook(request):
                     {auth_info_html}
                     
                     <div style="text-align: center; margin: 30px 0;">
-                        <a href="https://statsfut.com/members/login/" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: bold; font-size: 15px; display: inline-block;">
+                        <a href="https://vip.statsfut.com/vip-login" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: bold; font-size: 15px; display: inline-block;">
                             🚀 Acessar Painel VIP Agora
                         </a>
                     </div>
@@ -1226,7 +1226,7 @@ def stripe_webhook(request):
                     {auth_info_html}
                     
                     <div style="text-align: center; margin: 30px 0;">
-                        <a href="https://statsfut.com/members/login/" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: bold; font-size: 15px; display: inline-block;">
+                        <a href="https://vip.statsfut.com/vip-login" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: bold; font-size: 15px; display: inline-block;">
                             🚀 Acessar Painel VIP Agora
                         </a>
                     </div>
