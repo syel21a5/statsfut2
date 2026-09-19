@@ -213,10 +213,11 @@
     </div>
   </footer>
 
-  <!-- Dicionário Multilíngue & Script de Tradução VIP Embutido -->
+  <!-- Dicionário Multilíngue Exaustivo & Script de Tradução VIP -->
   <script>
     const VIP_TRANSLATIONS = {
       'en': {
+        // Menu Superior
         'TODOS JOGOS': 'ALL MATCHES',
         'AO VIVO': 'LIVE',
         'GOLS': 'GOALS',
@@ -227,12 +228,35 @@
         'Modo:': 'Mode:',
         'Escuro Profissional': 'Dark Terminal',
         'Algoritmo estatístico auditado com leitura de linhas asiáticas, gols esperados (xG) e pressão final.': 'Audited statistical algorithm analyzing Asian lines, expected goals (xG) and late pressure.',
-        'RODADA / DATA': 'ROUND / DATE',
+
+        // Rodada / Calendário
+        'DATA / RODADA': 'DATE / ROUND',
+        'RODADA / DATA': 'DATE / ROUND',
         'ONTEM': 'YESTERDAY',
         'HOJE': 'TODAY',
         'AMANHÃ': 'TOMORROW',
+        'Hoje ·': 'Today ·',
+        'Amanhã ·': 'Tomorrow ·',
+        'Em ': 'On ',
+        'set.': 'Sep',
+        'out.': 'Oct',
+        'nov.': 'Nov',
+        'dez.': 'Dec',
+        'jan.': 'Jan',
+        'fev.': 'Feb',
+        'mar.': 'Mar',
+        'abr.': 'Apr',
+        'mai.': 'May',
+        'jun.': 'Jun',
+        'jul.': 'Jul',
+        'ago.': 'Aug',
+
+        // Sidebar Mercados
         'MERCADOS & FILTROS': 'MARKETS & FILTERS',
-        'Todos os Mercados': 'All Markets',
+        'Todos os mercados': 'All markets',
+        'Ambos marcam': 'Both teams to score',
+        'Resultado / Lay': 'Result / Lay',
+        'Lay Placar (95%+)': 'Lay Score (95%+)',
         'Gols +1.5 FT': 'Over 1.5 Goals',
         'Gols +2.5 FT': 'Over 2.5 Goals',
         'Ambos Marcam (BTTS)': 'Both Teams to Score',
@@ -241,47 +265,78 @@
         'Cantos +8.5 FT': 'Corners Over 8.5',
         'Cantos Finais (75\'+)': 'Late Corners (75\'+)',
         'Lay Placar Improvável': 'Lay Unlikely Score',
-        'STATUS DA RODADA': 'ROUND STATUS',
-        'Todos': 'All',
-        'Encerrados': 'Finished',
-        'Só Sniper ≥80%': 'Sniper ≥80% Only',
-        'Buscar clube ou campeonato...': 'Search club or league...',
-        'TOP PICKS DA RODADA': 'TOP ROUND PICKS',
-        'Auditado': 'Audited',
-        'Prob.': 'Prob.',
-        'Justa': 'Fair',
-        'Analisar': 'Analyze',
+
+        // Cards KPIs Superiores
         'Jogos do Mercado': 'Market Matches',
+        'Disponíveis hoje': 'Available today',
+        'Auditados no banco': 'Audited in database',
+        'Tips para': 'Tips for',
         'Acerto': 'Accuracy',
+        'Acerto Hoje': 'Hit Rate Today',
+        'Acerto Amanhã': 'Hit Rate Tomorrow',
+        'Acerto Em': 'Hit Rate On',
         'Histórico': 'Historical',
+        'Futuro': 'Future',
+        'resolvidos': 'resolved',
         'Acerto 7 dias': '7-Day Winrate',
         'Média': 'Average',
         'Histórico consolidado': 'Consolidated track record',
         'Acerto 30 dias': '30-Day Winrate',
         'Amostra': 'Sample',
         'Neste mercado': 'In this market',
+        'ROI Odd Justa': 'Fair Odd ROI',
         'Odd Justa Média': 'Avg Fair Odd',
         'ROI Estimado': 'Estimated ROI',
+        'Stake fixa 1 unid.': 'Flat stake 1 unit',
+
+        // Filtros Rápidos
+        'Partidas:': 'Matches:',
+        'Todas': 'All',
+        'Ao Vivo': 'Live',
+        'Encerradas': 'Finished',
+        'Encerrados': 'Finished',
+        'Só ≥ 80% (Sniper)': 'Only ≥ 80% (Sniper)',
+        'Só Sniper ≥80%': 'Sniper ≥80% Only',
+        'Buscar time ou liga...': 'Search team or league...',
+        'Buscar clube ou campeonato...': 'Search club or league...',
+
+        // Top Picks Carousel
+        'Melhores apostas do dia': 'Top picks of the day',
+        'as previsões com maior confiança matemática': 'predictions with the highest mathematical confidence',
+        'TOP PICKS DA RODADA': 'TOP ROUND PICKS',
+        'Auditado': 'Audited',
+        'Prob.': 'Prob.',
+        'justa': 'fair',
+        'Justa': 'Fair',
+        'Analisar': 'Analyze',
+
+        // Tabela & Cabeçalhos
+        'a mostrar as mais fortes': 'showing the strongest',
+        'acerto 30 d.': 'hit rate 30 d.',
+        'Ver todas': 'View all',
+        'Hora': 'Time',
+        'HORA': 'TIME',
+        'Campeonato': 'League',
+        'CAMPEONATO': 'LEAGUE',
+        'Jogo': 'Match',
+        'JOGO': 'MATCH',
+        'Casa · Fora': 'Home · Away',
+        'CASA · FORA': 'HOME · AWAY',
+        'Previsão': 'Probability',
+        'PREVISÃO': 'PROBABILITY',
+        'Ação': 'Action',
+        'AÇÃO': 'ACTION',
         'Gols Mais de 1.5 FT': 'Over 1.5 Goals FT',
         'Gols Mais de 2.5 FT': 'Over 2.5 Goals FT',
-        'Ambos Marcam': 'Both Teams to Score',
         'Gols Menos de 3.5 FT': 'Under 3.5 Goals FT',
         'Cantos Mais de 7.5 FT': 'Corners Over 7.5 FT',
         'Cantos Mais de 8.5 FT': 'Corners Over 8.5 FT',
         'Cantos Finais (Pressão 75\'+)': 'Late Corners (Pressure 75\'+)',
-        'HORA': 'TIME',
-        'CAMPEONATO': 'LEAGUE',
-        'JOGO': 'MATCH',
-        'CASA · FORA': 'HOME · AWAY',
-        'PREVISÃO': 'PROBABILITY',
-        'JUSTA': 'FAIR ODD',
-        'AÇÃO': 'ACTION',
-        'Ver todas': 'View all',
         'Contra:': 'Lay:',
-        'resolvidos': 'resolved',
         'Tips': 'Tips'
       },
       'es': {
+        // Menu Superior
         'TODOS JOGOS': 'TODOS LOS PARTIDOS',
         'AO VIVO': 'EN VIVO',
         'GOLS': 'GOLES',
@@ -292,12 +347,35 @@
         'Modo:': 'Modo:',
         'Escuro Profissional': 'Oscuro Profesional',
         'Algoritmo estatístico auditado com leitura de linhas asiáticas, gols esperados (xG) e pressão final.': 'Algoritmo estadístico auditado con análisis de líneas asiáticas, goles esperados (xG) y presión final.',
+
+        // Rodada / Calendário
+        'DATA / RODADA': 'JORNADA / FECHA',
         'RODADA / DATA': 'JORNADA / FECHA',
         'ONTEM': 'AYER',
         'HOJE': 'HOY',
         'AMANHÃ': 'MAÑANA',
+        'Hoje ·': 'Hoy ·',
+        'Amanhã ·': 'Mañana ·',
+        'Em ': 'En ',
+        'set.': 'sep.',
+        'out.': 'oct.',
+        'nov.': 'nov.',
+        'dez.': 'dic.',
+        'jan.': 'ene.',
+        'fev.': 'feb.',
+        'mar.': 'mar.',
+        'abr.': 'abr.',
+        'mai.': 'may.',
+        'jun.': 'jun.',
+        'jul.': 'jul.',
+        'ago.': 'ago.',
+
+        // Sidebar Mercados
         'MERCADOS & FILTROS': 'MERCADOS Y FILTROS',
-        'Todos os Mercados': 'Todos los Mercados',
+        'Todos os mercados': 'Todos los mercados',
+        'Ambos marcam': 'Ambos marcan',
+        'Resultado / Lay': 'Resultado / Lay',
+        'Lay Placar (95%+)': 'Lay Marcador (95%+)',
         'Gols +1.5 FT': 'Goles +1.5 FT',
         'Gols +2.5 FT': 'Goles +2.5 FT',
         'Ambos Marcam (BTTS)': 'Ambos Marcan (BTTS)',
@@ -306,47 +384,78 @@
         'Cantos +8.5 FT': 'Córners +8.5 FT',
         'Cantos Finais (75\'+)': 'Córners Finales (75\'+)',
         'Lay Placar Improvável': 'Lay Marcador Improbable',
-        'STATUS DA RODADA': 'ESTADO DE LA JORNADA',
-        'Todos': 'Todos',
-        'Encerrados': 'Finalizados',
-        'Só Sniper ≥80%': 'Solo Sniper ≥80%',
-        'Buscar clube ou campeonato...': 'Buscar equipo o liga...',
-        'TOP PICKS DA RODADA': 'TOP PICKS DE LA JORNADA',
-        'Auditado': 'Auditado',
-        'Prob.': 'Prob.',
-        'Justa': 'Justa',
-        'Analisar': 'Analizar',
+
+        // Cards KPIs Superiores
         'Jogos do Mercado': 'Partidos del Mercado',
+        'Disponíveis hoje': 'Disponibles hoy',
+        'Auditados no banco': 'Auditados en base',
+        'Tips para': 'Tips para',
         'Acerto': 'Acierto',
+        'Acerto Hoje': 'Acierto Hoy',
+        'Acerto Amanhã': 'Acierto Mañana',
+        'Acerto Em': 'Acierto En',
         'Histórico': 'Histórico',
+        'Futuro': 'Futuro',
+        'resolvidos': 'resueltos',
         'Acerto 7 dias': 'Acierto 7 días',
         'Média': 'Media',
         'Histórico consolidado': 'Histórico consolidado',
         'Acerto 30 dias': 'Acierto 30 días',
         'Amostra': 'Muestra',
         'Neste mercado': 'En este mercado',
+        'ROI Odd Justa': 'ROI Cuota Justa',
         'Odd Justa Média': 'Cuota Justa Media',
         'ROI Estimado': 'ROI Estimado',
+        'Stake fixa 1 unid.': 'Stake plana 1 unid.',
+
+        // Filtros Rápidos
+        'Partidas:': 'Partidos:',
+        'Todas': 'Todos',
+        'Ao Vivo': 'En Vivo',
+        'Encerradas': 'Finalizados',
+        'Encerrados': 'Finalizados',
+        'Só ≥ 80% (Sniper)': 'Solo ≥ 80% (Sniper)',
+        'Só Sniper ≥80%': 'Solo Sniper ≥80%',
+        'Buscar time ou liga...': 'Buscar equipo o liga...',
+        'Buscar clube ou campeonato...': 'Buscar equipo o liga...',
+
+        // Top Picks Carousel
+        'Melhores apostas do dia': 'Mejores apuestas del día',
+        'as previsões com maior confiança matemática': 'pronósticos con mayor confianza matemática',
+        'TOP PICKS DA RODADA': 'TOP PICKS DE LA JORNADA',
+        'Auditado': 'Auditado',
+        'Prob.': 'Prob.',
+        'justa': 'justa',
+        'Justa': 'Justa',
+        'Analisar': 'Analizar',
+
+        // Tabela & Cabeçalhos
+        'a mostrar as mais fortes': 'mostrando las más fuertes',
+        'acerto 30 d.': 'acierto 30 d.',
+        'Ver todas': 'Ver todas',
+        'Hora': 'Hora',
+        'HORA': 'HORA',
+        'Campeonato': 'Competición',
+        'CAMPEONATO': 'COMPETICIÓN',
+        'Jogo': 'Partido',
+        'JOGO': 'PARTIDO',
+        'Casa · Fora': 'Local · Visitante',
+        'CASA · FORA': 'LOCAL · VISITANTE',
+        'Previsão': 'Probabilidad',
+        'PREVISÃO': 'PROBABILIDAD',
+        'Ação': 'Acción',
+        'AÇÃO': 'ACCIÓN',
         'Gols Mais de 1.5 FT': 'Goles Más de 1.5 FT',
         'Gols Mais de 2.5 FT': 'Goles Más de 2.5 FT',
-        'Ambos Marcam': 'Ambos Marcan',
         'Gols Menos de 3.5 FT': 'Goles Menos de 3.5 FT',
         'Cantos Mais de 7.5 FT': 'Córners Más de 7.5 FT',
         'Cantos Mais de 8.5 FT': 'Córners Más de 8.5 FT',
         'Cantos Finais (Pressão 75\'+)': 'Córners Finales (Presión 75\'+)',
-        'HORA': 'HORA',
-        'CAMPEONATO': 'COMPETICIÓN',
-        'JOGO': 'PARTIDO',
-        'CASA · FORA': 'LOCAL · VISITANTE',
-        'PREVISÃO': 'PROBABILIDAD',
-        'JUSTA': 'CUOTA JUSTA',
-        'AÇÃO': 'ACCIÓN',
-        'Ver todas': 'Ver todas',
         'Contra:': 'Contra:',
-        'resolvidos': 'resueltos',
         'Tips': 'Tips'
       },
       'de': {
+        // Menu Superior
         'TODOS JOGOS': 'ALLE SPIELE',
         'AO VIVO': 'LIVE',
         'GOLS': 'TORE',
@@ -357,12 +466,35 @@
         'Modo:': 'Modus:',
         'Escuro Profissional': 'Dunkles Terminal',
         'Algoritmo estatístico auditado com leitura de linhas asiáticas, gols esperados (xG) e pressão final.': 'Geprüfter statistischer Algorithmus für asiatische Linien, erwartete Tore (xG) und Spätdruck.',
+
+        // Rodada / Calendário
+        'DATA / RODADA': 'SPIELTAG / DATUM',
         'RODADA / DATA': 'SPIELTAG / DATUM',
         'ONTEM': 'GESTERN',
         'HOJE': 'HEUTE',
         'AMANHÃ': 'MORGEN',
+        'Hoje ·': 'Heute ·',
+        'Amanhã ·': 'Morgen ·',
+        'Em ': 'Am ',
+        'set.': 'Sep.',
+        'out.': 'Okt.',
+        'nov.': 'Nov.',
+        'dez.': 'Dez.',
+        'jan.': 'Jan.',
+        'fev.': 'Feb.',
+        'mar.': 'Mär.',
+        'abr.': 'Apr.',
+        'mai.': 'Mai',
+        'jun.': 'Jun.',
+        'jul.': 'Jul.',
+        'ago.': 'Aug.',
+
+        // Sidebar Mercados
         'MERCADOS & FILTROS': 'MÄRKTE & FILTER',
-        'Todos os Mercados': 'Alle Märkte',
+        'Todos os mercados': 'Alle Märkte',
+        'Ambos marcam': 'Beide Treffen (BTTS)',
+        'Resultado / Lay': 'Ergebnis / Lay',
+        'Lay Placar (95%+)': 'Lay Spielstand (95%+)',
         'Gols +1.5 FT': 'Tore Über 1.5 FT',
         'Gols +2.5 FT': 'Tore Über 2.5 FT',
         'Ambos Marcam (BTTS)': 'Beide Treffen (BTTS)',
@@ -371,44 +503,74 @@
         'Cantos +8.5 FT': 'Ecken Über 8.5 FT',
         'Cantos Finais (75\'+)': 'Späte Ecken (75\'+)',
         'Lay Placar Improvável': 'Lay Unwahrscheinlicher Spielstand',
-        'STATUS DA RODADA': 'SPIELTAG-STATUS',
-        'Todos': 'Alle',
-        'Encerrados': 'Beendet',
-        'Só Sniper ≥80%': 'Nur Sniper ≥80%',
-        'Buscar clube ou campeonato...': 'Verein oder Liga suchen...',
-        'TOP PICKS DA RODADA': 'TOP PICKS DER RUNDE',
-        'Auditado': 'Geprüft',
-        'Prob.': 'Wsk.',
-        'Justa': 'Fair',
-        'Analisar': 'Analysieren',
+
+        // Cards KPIs Superiores
         'Jogos do Mercado': 'Markt-Spiele',
+        'Disponíveis hoje': 'Heute verfügbar',
+        'Auditados no banco': 'In Datenbank geprüft',
+        'Tips para': 'Tipps für',
         'Acerto': 'Trefferquote',
+        'Acerto Hoje': 'Trefferquote Heute',
+        'Acerto Amanhã': 'Trefferquote Morgen',
+        'Acerto Em': 'Trefferquote Am',
         'Histórico': 'Historisch',
+        'Futuro': 'Zukunft',
+        'resolvidos': 'beendet',
         'Acerto 7 dias': 'Trefferquote 7 Tage',
         'Média': 'Durchschnitt',
         'Histórico consolidado': 'Konsolidierte Bilanz',
         'Acerto 30 dias': 'Trefferquote 30 Tage',
         'Amostra': 'Stichprobe',
         'Neste mercado': 'In diesem Markt',
+        'ROI Odd Justa': 'ROI Faire Quote',
         'Odd Justa Média': 'Durchschn. Faire Quote',
         'ROI Estimado': 'Geschätzter ROI',
+        'Stake fixa 1 unid.': 'Feste Stake 1 Einh.',
+
+        // Filtros Rápidos
+        'Partidas:': 'Spiele:',
+        'Todas': 'Alle',
+        'Ao Vivo': 'Live',
+        'Encerradas': 'Beendet',
+        'Encerrados': 'Beendet',
+        'Só ≥ 80% (Sniper)': 'Nur ≥ 80% (Sniper)',
+        'Só Sniper ≥80%': 'Nur Sniper ≥80%',
+        'Buscar time ou liga...': 'Verein oder Liga suchen...',
+        'Buscar clube ou campeonato...': 'Verein oder Liga suchen...',
+
+        // Top Picks Carousel
+        'Melhores apostas do dia': 'Top-Tipps des Tages',
+        'as previsões com maior confiança matemática': 'Prognosen mit höchster mathematischer Sicherheit',
+        'TOP PICKS DA RODADA': 'TOP PICKS DER RUNDE',
+        'Auditado': 'Geprüft',
+        'Prob.': 'Wsk.',
+        'justa': 'fair',
+        'Justa': 'Fair',
+        'Analisar': 'Analysieren',
+
+        // Tabela & Cabeçalhos
+        'a mostrar as mais fortes': 'zeigt die stärksten',
+        'acerto 30 d.': 'Trefferquote 30 T.',
+        'Ver todas': 'Alle ansehen',
+        'Hora': 'Zeit',
+        'HORA': 'ZEIT',
+        'Campeonato': 'Liga',
+        'CAMPEONATO': 'LIGA',
+        'Jogo': 'Spiel',
+        'JOGO': 'SPIEL',
+        'Casa · Fora': 'Heim · Auswärts',
+        'CASA · FORA': 'HEIM · AUSWÄRTS',
+        'Previsão': 'Wahrscheinlichkeit',
+        'PREVISÃO': 'WAHRSCH.',
+        'Ação': 'Aktion',
+        'AÇÃO': 'AKTION',
         'Gols Mais de 1.5 FT': 'Tore Mehr als 1.5 FT',
         'Gols Mais de 2.5 FT': 'Tore Mehr als 2.5 FT',
-        'Ambos Marcam': 'Beide Treffen (BTTS)',
         'Gols Menos de 3.5 FT': 'Tore Unter 3.5 FT',
         'Cantos Mais de 7.5 FT': 'Ecken Mehr als 7.5 FT',
         'Cantos Mais de 8.5 FT': 'Ecken Mehr als 8.5 FT',
         'Cantos Finais (Pressão 75\'+)': 'Späte Ecken (Druck 75\'+)',
-        'HORA': 'ZEIT',
-        'CAMPEONATO': 'LIGA',
-        'JOGO': 'SPIEL',
-        'CASA · FORA': 'HEIM · AUSWÄRTS',
-        'PREVISÃO': 'WAHRSCH.',
-        'JUSTA': 'FAIRE QUOTE',
-        'AÇÃO': 'AKTION',
-        'Ver todas': 'Alle ansehen',
         'Contra:': 'Gegen:',
-        'resolvidos': 'beendet',
         'Tips': 'Tipps'
       }
     };
@@ -445,16 +607,23 @@
             if (val && dict[val]) {
               node.nodeValue = node.nodeValue.replace(val, dict[val]);
             } else if (val) {
-              // Checagens parciais úteis
+              // Substituições exatas de termos compostos
               for (const [ptText, transText] of Object.entries(dict)) {
-                if (val.includes(ptText) && ptText.length > 3) {
-                  node.nodeValue = node.nodeValue.replace(ptText, transText);
+                if (val.includes(ptText)) {
+                  node.nodeValue = node.nodeValue.split(ptText).join(transText);
+                  val = node.nodeValue.trim();
                 }
               }
             }
-          } else if (node.nodeType === Node.ELEMENT_NODE && !['SCRIPT', 'STYLE', 'INPUT', 'TEXTAREA'].includes(node.tagName)) {
+          } else if (node.nodeType === Node.ELEMENT_NODE && !['SCRIPT', 'STYLE', 'TEXTAREA'].includes(node.tagName)) {
             if (node.placeholder && dict[node.placeholder]) {
               node.placeholder = dict[node.placeholder];
+            } else if (node.placeholder) {
+              for (const [ptText, transText] of Object.entries(dict)) {
+                if (node.placeholder.includes(ptText)) {
+                  node.placeholder = node.placeholder.split(ptText).join(transText);
+                }
+              }
             }
             node.childNodes.forEach(translateTextNodes);
           }
