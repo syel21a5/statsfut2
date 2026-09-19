@@ -873,7 +873,88 @@ def vip_match_analysis_view(request, match_id):
     })
 
 def vip_live_radar_view(request):
-    return render(request, 'base_vip.html', {'lang_prefix': get_lang_prefix(request)})
+    """
+    StatsFut VIP · Live Radar & Telemetry Hub (/vip/live-radar/ ou /vip/radar/)
+    Central ao vivo no padrão Terminal Dark estilo CornerPro com classificação por intensidade de pressão,
+    APM (Ataques por Minuto), gráficos minuto a minuto e termômetro de gols.
+    """
+    from matches.models import Match
+    from matches.services.live_radar import LiveRadarService
+
+    live_statuses = ['1H', '2H', 'HT', 'LIVE', 'Live', 'In Play', 'IN_PLAY', 'ET', 'P', 'Halftime', 'PAUSED']
+    live_matches_qs = Match.objects.filter(
+        status__in=live_statuses
+    ).select_related('league', 'home_team', 'away_team').order_by('-elapsed_time', 'id')
+
+    radar_list = []
+    for m in live_matches_qs:
+        p5 = LiveRadarService.calculate_pressure(m, window_minutes=5)
+        p15 = LiveRadarService.calculate_pressure(m, window_minutes=15)
+        p_ft = LiveRadarService.calculate_pressure(m, window_minutes=120)
+
+        # Gráfico minuto a minuto (graph_points do SofaScore)
+        sd = m.statistics_data or {}
+        pts = sd.get('graph_points', []) if isinstance(sd, dict) else []
+        recent_pts = pts[-20:] if pts else []
+
+        # Cálculo do Índice de Intensidade / Pressão Global
+        # Baseado no valor absoluto médio dos últimos minutos ou chutes + cantos
+        h_corners = m.home_corners or 0
+        a_corners = m.away_corners or 0
+        tot_corners = h_corners + a_corners
+
+        h_shots = m.home_shots or 0
+        a_shots = m.away_shots or 0
+        tot_shots = h_shots + a_shots
+
+        elapsed = int(m.elapsed_time or 1)
+        shots_per_min = round(tot_shots / max(elapsed, 1), 2)
+
+        # Intensidade do termômetro
+        intensity_level = 'normal'
+        intensity_label = 'BALANCED'
+        intensity_color = 'cyan'
+
+        # Se temos graph_points, medir a média recente de volume de ataque
+        if recent_pts:
+            avg_abs_val = sum(abs(p.get('value', 0)) for p in recent_pts) / len(recent_pts)
+            if avg_abs_val >= 40:
+                intensity_level = 'extreme'
+                intensity_label = 'EXTREME PRESSURE 🔥🔥🔥'
+                intensity_color = 'rose'
+            elif avg_abs_val >= 22:
+                intensity_level = 'high'
+                intensity_label = 'HIGH PRESSURE 🔥'
+                intensity_color = 'amber'
+        elif shots_per_min >= 0.25 or tot_corners >= 8:
+            intensity_level = 'high'
+            intensity_label = 'HIGH ACTIVITY ⚡'
+            intensity_color = 'amber'
+
+        radar_list.append({
+            'match': m,
+            'p5': p5,
+            'p15': p15,
+            'p_ft': p_ft,
+            'recent_pts': recent_pts,
+            'tot_corners': tot_corners,
+            'tot_shots': tot_shots,
+            'shots_per_min': shots_per_min,
+            'intensity_level': intensity_level,
+            'intensity_label': intensity_label,
+            'intensity_color': intensity_color,
+            'has_graph': bool(pts),
+        })
+
+    # Ordenar jogos: Extremos e Alta Pressão no topo da tela!
+    priority_map = {'extreme': 0, 'high': 1, 'normal': 2}
+    radar_list.sort(key=lambda x: (priority_map.get(x['intensity_level'], 3), -(x['match'].elapsed_time or 0)))
+
+    return render(request, 'vip_live_radar.html', {
+        'radar_list': radar_list,
+        'live_count': len(radar_list),
+        'lang_prefix': get_lang_prefix(request),
+    })
 
 def vip_tickets_view(request):
     """

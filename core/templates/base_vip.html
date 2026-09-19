@@ -93,20 +93,23 @@
 
       <!-- Links de Navegação Principal (Estilo CornerPro) -->
       <nav class="hidden lg:flex items-center gap-6 font-mono text-xs font-semibold tracking-wider">
-        <a href="{{ lang_prefix }}/vip/jogos/" class="{% if not current_status or current_status == 'today' or current_status == 'tomorrow' or current_status == 'finished' %}{% if not selected_market or selected_market == 'all' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-white hover:text-[#00b4d8]{% endif %}{% else %}text-white hover:text-[#00b4d8]{% endif %} transition">ALL MATCHES</a>
-        <a href="{{ lang_prefix }}/vip/jogos/?status=live" class="{% if current_status == 'live' %}text-rose-300 bg-rose-500/25 border-rose-500/50{% else %}text-rose-400 hover:text-rose-300 bg-rose-500/10 border-rose-500/20{% endif %} transition flex items-center gap-1.5 px-2.5 py-1 rounded-lg border shadow-sm">
+        <a href="{{ lang_prefix }}/vip/jogos/" class="{% if request.resolver_match.url_name in 'vip_games_list vip_games_list_i18n' and not current_status == 'live' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-white hover:text-[#00b4d8]{% endif %} transition">ALL MATCHES</a>
+        
+        <a href="{{ lang_prefix }}/vip/radar/" class="{% if request.resolver_match.url_name in 'vip_radar vip_radar_i18n vip_live_radar vip_live_radar_i18n' %}text-rose-300 bg-rose-500/25 border-rose-500/50 border-b-2 border-rose-400{% else %}text-rose-400 hover:text-rose-300 bg-rose-500/10 border-rose-500/20{% endif %} transition flex items-center gap-1.5 px-2.5 py-1 rounded-lg border shadow-sm font-bold">
           <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-          <span>LIVE</span>
+          <span>LIVE RADAR</span>
           <span class="ml-0.5 px-1.5 py-0.2 rounded-full bg-rose-500 text-white font-bold text-[10px]">
             {{ live_count|default:"0" }}
           </span>
         </a>
-        <a href="{{ lang_prefix }}/vip/jogos/?market=gols" class="{% if selected_market == 'gols' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-gray-400 hover:text-white{% endif %} transition">GOALS</a>
-        <a href="{{ lang_prefix }}/vip/jogos/?market=cantos" class="{% if selected_market == 'cantos' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-gray-400 hover:text-white{% endif %} transition">CORNERS</a>
-        <a href="{{ lang_prefix }}/vip/bilhetes/" class="{% if request.resolver_match.url_name == 'vip_tickets' or request.resolver_match.url_name == 'vip_tickets_i18n' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1 font-bold{% else %}text-gray-400 hover:text-white{% endif %} transition flex items-center gap-1.5">
+
+        <a href="{{ lang_prefix }}/vip/bilhetes/" class="{% if request.resolver_match.url_name in 'vip_tickets vip_tickets_i18n' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1 font-bold{% else %}text-gray-400 hover:text-white{% endif %} transition flex items-center gap-1.5">
           <i class="fa-solid fa-layer-group text-[11px] text-cyan-400"></i>
           <span>READY TICKETS</span>
         </a>
+
+        <a href="{{ lang_prefix }}/vip/jogos/?market=gols" class="{% if selected_market == 'gols' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-gray-400 hover:text-white{% endif %} transition">GOALS</a>
+        <a href="{{ lang_prefix }}/vip/jogos/?market=cantos" class="{% if selected_market == 'cantos' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-gray-400 hover:text-white{% endif %} transition">CORNERS</a>
         <a href="{{ lang_prefix }}/vip/jogos/?market=lays" class="{% if selected_market == 'lays' %}text-[#00b4d8] border-b-2 border-[#00b4d8] pb-1{% else %}text-gray-400 hover:text-white{% endif %} transition">LAY MARKETS</a>
       </nav>
 
