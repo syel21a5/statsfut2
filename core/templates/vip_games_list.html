@@ -304,11 +304,18 @@
             <div class="text-[10px] text-gray-500 font-mono truncate">{{ pick.match.league.name }}</div>
           </div>
 
-          <!-- Rodapé do Card: Probabilidade Neon + Odd Justa + Link -->
+          <!-- Rodapé do Card: Probabilidade Neon + Odd Real/Justa + EV Badge + Link -->
           <div class="pt-2.5 border-t border-gray-800/60 flex items-center justify-between">
-            <div class="flex items-baseline gap-1.5">
+            <div class="flex items-baseline gap-1.5 flex-wrap">
               <span class="text-xl font-black text-[#00d26a] font-mono leading-none">{{ pick.prob }}%</span>
-              <span class="text-[10px] text-gray-500 font-mono">fair {{ pick.fair_odd }}</span>
+              {% if pick.real_odd %}
+                <span class="text-[11px] text-cyan-400 font-bold font-mono">@{{ pick.real_odd }}</span>
+                {% if pick.ev and pick.ev > 0 %}
+                  <span class="text-[9px] font-mono font-bold text-emerald-400 bg-emerald-500/15 px-1 py-0.2 rounded border border-emerald-500/30">+{{ pick.ev }}%</span>
+                {% endif %}
+              {% else %}
+                <span class="text-[10px] text-gray-500 font-mono">fair @{{ pick.fair_odd }}</span>
+              {% endif %}
             </div>
             <a href="{{ lang_prefix }}/vip/analise/{{ pick.match.id }}/" class="text-gray-400 hover:text-cyan-400 transition text-xs">
               <i class="fa-solid fa-chevron-right text-[10px]"></i>
@@ -366,7 +373,8 @@
               <th class="py-2.5 px-4">Match</th>
               <th class="py-2.5 px-4 text-center min-w-[130px] whitespace-nowrap">Home &middot; Away</th>
               <th class="py-2.5 px-4 text-center min-w-[100px] whitespace-nowrap">Prediction</th>
-              <th class="py-2.5 px-4 text-center min-w-[80px] whitespace-nowrap">Fair</th>
+              <th class="py-2.5 px-4 text-center min-w-[130px] whitespace-nowrap" title="Bookmaker Odd (SofaScore) vs Fair Model Odd">Market &middot; Fair</th>
+              <th class="py-2.5 px-4 text-center min-w-[80px] whitespace-nowrap" title="Expected Value (+EV Edge)">Value (+EV)</th>
               <th class="py-2.5 px-4 text-right w-36">Action</th>
             </tr>
           </thead>
@@ -488,24 +496,115 @@
                 {% endif %}
               </td>
 
-              <!-- Odd Justa -->
-              <td class="py-3 px-4 text-center font-mono text-gray-400 text-xs whitespace-nowrap">
+              <!-- Odds: Real da Casa vs Justa do Modelo -->
+              <td class="py-3 px-4 text-center font-mono text-xs whitespace-nowrap">
                 {% if sec.id == 'gols_o15' %}
-                  {{ m.fair_o15 }}
+                  {% if m.real_odd_o15 %}
+                    <span class="text-cyan-400 font-bold">@{{ m.real_odd_o15 }}</span>
+                    <span class="text-gray-600 mx-1">/</span>
+                    <span class="text-gray-500 text-[11px]">@{{ m.fair_o15 }}</span>
+                  {% else %}
+                    <span class="text-gray-400">@{{ m.fair_o15 }}</span>
+                  {% endif %}
                 {% elif sec.id == 'gols_o25' %}
-                  {{ m.fair_o25 }}
+                  {% if m.real_odd_o25 %}
+                    <span class="text-cyan-400 font-bold">@{{ m.real_odd_o25 }}</span>
+                    <span class="text-gray-600 mx-1">/</span>
+                    <span class="text-gray-500 text-[11px]">@{{ m.fair_o25 }}</span>
+                  {% else %}
+                    <span class="text-gray-400">@{{ m.fair_o25 }}</span>
+                  {% endif %}
                 {% elif sec.id == 'gols_btts' %}
-                  {{ m.fair_btts }}
+                  {% if m.real_odd_btts %}
+                    <span class="text-cyan-400 font-bold">@{{ m.real_odd_btts }}</span>
+                    <span class="text-gray-600 mx-1">/</span>
+                    <span class="text-gray-500 text-[11px]">@{{ m.fair_btts }}</span>
+                  {% else %}
+                    <span class="text-gray-400">@{{ m.fair_btts }}</span>
+                  {% endif %}
                 {% elif sec.id == 'gols_u35' %}
-                  {{ m.fair_u35 }}
-                {% elif sec.id == 'cantos_75ft' %}
-                  {{ m.fair_c75ft }}
+                  {% if m.real_odd_u35 %}
+                    <span class="text-cyan-400 font-bold">@{{ m.real_odd_u35 }}</span>
+                    <span class="text-gray-600 mx-1">/</span>
+                    <span class="text-gray-500 text-[11px]">@{{ m.fair_u35 }}</span>
+                  {% else %}
+                    <span class="text-gray-400">@{{ m.fair_u35 }}</span>
+                  {% endif %}
                 {% elif sec.id == 'cantos_o75' %}
-                  {{ m.fair_c75 }}
+                  {% if m.real_odd_c75 %}
+                    <span class="text-cyan-400 font-bold">@{{ m.real_odd_c75 }}</span>
+                    <span class="text-gray-600 mx-1">/</span>
+                    <span class="text-gray-500 text-[11px]">@{{ m.fair_c75 }}</span>
+                  {% else %}
+                    <span class="text-gray-400">@{{ m.fair_c75 }}</span>
+                  {% endif %}
                 {% elif sec.id == 'cantos_o85' %}
-                  {{ m.fair_c85 }}
+                  {% if m.real_odd_c85 %}
+                    <span class="text-cyan-400 font-bold">@{{ m.real_odd_c85 }}</span>
+                    <span class="text-gray-600 mx-1">/</span>
+                    <span class="text-gray-500 text-[11px]">@{{ m.fair_c85 }}</span>
+                  {% else %}
+                    <span class="text-gray-400">@{{ m.fair_c85 }}</span>
+                  {% endif %}
+                {% elif sec.id == 'cantos_75ft' %}
+                  <span class="text-gray-400">@{{ m.fair_c75ft }}</span>
                 {% else %}
-                  {{ m.fair_lay }}
+                  <span class="text-gray-400">@{{ m.fair_lay }}</span>
+                {% endif %}
+              </td>
+
+              <!-- Indicador de Valor Esperado (+EV) -->
+              <td class="py-3 px-4 text-center font-mono whitespace-nowrap">
+                {% if sec.id == 'gols_o15' and m.ev_o15 is not None %}
+                  {% if m.ev_o15 > 0 %}
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                      +{{ m.ev_o15 }}%
+                    </span>
+                  {% else %}
+                    <span class="text-gray-600 text-[10px] font-medium">{{ m.ev_o15 }}%</span>
+                  {% endif %}
+                {% elif sec.id == 'gols_o25' and m.ev_o25 is not None %}
+                  {% if m.ev_o25 > 0 %}
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                      +{{ m.ev_o25 }}%
+                    </span>
+                  {% else %}
+                    <span class="text-gray-600 text-[10px] font-medium">{{ m.ev_o25 }}%</span>
+                  {% endif %}
+                {% elif sec.id == 'gols_btts' and m.ev_btts is not None %}
+                  {% if m.ev_btts > 0 %}
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                      +{{ m.ev_btts }}%
+                    </span>
+                  {% else %}
+                    <span class="text-gray-600 text-[10px] font-medium">{{ m.ev_btts }}%</span>
+                  {% endif %}
+                {% elif sec.id == 'gols_u35' and m.ev_u35 is not None %}
+                  {% if m.ev_u35 > 0 %}
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                      +{{ m.ev_u35 }}%
+                    </span>
+                  {% else %}
+                    <span class="text-gray-600 text-[10px] font-medium">{{ m.ev_u35 }}%</span>
+                  {% endif %}
+                {% elif sec.id == 'cantos_o75' and m.ev_c75 is not None %}
+                  {% if m.ev_c75 > 0 %}
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                      +{{ m.ev_c75 }}%
+                    </span>
+                  {% else %}
+                    <span class="text-gray-600 text-[10px] font-medium">{{ m.ev_c75 }}%</span>
+                  {% endif %}
+                {% elif sec.id == 'cantos_o85' and m.ev_c85 is not None %}
+                  {% if m.ev_c85 > 0 %}
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                      +{{ m.ev_c85 }}%
+                    </span>
+                  {% else %}
+                    <span class="text-gray-600 text-[10px] font-medium">{{ m.ev_c85 }}%</span>
+                  {% endif %}
+                {% else %}
+                  <span class="text-gray-600 text-[10px]">&mdash;</span>
                 {% endif %}
               </td>
 

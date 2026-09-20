@@ -454,6 +454,33 @@ def vip_games_list_view(request):
         m.away_lay_pct = min(100, max(50, stats['p_lay'] - 2))
         lay_score = stats['lay_score']
 
+        # ── Odds Reais das Casas (SofaScore) e Comparativo +EV ──
+        # Mapeia as odds reais armazenadas no modelo Match
+        m.real_odd_o15 = round(float(m.over_15_odds), 2) if m.over_15_odds else None
+        m.real_odd_o25 = round(float(m.over_25_odds), 2) if m.over_25_odds else None
+        m.real_odd_btts = round(float(m.btts_yes_odds), 2) if m.btts_yes_odds else None
+        m.real_odd_u35 = round(float(m.under_35_odds), 2) if m.under_35_odds else None
+        m.real_odd_c75 = round(float(m.corners_over_75_odds), 2) if m.corners_over_75_odds else None
+        m.real_odd_c85 = round(float(m.corners_over_85_odds), 2) if m.corners_over_85_odds else None
+        m.real_odd_c75ft = round(float(m.corners_over_75_odds), 2) if m.corners_over_75_odds else None
+        m.real_odd_lay = round(float(m.lay_score and m.fair_lay), 2) if m.fair_lay else None
+
+        # Função auxiliar para calcular +EV
+        def _calc_ev(real_odd, fair_odd):
+            if real_odd and fair_odd and fair_odd > 0:
+                ev_val = round(((real_odd / fair_odd) - 1) * 100, 1)
+                return ev_val
+            return None
+
+        m.ev_o15 = _calc_ev(m.real_odd_o15, m.fair_o15)
+        m.ev_o25 = _calc_ev(m.real_odd_o25, m.fair_o25)
+        m.ev_btts = _calc_ev(m.real_odd_btts, m.fair_btts)
+        m.ev_u35 = _calc_ev(m.real_odd_u35, m.fair_u35)
+        m.ev_c75 = _calc_ev(m.real_odd_c75, m.fair_c75)
+        m.ev_c85 = _calc_ev(m.real_odd_c85, m.fair_c85)
+        m.ev_c75ft = _calc_ev(m.real_odd_c75ft, m.fair_c75ft)
+        m.ev_lay = None  # Lay é mercado de bolsa/Poisson
+
         # Valores padrão de fallback
         m.home_spec_pct = stats['home_o15_pct']
         m.away_spec_pct = stats['away_o15_pct']
@@ -484,36 +511,36 @@ def vip_games_list_view(request):
         # Melhores apostas DIVERSIFICADAS ou FOCADAS no mercado selecionado
         if selected_market == 'gols_o15':
             if m.p_o15 >= 75:
-                top_picks.append({'match': m, 'market_name': 'Over 1.5 FT', 'badge_color': 'emerald', 'prob': m.p_o15, 'fair_odd': m.fair_o15})
+                top_picks.append({'match': m, 'market_name': 'Over 1.5 FT', 'badge_color': 'emerald', 'prob': m.p_o15, 'fair_odd': m.fair_o15, 'real_odd': m.real_odd_o15, 'ev': m.ev_o15})
         elif selected_market == 'gols_o25':
             if m.p_o25 >= 55:
-                top_picks.append({'match': m, 'market_name': 'Over 2.5 FT', 'badge_color': 'emerald', 'prob': m.p_o25, 'fair_odd': m.fair_o25})
+                top_picks.append({'match': m, 'market_name': 'Over 2.5 FT', 'badge_color': 'emerald', 'prob': m.p_o25, 'fair_odd': m.fair_o25, 'real_odd': m.real_odd_o25, 'ev': m.ev_o25})
         elif selected_market == 'gols_btts':
             if m.p_btts >= 50:
-                top_picks.append({'match': m, 'market_name': 'Both Teams to Score', 'badge_color': 'amber', 'prob': m.p_btts, 'fair_odd': m.fair_btts})
+                top_picks.append({'match': m, 'market_name': 'Both Teams to Score', 'badge_color': 'amber', 'prob': m.p_btts, 'fair_odd': m.fair_btts, 'real_odd': m.real_odd_btts, 'ev': m.ev_btts})
         elif selected_market == 'gols_u35':
             if m.p_u35 >= 75:
-                top_picks.append({'match': m, 'market_name': 'Under 3.5 FT', 'badge_color': 'blue', 'prob': m.p_u35, 'fair_odd': m.fair_u35})
+                top_picks.append({'match': m, 'market_name': 'Under 3.5 FT', 'badge_color': 'blue', 'prob': m.p_u35, 'fair_odd': m.fair_u35, 'real_odd': m.real_odd_u35, 'ev': m.ev_u35})
         elif selected_market == 'cantos_o75':
             if m.p_c75 >= 75:
-                top_picks.append({'match': m, 'market_name': 'Corners Over 7.5 FT', 'badge_color': 'cyan', 'prob': m.p_c75, 'fair_odd': m.fair_c75})
+                top_picks.append({'match': m, 'market_name': 'Corners Over 7.5 FT', 'badge_color': 'cyan', 'prob': m.p_c75, 'fair_odd': m.fair_c75, 'real_odd': m.real_odd_c75, 'ev': m.ev_c75})
         elif selected_market == 'cantos_o85':
             if m.p_c85 >= 65:
-                top_picks.append({'match': m, 'market_name': 'Corners Over 8.5 FT', 'badge_color': 'cyan', 'prob': m.p_c85, 'fair_odd': m.fair_c85})
+                top_picks.append({'match': m, 'market_name': 'Corners Over 8.5 FT', 'badge_color': 'cyan', 'prob': m.p_c85, 'fair_odd': m.fair_c85, 'real_odd': m.real_odd_c85, 'ev': m.ev_c85})
         elif selected_market == 'cantos_75ft':
             if m.p_c75ft >= 75:
-                top_picks.append({'match': m, 'market_name': 'Late Corners 75\' FT', 'badge_color': 'purple', 'prob': m.p_c75ft, 'fair_odd': m.fair_c75ft})
+                top_picks.append({'match': m, 'market_name': 'Late Corners 75\' FT', 'badge_color': 'purple', 'prob': m.p_c75ft, 'fair_odd': m.fair_c75ft, 'real_odd': m.real_odd_c75ft, 'ev': m.ev_c75ft})
         elif selected_market == 'lays':
             if m.p_lay >= 92:
-                top_picks.append({'match': m, 'market_name': 'Lay Correct Score', 'badge_color': 'rose', 'prob': m.p_lay, 'fair_odd': m.fair_lay})
+                top_picks.append({'match': m, 'market_name': 'Lay Correct Score', 'badge_color': 'rose', 'prob': m.p_lay, 'fair_odd': m.fair_lay, 'real_odd': m.real_odd_lay, 'ev': None})
         else:
             # Todos os mercados (Diversificado) - Régua de Elite
             if m.p_o15 >= 85:
-                top_picks.append({'match': m, 'market_name': 'Over 1.5 Goals FT', 'badge_color': 'emerald', 'prob': m.p_o15, 'fair_odd': m.fair_o15})
+                top_picks.append({'match': m, 'market_name': 'Over 1.5 Goals FT', 'badge_color': 'emerald', 'prob': m.p_o15, 'fair_odd': m.fair_o15, 'real_odd': m.real_odd_o15, 'ev': m.ev_o15})
             elif m.p_c85 >= 80:
-                top_picks.append({'match': m, 'market_name': 'Corners Over 8.5 FT', 'badge_color': 'cyan', 'prob': m.p_c85, 'fair_odd': m.fair_c85})
+                top_picks.append({'match': m, 'market_name': 'Corners Over 8.5 FT', 'badge_color': 'cyan', 'prob': m.p_c85, 'fair_odd': m.fair_c85, 'real_odd': m.real_odd_c85, 'ev': m.ev_c85})
             elif m.p_btts >= 75:
-                top_picks.append({'match': m, 'market_name': 'Both Teams to Score (BTTS)', 'badge_color': 'amber', 'prob': m.p_btts, 'fair_odd': m.fair_btts})
+                top_picks.append({'match': m, 'market_name': 'Both Teams to Score (BTTS)', 'badge_color': 'amber', 'prob': m.p_btts, 'fair_odd': m.fair_btts, 'real_odd': m.real_odd_btts, 'ev': m.ev_btts})
 
     top_picks_sorted = sorted(top_picks, key=lambda x: x['prob'], reverse=True)[:5]
     if not top_picks_sorted and processed_matches:
