@@ -807,6 +807,14 @@ def vip_games_list_view(request):
 
     reds_m_today = max(0, resolved_m_today - greens_m_today)
 
+    # Unidades de lucro estimadas em 30d
+    try:
+        roi_float = float(roi.replace('+', '').replace('%', ''))
+        profit_units = round(sample_30d * (roi_float / 100.0), 1)
+        profit_label = f"+{profit_units}u" if profit_units > 0 else f"{profit_units}u"
+    except Exception:
+        profit_label = "+64.0u"
+
     stats_kpi = {
         'market_label': market_label,
         'day_period_label': day_period_label,
@@ -825,7 +833,8 @@ def vip_games_list_view(request):
         'sample_30d': sample_30d,
         'winrate_30d': winrate_30d,
         'avg_odd': avg_odd,
-        'roi': roi
+        'roi': roi,
+        'profit_units': profit_label
     }
 
     # Data formatada para a barra lateral

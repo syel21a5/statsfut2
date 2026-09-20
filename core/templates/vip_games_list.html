@@ -218,14 +218,20 @@
       <div class="bg-[#14181f] border border-gray-800/60 rounded-xl p-3.5 flex flex-col justify-between shadow-lg relative overflow-hidden col-span-2 md:col-span-1">
         <div>
           <div class="flex items-center justify-between">
-            <span class="text-[11px] font-medium text-gray-400 block">Fair Odd ROI</span>
-            <span class="text-[9px] font-mono text-emerald-400 font-bold">Odd ~{{ stats_kpi.avg_odd }}</span>
+            <span class="text-[11px] font-medium text-gray-400 block">ROI (30 Days)</span>
+            <span class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">Odd ~{{ stats_kpi.avg_odd }}</span>
           </div>
           <span class="text-2xl font-black text-[#00d26a] font-mono mt-1.5 block">{{ stats_kpi.roi }}</span>
-          <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">Flat stake 1 unit</span>
+          <div class="mt-1 flex items-center flex-wrap gap-1.5 font-mono text-[11px] font-semibold">
+            <span class="text-emerald-400">💰 {{ stats_kpi.profit_units }}</span>
+            <span class="text-gray-600">·</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-800/80 text-gray-400 text-[10px] font-normal border border-gray-700/50">
+              Stake 1u fixa
+            </span>
+          </div>
         </div>
         <div class="w-full bg-gray-800 h-1 rounded-full mt-3 overflow-hidden">
-          <div class="bg-[#00d26a] h-full w-[70%]"></div>
+          <div class="bg-[#00d26a] h-full w-[75%]"></div>
         </div>
       </div>
 
