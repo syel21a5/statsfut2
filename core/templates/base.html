@@ -115,6 +115,10 @@
             <span class="ms-1">{% translate "Upgrade to VIP" %}</span>
             <span class="badge ms-auto px-2 py-1 rounded-pill" style="background: linear-gradient(135deg, #f59e0b, #f97316); font-size: 0.6rem; color: #fff;">PRO</span>
         </a>
+        <a href="{% url 'members:login' %}" class="nav-link d-flex align-items-center text-secondary py-1.5" style="font-size: 0.8rem; opacity: 0.85;">
+            <i class="fa-solid fa-arrow-right-to-bracket text-warning me-2" style="font-size: 0.75rem;"></i>
+            <span>{% translate "Login Assinante VIP" %}</span>
+        </a>
         {% endif %}
 
         <!-- Botão Telegram Free -->
@@ -245,11 +249,6 @@
                         </li>
                     </ul>
                 </div>
-                {% else %}
-                <a href="{% url 'members:login' %}" class="btn btn-sm text-white d-flex align-items-center gap-2" id="headerLoginBtn" style="background: linear-gradient(135deg, var(--primary), #6366f1); border: none; border-radius: 10px; padding: 6px 14px;">
-                    <i class="fa-solid fa-right-to-bracket"></i>
-                    <span class="d-none d-md-inline small">{% translate "Login" %}</span>
-                </a>
                 {% endif %}
             </div>
         </header>
