@@ -120,9 +120,9 @@ def get_match_full_stats(match):
         fair_h = round(1 / ((1/h_odd) / margin), 2)
         fair_d = round(1 / ((1/d_odd) / margin), 2)
         fair_a = round(1 / ((1/a_odd) / margin), 2)
-        ev_h = round(((fair_h / h_odd) - 1) * 100, 1)
-        ev_d = round(((fair_d / d_odd) - 1) * 100, 1)
-        ev_a = round(((fair_a / a_odd) - 1) * 100, 1)
+        ev_h = round(((h_odd / fair_h) - 1) * 100, 1)
+        ev_d = round(((d_odd / fair_d) - 1) * 100, 1)
+        ev_a = round(((a_odd / fair_a) - 1) * 100, 1)
         odds_data.append({
             'market': f'{match.home_team.name[:15]} Win',
             'book_odd': round(h_odd, 2),
@@ -154,19 +154,24 @@ def get_match_full_stats(match):
         })
 
     # Mercados de Gols e Cantos na Tabela +EV
+    book_odd_o25 = round(float(match.over_25_odds or (1.30 if total_expected_goals >= 3.0 else 1.85)), 2)
+    ev_o25 = round(((prob_over_25 / 100) * book_odd_o25 - 1) * 100, 1)
     odds_data.append({
         'market': 'Over 2.5 Goals',
-        'book_odd': round(float(match.over_25_odds or (1.30 if total_expected_goals >= 3.0 else 1.85)), 2),
+        'book_odd': book_odd_o25,
         'fair_odd': round(100 / max(prob_over_25, 1.0), 2),
-        'ev': f'+{round((prob_over_25 / 100 * 1.5 - 1) * 100, 1)}%',
-        'status': 'value' if prob_over_25 >= 60 else 'neutral'
+        'ev': f'{"+" if ev_o25 > 0 else ""}{ev_o25}%',
+        'status': 'value' if ev_o25 > 0 else 'neutral'
     })
+    
+    book_odd_c95 = round(float(match.corners_over_95_odds or 1.90), 2)
+    ev_c95 = round(((corners_prob_over_95 / 100) * book_odd_c95 - 1) * 100, 1)
     odds_data.append({
         'market': 'Over 9.5 Corners',
-        'book_odd': round(float(match.corners_over_95_odds or 1.90), 2),
+        'book_odd': book_odd_c95,
         'fair_odd': round(100 / max(corners_prob_over_95, 1.0), 2),
-        'ev': f'+{round((corners_prob_over_95 / 100 * 1.9 - 1) * 100, 1)}%',
-        'status': 'strong_value' if corners_prob_over_95 >= 65 else 'neutral'
+        'ev': f'{"+" if ev_c95 > 0 else ""}{ev_c95}%',
+        'status': 'strong_value' if ev_c95 > 5 else ('value' if ev_c95 >= 0 else 'neutral')
     })
 
     # Gráfico de Pressão: se a partida já teve estatísticas (como source graph_points), usar real. Senão vazio ou informativo
@@ -1242,9 +1247,9 @@ def vip_tools_view(request):
             fair_d = round(1 / ((1/d_odd) / margin), 2)
             fair_a = round(1 / ((1/a_odd) / margin), 2)
 
-            ev_h = round(((fair_h / h_odd) - 1) * 100, 1)
-            ev_d = round(((fair_d / d_odd) - 1) * 100, 1)
-            ev_a = round(((fair_a / a_odd) - 1) * 100, 1)
+            ev_h = round(((h_odd / fair_h) - 1) * 100, 1)
+            ev_d = round(((d_odd / fair_d) - 1) * 100, 1)
+            ev_a = round(((a_odd / fair_a) - 1) * 100, 1)
 
             # Apenas descompassos relevantes (> 3% de valor esperado)
             if ev_h >= 3.0:
