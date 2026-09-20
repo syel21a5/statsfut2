@@ -987,6 +987,14 @@ def vip_live_radar_view(request):
             intensity_label = 'HIGH ACTIVITY ⚡'
             intensity_color = 'amber'
 
+        # Detecção da Estratégia Blindada: Sniper Under 4.5
+        is_sniper_under45 = False
+        tot_goals = (m.home_score or 0) + (m.away_score or 0)
+        league_name = (m.league.name if m.league else '').lower()
+        is_blacklisted = any(bad in league_name for bad in ['u20', 'u21', 'u19', 'super league', 'besta deild', 'ykkosliiga', '1st division'])
+        if (18 <= elapsed <= 32) and tot_goals == 2 and tot_shots <= 9 and not is_blacklisted:
+            is_sniper_under45 = True
+
         radar_list.append({
             'match': m,
             'p5': p5,
@@ -1000,6 +1008,7 @@ def vip_live_radar_view(request):
             'intensity_label': intensity_label,
             'intensity_color': intensity_color,
             'has_graph': bool(pts),
+            'is_sniper_under45': is_sniper_under45,
         })
 
     # Ordenar jogos: Extremos e Alta Pressão no topo da tela!

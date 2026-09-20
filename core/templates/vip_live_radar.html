@@ -66,7 +66,7 @@
                 </div>
 
                 <!-- Placar e Nomes dos Times -->
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-3 flex-wrap">
                   <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded font-mono font-bold text-xs bg-rose-500/20 text-rose-400 border border-rose-500/40">
                     <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
                     {{ m.elapsed_time|default:"LIVE" }}'
@@ -79,6 +79,13 @@
                     </span>
                     <span>{{ m.away_team.name }}</span>
                   </a>
+
+                  {% if item.is_sniper_under45 %}
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-mono font-black bg-indigo-500/20 text-indigo-300 border border-indigo-500/50 shadow-sm shadow-indigo-950/40 animate-pulse" title="2 early goals in a controlled-pace match. Bookmakers inflated Under 4.5 line!">
+                    <i class="fa-solid fa-shield-halved text-indigo-400"></i>
+                    <span>SNIPER UNDER 4.5 DETECTADO</span>
+                  </span>
+                  {% endif %}
                 </div>
               </div>
 

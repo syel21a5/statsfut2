@@ -7,5 +7,7 @@ while true; do
   printf 'AUTHENTICATE ""\r\nSIGNAL NEWNYM\r\nQUIT\r\n' | nc 127.0.0.1 9051 2>/dev/null
   sleep 3
   venv/bin/python manage.py update_live_matches --mode live --force >> /www/wwwroot/statsfut.com/logs/live_tor.log 2>&1
+  # Dispara o Robô Blindado de Under 4.5 e Lay em tempo real a cada rodada ao vivo
+  venv/bin/python manage.py run_live_lay_bot >> /www/wwwroot/statsfut.com/logs/live_lay_bot.log 2>&1
   sleep 120
 done

@@ -15,11 +15,19 @@ class LiveUnderDetector:
     """
 
     def __init__(self):
-        # A Janela Mestra: Tudo tem que acontecer no 1º tempo (até 45' + acréscimos)
-        self.MAX_MINUTE = 45
+        # Janela Blindada: Entrada ideal entre o 18' e 32' (antes da loucura do fim do 1T)
+        self.MIN_MINUTE = 18
+        self.MAX_MINUTE = 32
 
-        # A Regra de Ouro Inquebrável: Over 4.5 deve ser <= 15%
-        self.MAX_OVER_45_PROB = 15.0
+        # A Regra de Ouro: Over 4.5 pré-jogo deve ser <= 18%
+        self.MAX_OVER_45_PROB = 18.0
+
+        # Lista Negra de Ligas Suicidas (historicamente > 50% de RED em jogos malucos com 2 gols cedo)
+        self.BLACKLISTED_LEAGUES = [
+            'super league', 'besta deild', 'ykkosliiga', 'ykkösliiga', 
+            '1st division', 'u20', 'u21', 'u19', 'sub-20', 'sub-21', 'sub-19',
+            'amateur', 'regional', 'oberliga'
+        ]
 
     def process_live_matches(self):
         """Busca jogos ao vivo e analisa oportunidades de Under."""
@@ -34,7 +42,7 @@ class LiveUnderDetector:
 
     def analyze_match(self, match):
         try:
-            # Garante que só olha para o Primeiro Tempo
+            # 1. Garante que só olha para o Primeiro Tempo
             if match.status in ['2H', 'FT', 'Finished', 'Match Finished']:
                 return
 
@@ -42,22 +50,32 @@ class LiveUnderDetector:
             away_score = match.away_score or 0
             total_goals = home_score + away_score
 
-            # Filtro de tempo
+            # 2. REGRA DE OURO INEGOCIÁVEL: EXATAMENTE 2 GOLS NO PLACAR!
+            # (Se tiver 3 gols ou mais, a auditoria provou que o risco de RED passa de 58%!)
+            if total_goals != 2:
+                return
+
+            # 3. FILTRO DE MINUTAGEM: Entre o 18' e 32'
             elapsed = match.elapsed_time or 0
-            if match.status == 'HT':
-                elapsed = 45
-
-            if elapsed > self.MAX_MINUTE and match.status != 'HT':
+            if not (self.MIN_MINUTE <= elapsed <= self.MAX_MINUTE):
                 return
 
-            # Para o RADAR de 0x0, só queremos avisar bem no comecinho (ex: até 15 min)
-            if total_goals == 0 and elapsed > 15:
+            # 4. FILTRO DE LIGA: Bloquear ligas doidas / de alta variância
+            league_name = (match.league.name if match.league else '').lower()
+            league_country = (match.league.country if match.league and match.league.country else '').lower()
+            full_league_str = f"{league_country} {league_name}"
+            for blacklisted in self.BLACKLISTED_LEAGUES:
+                if blacklisted in full_league_str:
+                    logger.info(f"🛡️ Under Detector: Jogo {match.id} ignorado por estar em liga de alto risco ({match.league.name}).")
+                    return
+
+            # 5. FILTRO DE TELEMETRIA AO VIVO: Ritmo não pode ser tiroteio desenfreado
+            tot_shots = (match.home_shots or 0) + (match.away_shots or 0)
+            if tot_shots > 9:  # Mais de 9 chutes aos 30' indica partida aberta
+                logger.info(f"🛡️ Under Detector: Jogo {match.id} ignorado por excesso de chutes ({tot_shots} chutes aos {elapsed}').")
                 return
 
-            # A remoção do filtro de cartão vermelho foi solicitada pelo usuário.
-            # O usuário validará os cartões vermelhos manualmente na casa de apostas.
-
-            # Analisa as estatísticas
+            # 6. Analisa as estatísticas pré-jogo
             analyzer = MatchAnalyzer(match)
             stats = analyzer.generate_full_report()
 
@@ -65,10 +83,9 @@ class LiveUnderDetector:
                 return
 
             over_45_prob = stats['goals'].get('over_45', 100)
-            over_35_prob = stats['goals'].get('over_35', 100)
 
-            # Filtro Mestre: Validação Matemática
-            if over_45_prob <= self.MAX_OVER_45_PROB and over_35_prob <= 25.0:
+            # Filtro Mestre: Validação Matemática pré-jogo
+            if over_45_prob <= self.MAX_OVER_45_PROB:
                 self.send_telegram_alert(
                     match, home_score, away_score, elapsed, over_45_prob, total_goals
                 )
@@ -80,77 +97,44 @@ class LiveUnderDetector:
         from matches.models import ScannerTip
 
         # Anti-spam definitivo via Banco de Dados
-        market_key = f"TLGRM_UNDER_{total_goals}_GOLS"
+        market_key = "TLGRM_UNDER_45_SNIPER"
         tip, created = ScannerTip.objects.get_or_create(
             match=match,
             market=market_key,
             defaults={
-                'prediction_text': f"Telegram Under Alert ({total_goals} Gols)",
+                'prediction_text': f"Telegram Under 4.5 Sniper Alert ({h_score}x{a_score} aos {elapsed}')",
                 'probability': over_45_prob,
                 'status': 'PENDING'
             }
         )
         
-        # Se não foi criado agora, é porque já tínhamos salvo no banco que a mensagem foi enviada
+        # Se já alertou esta partida, não envia de novo
         if not created:
             return
 
         home_name = match.home_team.name
         away_name = match.away_team.name
-        league = match.league.name
-        under_45_prob = 100 - over_45_prob
-
-        # Módulos de Mensagem Dinâmica
-        if total_goals == 0:
-            titulo = "RADAR (Jogo Promissor)"
-            obs = ("Partida excelente para a estratégia Under! Favorite na corretora e aguarde.\n"
-                   "⚠️ <b>NÃO entre agora:</b> Aguarde o primeiro gol em 0x0 para fazer a entrada + proteções juntas.")
-            linhas = f"🟢 <b>Favoritar o Jogo</b> (Aguardar 1º gol)"
-        elif total_goals == 1:
-            if elapsed <= 15:
-                titulo = "GOL CEDO (Blindagem Total ou Under 4.5)"
-                obs = (f"Gol muito cedo aos {elapsed}'min! Risco de goleada ativa.\n"
-                       "👉 <b>Como agir profissionalmente (Stake R$ 50):</b>\n"
-                       "1. <b>Linha Conservadora:</b> Entre no <b>Under 4.5</b> (R$ 50) e proteja apenas com R$ 2,50 no AOV Casa e R$ 1,00 no AOV Visitante.\n"
-                       "2. <b>Linha Blindagem Total:</b> Entre no <b>Under 3.5</b> (R$ 50) e coloque seguros de R$ 1,00 a R$ 3,50 no AOV Casa/Vis e nos placares (2-2, 3-1, 1-3, 3-2, 2-3) para cobrir 100% dos cenários.")
-                linhas = f"🟢 <b>Under 4.5</b> (Seguro) ou <b>Under 3.5</b> (Com 7 Proteções)"
-            elif elapsed <= 30:
-                titulo = "GOL INTERMEDIÁRIO (Under 3.5 Protegido)"
-                obs = (f"Gol aos {elapsed}'min! A chance de goleada caiu. O inimigo é o placar de 4 gols.\n"
-                       "👉 <b>Como agir profissionalmente (Stake R$ 50):</b>\n"
-                       "Entre no <b>Under 3.5</b> (R$ 50) e proteja apenas os placares de 4 gols: R$ 2,00 no 2-2, R$ 2,00 no 3-1 e R$ 1,00 no 1-3. (Economiza R$ 10 em seguros).")
-                linhas = f"🟢 <b>Under 3.5</b> (Com proteção apenas de 4 gols)"
-            else:
-                titulo = "GOL NO FIM DO HT (Under 3.5 ou Under 2.5)"
-                obs = (f"Gol tardio aos {elapsed}'min! Perto do intervalo.\n"
-                       "👉 <b>Como agir profissionalmente (Stake R$ 50):</b>\n"
-                       "1. <b>Seguro:</b> Entre no <b>Under 3.5</b> seco (R$ 50) sem proteções.\n"
-                       "2. <b>Agressivo:</b> Entre no <b>Under 2.5</b> (R$ 50) e coloque apenas R$ 2,00 no 2-1 e R$ 1,00 no 1-2 de proteção.")
-                linhas = f"🟢 <b>Under 3.5</b> (Sem seguro) ou <b>Under 2.5</b> (Protegido no 2-1/1-2)"
-        elif total_goals == 2:
-            titulo = "PÂNICO DO MERCADO (2 Gols)"
-            obs = "Dois gols tão cedo num jogo de tendência Under! O mercado entrou em colapso projetando uma chuva de gols. Abrace as linhas altas."
-            linhas = f"🟢 <b>Under 4.5</b> (Para ótimo lucro)\n🟢 <b>Under 5.5</b> (Para segurança máxima)"
-        elif total_goals >= 3:
-            titulo = f"A FALSA GOLEADA ({total_goals} Gols)"
-            obs = "O mercado tem certeza que vai terminar 6x0. Mas a matemática diz que o jogo morre agora e as equipes vão se fechar. As odds do Under estão esmagadoras!"
-            linhas = f"🟢 <b>Under {total_goals + 1}.5</b>\n🟢 <b>Under {total_goals + 2}.5</b> (Risco quase zero)"
+        league = match.league.name if match.league else 'Liga'
+        under_45_prob = round(100 - over_45_prob, 1)
 
         msg = (
-            f"🛡️ <b>ALERTA UNDER: {titulo}</b> 🛡️\n\n"
-            f"🏆 {league}\n"
+            f"🛡️ <b>SNIPER UNDER 4.5 (Pós-Gols Rápidos)</b> 🛡️\n\n"
+            f"🏆 <b>{league}</b>\n"
             f"⚽ <b>{home_name} {h_score} x {a_score} {away_name}</b>\n"
             f"⏱️ <i>{elapsed}' minutos (1º Tempo)</i>\n\n"
-            f"📊 <b>A Regra de Ouro (Matemática):</b>\n"
-            f"A chance deste jogo bater Over 4.5 Gols é de apenas <b>{over_45_prob}%</b>.\n"
-            f"<i>Isso significa {under_45_prob}% de segurança.</i>\n\n"
-            f"💡 <b>Recomendação:</b>\n"
-            f"Fique de olho nas linhas com odd esticada:\n"
-            f"{linhas}\n\n"
-            f"<i>{obs}</i>\n\n"
-            f"🧮 <b>Calcule suas Stakes na hora:</b>\n"
-            f"👉 https://statsfut.com/calculadora-under/"
+            f"📊 <b>Leitura de Valor & Telemetria:</b>\n"
+            f"• Placar controlado: Exatamente 2 gols no 1T\n"
+            f"• Confiança matemática prévia: <b>{under_45_prob}%</b> de Under\n"
+            f"• O mercado inflacionou a linha para <b>Under 4.5</b> pagando odds altas!\n\n"
+            f"🎯 <b>Recomendação de Entrada:</b>\n"
+            f"👉 <b>Entrar no Mercado: Menos de 4.5 Gols (Under 4.5 FT)</b>\n"
+            f"💡 <i>Odd sugerida: @1.45 a @1.70</i>\n\n"
+            f"⚠️ <b>GESTÃO DE BANCA BLINDADA:</b>\n"
+            f"• Stake Fixa recomendada: <b>1% a 1.5% da banca</b> (NUNCA aumente a mão)\n"
+            f"• Stop Loss: Máximo de 2 reds no dia nesta tática\n\n"
+            f"🔗 Acompanhe o Live Radar no Terminal VIP:\n"
+            f"👉 https://vip.statsfut.com/vip/radar/"
         )
 
-        logger.info(f"Disparando Under Alert Dinâmico para {home_name} x {away_name} ({total_goals} gols)")
+        logger.info(f"Disparando Under 4.5 Sniper Alert para {home_name} x {away_name} ({h_score}x{a_score} aos {elapsed}')")
         TelegramBotService.send_message(msg)
