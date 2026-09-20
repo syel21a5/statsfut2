@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cena 3 Snappy 4K · Free Bet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Plus Jakarta Sans', sans-serif; }
+        body {
+            width: 3840px; height: 2160px;
+            background: radial-gradient(circle at 50% 35%, #051a24 0%, #030712 100%);
+            color: #ffffff;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 120px 180px;
+            overflow: hidden;
+            position: relative;
+            perspective: 2500px;
+        }
+
+        .bg-glow {
+            position: absolute; border-radius: 50%; filter: blur(250px); pointer-events: none;
+        }
+        .glow-emerald { top: 15%; right: 15%; width: 1300px; height: 1300px; background: rgba(16, 185, 129, 0.16); }
+        .glow-cyan { bottom: 15%; left: 15%; width: 1300px; height: 1300px; background: rgba(6, 182, 212, 0.16); }
+        .grid-overlay {
+            position: absolute; inset: 0;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.02) 2px, transparent 2px),
+                              linear-gradient(90deg, rgba(255, 255, 255, 0.02) 2px, transparent 2px);
+            background-size: 100px 100px;
+            pointer-events: none;
+        }
+
+        .header-container { text-align: center; margin-bottom: 60px; z-index: 10; }
+        .badge {
+            display: inline-flex; align-items: center; gap: 20px;
+            background: rgba(16, 185, 129, 0.15); border: 2px solid rgba(16, 185, 129, 0.5);
+            color: #34d399; padding: 18px 50px; border-radius: 9999px;
+            font-size: 38px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em;
+            margin-bottom: 24px; box-shadow: 0 0 40px rgba(16, 185, 129, 0.3);
+        }
+        h1 {
+            font-size: 126px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.03em;
+        }
+        h1 span { color: #34d399; text-shadow: 0 0 50px rgba(52, 211, 153, 0.6); }
+        p.subtitle {
+            font-size: 52px; color: #94a3b8; max-width: 2800px; line-height: 1.4;
+        }
+
+        .scenario-board {
+            background: rgba(15, 23, 42, 0.85);
+            border: 3px solid rgba(16, 185, 129, 0.5);
+            border-radius: 56px; padding: 75px 90px; max-width: 3300px; width: 100%;
+            box-shadow: 0 30px 100px rgba(0,0,0,0.7);
+            backdrop-filter: blur(40px); z-index: 10;
+        }
+
+        .scenario-alert-bar {
+            background: rgba(16, 185, 129, 0.12); border: 2px solid rgba(16, 185, 129, 0.4);
+            border-radius: 28px; padding: 28px 48px; display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 50px;
+        }
+        .scenario-title { font-size: 54px; font-weight: 900; color: #34d399; display: flex; align-items: center; gap: 20px; }
+        .score-pill {
+            font-family: 'JetBrains Mono', monospace; font-size: 60px; font-weight: 900;
+            background: #020617; padding: 10px 36px; border-radius: 20px; border: 2px solid #10b981; color: #ffffff;
+        }
+
+        .steps-split {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
+        }
+        .action-card {
+            background: rgba(30, 41, 59, 0.5); padding: 55px; border-radius: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.08);
+            position: relative; overflow: hidden; opacity: 0.25;
+            transition: all 0.4s ease;
+        }
+        .action-card h3 {
+            font-size: 48px; font-weight: 900; margin-bottom: 24px; display: flex; align-items: center; gap: 20px;
+        }
+        .action-card p {
+            font-size: 38px; color: #cbd5e1; line-height: 1.5;
+        }
+
+        .outcome-box {
+            margin-top: 50px; padding: 40px 60px; border-radius: 32px;
+            background: linear-gradient(90deg, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.2));
+            border: 2px solid rgba(16, 185, 129, 0.6);
+            display: grid; grid-template-columns: 1fr 1fr; gap: 40px; text-align: center;
+            opacity: 0.25; transition: all 0.4s ease;
+        }
+        .outcome-col { font-size: 44px; font-weight: 800; color: #ffffff; }
+        .outcome-col strong { color: #34d399; }
+    </style>
+</head>
+<body>
+    <div class="grid-overlay"></div>
+    <div class="bg-glow glow-emerald"></div>
+    <div class="bg-glow glow-cyan"></div>
+
+    <div class="header-container">
+        <div class="badge">Gestão & Blindagem de Lucro</div>
+        <h1>O Segredo da <span id="freeBetTitle">Free Bet</span> no Live Trading</h1>
+        <p class="subtitle">Como matar 100% do risco da aposta assim que o primeiro gol é marcado no jogo.</p>
+    </div>
+
+    <div class="scenario-board" id="boardBox">
+        <div class="scenario-alert-bar" id="alertBar">
+            <div class="scenario-title">⚽ Gol Marcado no 1º Tempo! (20′ ao 45′)</div>
+            <div class="score-pill" id="scorePill">1 x 0</div>
+        </div>
+
+        <div class="steps-split">
+            <div class="action-card" id="act1">
+                <h3 style="color:#38bdf8;">🧠 1. Sangue Frio & Controle</h3>
+                <p>O mercado vai suspender por 2 minutos e as cotações vão despencar. Não comemore nem tome decisões precipitadas no calor do momento.</p>
+            </div>
+
+            <div class="action-card" id="act2">
+                <h3 style="color:#34d399;">🛡️ 2. A Cobertura em Lay</h3>
+                <p>Faça uma aposta contra (Lay) no Over 1.5 cobrindo exatamente o valor que você injetou. Você acabou de criar uma Free Bet perfeita.</p>
+            </div>
+        </div>
+
+        <div class="outcome-box" id="outcomeBox">
+            <div class="outcome-col">🛡️ Se terminar 1x0: <strong>Risco R$ 0,00</strong> (Zero Prejuízo)</div>
+            <div class="outcome-col">💰 Se sair o 2º gol: <strong>Lucro Líquido Máximo</strong> no bolso!</div>
+        </div>
+    </div>
+
+    <script>
+        // CENA 3 (Offset de início: 121.98s no áudio original)
+        // 0.0s [121.9s]: 'E o que nós fazemos quando a bola finalmente balança as redes?...' -> Placar 1x0 pulsa
+        // 4.1s [126.1s]: 'Aqui está o grande divisor de águas entre o amador e o profissional: a criação da Free Bet' -> Título brilha
+        // 9.8s [131.8s]: 'Se sair um gol entre os 20 e 45 minutos... não fique torcendo desesperado...' -> PASSO 1 SALTA
+        // 16.6s [138.6s]: 'o operador inteligente realiza uma entrada em Lay... aposta contra...' -> PASSO 2 SALTA
+        // 27.8s [149.8s]: 'O resultado disso é pura tranquilidade: se o jogo terminar 1x0 risco zero... 2º gol lucro máximo!' -> BANNER DISPARA
+
+        const tl = gsap.timeline();
+
+        // 0.0s - Entrada Rápida
+        tl.from(".header-container", { opacity: 0, y: -30, duration: 0.5, ease: "back.out(2)" })
+          .from("#boardBox", { opacity: 0, scale: 0.96, duration: 0.6, ease: "power3.out" }, "-=0.3")
+          .from("#alertBar", { opacity: 0, y: 15, duration: 0.4 }, "-=0.4");
+
+        // 1.0s - Placar Pulsa na hora
+        tl.fromTo("#scorePill", { scale: 1 }, { scale: 1.25, repeat: 3, yoyo: true, duration: 0.25, ease: "power2.out" }, 1.0);
+
+        // 9.8s - PASSO 1 SALTA
+        tl.to("#act1", {
+            opacity: 1, scale: 1.05,
+            borderColor: "rgba(56, 189, 248, 0.9)",
+            boxShadow: "0 25px 80px rgba(56, 189, 248, 0.35)",
+            duration: 0.5, ease: "back.out(2)"
+        }, 9.8);
+
+        // 16.6s - PASSO 2 SALTA
+        tl.to("#act1", { opacity: 0.25, scale: 0.96, borderColor: "rgba(255, 255, 255, 0.08)", boxShadow: "none", duration: 0.4 }, 16.0);
+        tl.to("#act2", {
+            opacity: 1, scale: 1.05,
+            borderColor: "rgba(52, 211, 153, 0.9)",
+            boxShadow: "0 25px 80px rgba(52, 211, 153, 0.35)",
+            duration: 0.5, ease: "back.out(2)"
+        }, 16.6);
+
+        // 27.8s - BANNER DISPARA
+        tl.to("#outcomeBox", {
+            opacity: 1, scale: 1.05,
+            boxShadow: "0 30px 100px rgba(16, 185, 129, 0.5)",
+            duration: 0.6, ease: "back.out(2)"
+        }, 27.8);
+    </script>
+</body>
+</html>

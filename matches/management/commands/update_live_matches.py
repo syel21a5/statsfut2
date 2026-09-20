@@ -286,25 +286,6 @@ class Command(BaseCommand):
                     m.home_big_chances = rich.get('home_big_chances')
                     m.away_big_chances = rich.get('away_big_chances')
                     m.statistics_data = {'graph_points': rich['graph_points'], 'source': 'sofascore_tor'}
-
-                    # Atualiza Odds ao Vivo diretamente do SofaScore (aposentando TheOddsAPI)
-                    odds = rich.get('odds', {})
-                    if odds:
-                        if odds.get('home_win'): m.home_team_win_odds = odds['home_win']
-                        if odds.get('draw'): m.draw_odds = odds['draw']
-                        if odds.get('away_win'): m.away_team_win_odds = odds['away_win']
-                        if odds.get('over_15'): m.over_15_odds = odds['over_15']
-                        if odds.get('over_25'): m.over_25_odds = odds['over_25']
-                        if odds.get('under_25'): m.under_25_odds = odds['under_25']
-                        if odds.get('over_35'): m.over_35_odds = odds['over_35']
-                        if odds.get('under_35'): m.under_35_odds = odds['under_35']
-                        if odds.get('btts_yes'): m.btts_yes_odds = odds['btts_yes']
-                        if odds.get('btts_no'): m.btts_no_odds = odds['btts_no']
-                        if odds.get('dc_1x'): m.dc_1x_odds = odds['dc_1x']
-                        if odds.get('dc_x2'): m.dc_x2_odds = odds['dc_x2']
-                        if odds.get('dnb_home'): m.dnb_home_odds = odds['dnb_home']
-                        if odds.get('dnb_away'): m.dnb_away_odds = odds['dnb_away']
-
                     m.save()
                     # Snapshot para o calculate_pressure clássico (por diferença)
                     _Snapshot.objects.create(

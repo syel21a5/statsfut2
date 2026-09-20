@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cena 4 Snappy 4K · Call to Action</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Plus Jakarta Sans', sans-serif; }
+        body {
+            width: 3840px; height: 2160px;
+            background: radial-gradient(circle at 50% 35%, #0d1527 0%, #030712 100%);
+            color: #ffffff;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 120px 180px;
+            overflow: hidden;
+            position: relative;
+            perspective: 2500px;
+        }
+
+        .bg-glow {
+            position: absolute; border-radius: 50%; filter: blur(250px); pointer-events: none;
+        }
+        .glow-cyan { top: 10%; left: 10%; width: 1400px; height: 1400px; background: rgba(6, 182, 212, 0.16); }
+        .glow-emerald { bottom: 10%; right: 10%; width: 1400px; height: 1400px; background: rgba(16, 185, 129, 0.16); }
+        .grid-overlay {
+            position: absolute; inset: 0;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.02) 2px, transparent 2px),
+                              linear-gradient(90deg, rgba(255, 255, 255, 0.02) 2px, transparent 2px);
+            background-size: 100px 100px;
+            pointer-events: none;
+        }
+
+        .header-container { text-align: center; margin-bottom: 70px; z-index: 10; }
+        .badge {
+            display: inline-flex; align-items: center; gap: 20px;
+            background: rgba(6, 182, 212, 0.15); border: 2px solid rgba(6, 182, 212, 0.5);
+            color: #22d3ee; padding: 18px 50px; border-radius: 9999px;
+            font-size: 38px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em;
+            margin-bottom: 24px; box-shadow: 0 0 40px rgba(6, 182, 212, 0.3);
+        }
+        h1 {
+            font-size: 124px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.03em;
+        }
+        h1 span { color: #22d3ee; text-shadow: 0 0 50px rgba(34, 211, 238, 0.6); }
+        p.subtitle {
+            font-size: 52px; color: #94a3b8; max-width: 2800px; line-height: 1.4;
+        }
+
+        .cta-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+            width: 100%; max-width: 3300px; z-index: 10;
+        }
+
+        .cta-card {
+            background: rgba(15, 23, 42, 0.85); border-radius: 56px; padding: 75px;
+            border: 3px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(40px);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+            display: flex; flex-direction: column; justify-content: space-between;
+            opacity: 0.25; transition: all 0.4s ease;
+        }
+        .cta-header {
+            font-size: 52px; font-weight: 900; margin-bottom: 30px; display: flex; align-items: center; gap: 24px;
+        }
+        .cta-desc {
+            font-size: 42px; color: #cbd5e1; line-height: 1.6; margin-bottom: 40px;
+        }
+        .cta-badge-action {
+            padding: 24px 44px; border-radius: 24px; font-size: 42px; font-weight: 900;
+            display: inline-flex; align-items: center; justify-content: center; gap: 20px;
+            text-align: center;
+        }
+
+        .card-blog .cta-header { color: #38bdf8; }
+        .card-blog .cta-badge-action { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 2px solid #38bdf8; }
+
+        .card-radar .cta-header { color: #34d399; }
+        .card-radar .cta-badge-action { background: rgba(52, 211, 153, 0.2); color: #34d399; border: 2px solid #34d399; }
+    </style>
+</head>
+<body>
+    <div class="grid-overlay"></div>
+    <div class="bg-glow glow-cyan"></div>
+    <div class="bg-glow glow-emerald"></div>
+
+    <div class="header-container">
+        <div class="badge">Evolução Contínua</div>
+        <h1>Suba de Nível com a <span>StatsFut</span></h1>
+        <p class="subtitle">Acesse os artigos completos e a plataforma analítica para tomar decisões cirúrgicas.</p>
+    </div>
+
+    <div class="cta-grid">
+        <div class="cta-card card-blog" id="cardBlog">
+            <div>
+                <div class="cta-header">📖 Artigo Completo no Blog</div>
+                <div class="cta-desc">Confira as tabelas matemáticas de gestão, os outros capítulos da Saga do Over e cenários detalhados no nosso blog oficial.</div>
+            </div>
+            <div class="cta-badge-action">
+                🔗 Link no 1º Comentário Fixado
+            </div>
+        </div>
+
+        <div class="cta-card card-radar" id="cardRadar">
+            <div>
+                <div class="cta-header">⚡ Radar ao Vivo & Alertas</div>
+                <div class="cta-desc">Pare de operar às cegas. Tenha dados de pressão em tempo real, finalizações e momentos perfeitos para entrar no mercado.</div>
+            </div>
+            <div class="cta-badge-action">
+                🌐 statsfut.com
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // CENA 4 (Offset de início: 164.09s no áudio original)
+        // 0.0s [164.0s]: 'Esse método completo com todas as tabelas de simulação...' -> CARD BLOG SALTA
+        // 12.6s [176.7s]: 'O link está no primeiro comentário fixado deste vídeo' -> Badge do link pulsa
+        // 16.4s [180.5s]: 'E se você quer parar de operar no escuro e acompanhar o Radar ao Vivo...' -> CARD RADAR SALTA
+        // 27.5s [191.6s]: 'Deixe o seu like, inscreva-se no canal...' -> Os dois cards brilham juntos
+
+        const tl = gsap.timeline();
+
+        // 0.0s - Entrada
+        tl.from(".header-container", { opacity: 0, y: -30, duration: 0.5, ease: "back.out(2)" })
+          .from(".cta-card", { opacity: 0, y: 40, stagger: 0.2, duration: 0.6, ease: "power3.out" }, "-=0.3");
+
+        // 0.5s - CARD BLOG SALTA
+        tl.to("#cardBlog", {
+            opacity: 1, scale: 1.05,
+            borderColor: "rgba(56, 189, 248, 0.9)",
+            boxShadow: "0 30px 100px rgba(56, 189, 248, 0.4)",
+            duration: 0.5, ease: "back.out(2)"
+        }, 0.5);
+
+        // 12.6s - Link Fixado Pulsa
+        tl.fromTo("#cardBlog .cta-badge-action", { scale: 1 }, { scale: 1.12, yoyo: true, repeat: 1, duration: 0.3 }, 12.6);
+
+        // 16.4s - CARD RADAR SALTA
+        tl.to("#cardBlog", { opacity: 0.25, scale: 0.96, borderColor: "rgba(255, 255, 255, 0.08)", boxShadow: "none", duration: 0.4 }, 16.0);
+        tl.to("#cardRadar", {
+            opacity: 1, scale: 1.05,
+            borderColor: "rgba(52, 211, 153, 0.9)",
+            boxShadow: "0 30px 100px rgba(52, 211, 153, 0.4)",
+            duration: 0.5, ease: "back.out(2)"
+        }, 16.4);
+
+        // 27.5s - Like e Inscreva-se: Ambos ativos
+        tl.to(".cta-card", {
+            opacity: 1, scale: 1.02,
+            boxShadow: "0 25px 80px rgba(255,255,255,0.15)",
+            duration: 0.6, ease: "power3.out"
+        }, 27.5);
+    </script>
+</body>
+</html>

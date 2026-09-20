@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cena 1 Snappy 4K · Linha por Linha</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Plus Jakarta Sans', sans-serif; }
+        body {
+            width: 3840px; height: 2160px;
+            background: radial-gradient(circle at 50% 40%, #0a1128 0%, #030712 100%);
+            color: #ffffff;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 120px 180px;
+            overflow: hidden;
+            position: relative;
+            perspective: 2500px;
+        }
+
+        .bg-glow {
+            position: absolute; border-radius: 50%; filter: blur(220px); pointer-events: none;
+        }
+        .glow-red { top: -200px; left: -100px; width: 1400px; height: 1400px; background: rgba(239, 68, 68, 0.15); }
+        .glow-green { bottom: -200px; right: -100px; width: 1500px; height: 1500px; background: rgba(16, 185, 129, 0.18); }
+        .grid-overlay {
+            position: absolute; inset: 0;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.02) 2px, transparent 2px),
+                              linear-gradient(90deg, rgba(255, 255, 255, 0.02) 2px, transparent 2px);
+            background-size: 100px 100px;
+            pointer-events: none;
+        }
+
+        .header-container { text-align: center; margin-bottom: 70px; z-index: 10; }
+        .badge {
+            display: inline-flex; align-items: center; gap: 20px;
+            background: rgba(239, 68, 68, 0.15); border: 2px solid rgba(239, 68, 68, 0.5);
+            color: #f87171; padding: 18px 50px; border-radius: 9999px;
+            font-size: 38px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em;
+            margin-bottom: 30px; box-shadow: 0 0 40px rgba(239, 68, 68, 0.3);
+        }
+        h1 {
+            font-size: 130px; font-weight: 900; line-height: 1.1; margin-bottom: 24px;
+            letter-spacing: -0.03em;
+        }
+        .alert { color: #ef4444; text-shadow: 0 0 50px rgba(239, 68, 68, 0.6); }
+        .highlight { color: #10b981; text-shadow: 0 0 50px rgba(16, 185, 129, 0.6); }
+        p.subtitle {
+            font-size: 54px; color: #94a3b8; max-width: 2800px; line-height: 1.4;
+        }
+
+        .cards-stage {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 90px;
+            width: 100%; max-width: 3300px; z-index: 10;
+            transform-style: preserve-3d;
+        }
+
+        .card {
+            background: rgba(15, 23, 42, 0.85);
+            border-radius: 56px; padding: 80px 75px;
+            backdrop-filter: blur(40px);
+            border: 3px solid rgba(255, 255, 255, 0.08);
+            display: flex; flex-direction: column; justify-content: space-between;
+            position: relative; overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+            transform-origin: center center;
+            opacity: 0.25;
+            transition: border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 8px;
+        }
+        .card.bad::before { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .card.good::before { background: linear-gradient(90deg, #10b981, #34d399); }
+
+        .card-header {
+            font-size: 54px; font-weight: 900; margin-bottom: 44px; display: flex; align-items: center; gap: 24px;
+        }
+        .card.bad .card-header { color: #f87171; }
+        .card.good .card-header { color: #34d399; }
+
+        .stat-line {
+            font-size: 44px; color: #94a3b8; margin-bottom: 28px; line-height: 1.5;
+            display: flex; align-items: flex-start; gap: 20px;
+            padding: 12px 20px; border-radius: 20px;
+            transition: all 0.3s ease;
+            opacity: 0.3;
+        }
+        .stat-line.active-line {
+            opacity: 1; color: #ffffff;
+            transform: translateX(12px) scale(1.02);
+        }
+        .bad .stat-line.active-line {
+            background: rgba(239, 68, 68, 0.15);
+            border-left: 8px solid #ef4444;
+        }
+        .good .stat-line.active-line {
+            background: rgba(16, 185, 129, 0.15);
+            border-left: 8px solid #10b981;
+        }
+        .stat-line span.bullet { font-size: 38px; }
+        .stat-line strong { color: #ffffff; }
+
+        .live-stat-box {
+            background: rgba(2, 6, 23, 0.8); border: 2px solid rgba(255, 255, 255, 0.08);
+            border-radius: 32px; padding: 36px 40px; margin-top: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .live-stat-label { font-size: 38px; color: #94a3b8; font-weight: 700; }
+        .ticker-number {
+            font-family: 'JetBrains Mono', monospace; font-size: 72px; font-weight: 800;
+        }
+        .bad .ticker-number { color: #ef4444; }
+        .good .ticker-number { color: #10b981; text-shadow: 0 0 30px rgba(16, 185, 129, 0.5); }
+
+        .meter-container { margin-top: 30px; }
+        .meter-label {
+            display: flex; justify-content: space-between; font-size: 34px; font-weight: 800; margin-bottom: 14px;
+        }
+        .meter-bar-bg {
+            width: 100%; height: 26px; background: rgba(255, 255, 255, 0.08); border-radius: 13px; overflow: hidden;
+        }
+        .meter-bar-fill { height: 100%; width: 0%; border-radius: 13px; }
+        .bad .meter-bar-fill { background: linear-gradient(90deg, #f87171, #dc2626); box-shadow: 0 0 30px #ef4444; }
+        .good .meter-bar-fill { background: linear-gradient(90deg, #34d399, #059669); box-shadow: 0 0 30px #10b981; }
+
+        .card-footer {
+            margin-top: 40px; padding-top: 30px; border-top: 2px solid rgba(255,255,255,0.08);
+            font-size: 48px; font-weight: 900; display: flex; justify-content: space-between; align-items: center;
+        }
+        .bad .card-footer { color: #ef4444; }
+        .good .card-footer { color: #10b981; }
+    </style>
+</head>
+<body>
+    <div class="grid-overlay"></div>
+    <div class="bg-glow glow-red"></div>
+    <div class="bg-glow glow-green"></div>
+
+    <div class="header-container" id="headerBox">
+        <div class="badge" id="badgeTop">Saga do Over 1.5 · Masterclass de Live Trading</div>
+        <h1 id="mainTitle">A Armadilha da <span class="alert">Odd @1.25</span> vs. <span class="highlight">Drip Staking</span></h1>
+        <p class="subtitle" id="subTitle">O erro silencioso que drena a banca do apostador comum no minuto zero e a virada matemática dos profissionais.</p>
+    </div>
+
+    <div class="cards-stage">
+        <!-- CARD RUIM: O AMADOR -->
+        <div class="card bad" id="cardAmador">
+            <div>
+                <div class="card-header">❌ O Apostador Amador (Pré-Jogo)</div>
+                <div class="stat-line" id="bline1"><span class="bullet">🔴</span> Injeta <strong>100% da Stake</strong> no minuto zero às cegas</div>
+                <div class="stat-line" id="bline2"><span class="bullet">🔴</span> Aceita cotações esmagadas de <strong>@1.20 a @1.28</strong></div>
+                <div class="stat-line" id="bline3"><span class="bullet">🔴</span> Sem leitura de postura tática ou ritmo das equipes</div>
+                <div class="stat-line" id="bline4"><span class="bullet">🔴</span> Um único red exige até <strong>6 vitórias seguidas</strong> para recuperar</div>
+            </div>
+
+            <div class="live-stat-box" id="bboxStat">
+                <div class="live-stat-label">Odd Pré-Jogo:</div>
+                <div class="ticker-number" id="oddAmador">@1.25</div>
+            </div>
+
+            <div class="meter-container">
+                <div class="meter-label">
+                    <span style="color:#f87171;">Índice de Risco Cego</span>
+                    <span id="riskPercent" style="color:#ef4444;">95%</span>
+                </div>
+                <div class="meter-bar-bg">
+                    <div class="meter-bar-fill" id="meterBad"></div>
+                </div>
+            </div>
+
+            <div class="card-footer" id="bfoot">
+                <span>Retorno: R$ 25</span>
+                <span>Risco: Máximo e Tóxico</span>
+            </div>
+        </div>
+
+        <!-- CARD BOM: O TRADER PROFISSIONAL -->
+        <div class="card good" id="cardTrader">
+            <div>
+                <div class="card-header">✅ O Trader Matemático (Drip Staking)</div>
+                <div class="stat-line" id="gline1"><span class="bullet">🟢</span> Fraciona a entrada em <strong>3 parcelas cirúrgicas</strong></div>
+                <div class="stat-line" id="gline2"><span class="bullet">🟢</span> Deixa o <strong>Time Decay</strong> inflacionar a cotação naturalmente</div>
+                <div class="stat-line" id="gline3"><span class="bullet">🟢</span> Valida volume ofensivo e pressão no <strong>Radar StatsFut</strong></div>
+                <div class="stat-line" id="gline4"><span class="bullet">🟢</span> Odd média ponderada saltando para <strong>@1.65 até @1.85</strong></div>
+            </div>
+
+            <div class="live-stat-box" id="gboxStat">
+                <div class="live-stat-label">Odd Média Ponderada:</div>
+                <div class="ticker-number" id="oddTrader">@1.25</div>
+            </div>
+
+            <div class="meter-container">
+                <div class="meter-label">
+                    <span style="color:#34d399;">Multiplicador de Lucro</span>
+                    <span id="profitPercent" style="color:#10b981;">+300%</span>
+                </div>
+                <div class="meter-bar-bg">
+                    <div class="meter-bar-fill" id="meterGood"></div>
+                </div>
+            </div>
+
+            <div class="card-footer" id="gfoot">
+                <span>Retorno: R$ 75</span>
+                <span>Risco: Diluído e Blindado</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // TIMELINE SNAPPY MILISSEGUNDO A MILISSEGUNDO
+        // 00.1s - Intro Geral
+        // 04.1s - "Se você opera no mercado de gols..."
+        // 14.8s - "A grande maioria dos apostadores amadores comete o erro gravíssimo..." -> Card Amador salta
+        // 17.5s - "...de entrar com cem por cento da sua stake no minuto zero" -> Linha 1 acende
+        // 21.0s - "...aceitando cotações esmagadas de 1.20 a 1.28" -> Linha 2 acende + Odd Box treme
+        // 26.1s - "Pense comigo: você arrisca todo o seu capital sem saber sequer..." -> Linha 3 acende
+        // 36.0s - "Um único red nesse cenário anula o lucro de cinco ou seis apostas ganhas!" -> Linha 4 acende + Barra 95% dispara
+        // 41.1s - "Por outro lado, o trader analítico pensa em termos de probabilidade..." -> Card Amador retrai, Card Trader salta!
+        // 46.5s - "Ele divide o seu capital em três frações cirúrgicas..." -> Linha 1 Trader acende
+        // 49.0s - "...e utiliza o decaimento do tempo a seu favor" -> Linha 2 Trader acende
+        // 52.3s - "Em vez de aceitar uma esmola de odd 1.25, ele espera a cotação inflacionar..." -> Linha 3 Trader acende
+        // 56.5s - "...e busca uma odd média ponderada entre 1.65 e 1.85, multiplicando o lucro..." -> Linha 4 Trader acende + Contador dispara até 1.75!
+
+        const tl = gsap.timeline();
+
+        // 0.1s - Entrada Inicial Rápida
+        tl.from("#badgeTop", { opacity: 0, y: -30, scale: 0.9, duration: 0.6, ease: "back.out(2)" })
+          .from("#mainTitle", { opacity: 0, y: 20, duration: 0.6, ease: "power4.out" }, "-=0.3")
+          .from("#subTitle", { opacity: 0, y: 15, duration: 0.6, ease: "power4.out" }, "-=0.4")
+          .from(".card", { opacity: 0, y: 40, stagger: 0.2, duration: 0.7, ease: "power3.out" }, "-=0.3");
+
+        // 14.8s - AMADOR: Card Salta na Tela
+        tl.to("#cardAmador", {
+            opacity: 1, scale: 1.05, rotateY: 3,
+            borderColor: "rgba(239, 68, 68, 0.9)",
+            boxShadow: "0 40px 120px rgba(239, 68, 68, 0.4)",
+            duration: 0.5, ease: "back.out(1.8)"
+        }, 14.8);
+
+        // 17.5s - Linha 1 (100% da stake)
+        tl.to("#bline1", { className: "stat-line active-line", duration: 0.3, ease: "power2.out" }, 17.5);
+
+        // 21.0s - Linha 2 (@1.20 a @1.28)
+        tl.to("#bline2", { className: "stat-line active-line", duration: 0.3, ease: "power2.out" }, 21.0);
+        tl.fromTo("#bboxStat", { scale: 0.95 }, { scale: 1.05, repeat: 2, yoyo: true, duration: 0.2 }, 22.0);
+
+        // 26.1s - Linha 3 (Sem postura das equipes)
+        tl.to("#bline3", { className: "stat-line active-line", duration: 0.3, ease: "power2.out" }, 26.1);
+
+        // 36.0s - Linha 4 (Red fatal) + Barra Risco Máximo
+        tl.to("#bline4", { className: "stat-line active-line", duration: 0.3, ease: "power2.out" }, 36.0);
+        tl.to("#meterBad", { width: "95%", duration: 1.2, ease: "power3.out" }, 36.5);
+
+        // 41.1s - VIRADA: Trader Analítico
+        tl.to("#cardAmador", {
+            opacity: 0.2, scale: 0.94, rotateY: 0,
+            borderColor: "rgba(255, 255, 255, 0.08)", boxShadow: "none",
+            duration: 0.5, ease: "power3.inOut"
+        }, 41.1);
+
+        tl.to("#cardTrader", {
+            opacity: 1, scale: 1.07, rotateY: -3,
+            borderColor: "rgba(16, 185, 129, 0.9)",
+            boxShadow: "0 40px 120px rgba(16, 185, 129, 0.45)",
+            duration: 0.6, ease: "back.out(1.8)"
+        }, 41.1);
+
+        // 46.5s - Linha 1 Trader (3 frações cirúrgicas)
+        tl.to("#gline1", { className: "stat-line active-line", duration: 0.3, ease: "power2.out" }, 46.5);
+
+        // 49.0s - Linha 2 Trader (Time Decay a favor)
+        tl.to("#gline2", { className: "stat-line active-line", duration: 0.3, ease: "power2.out" }, 49.0);
+
+        // 52.3s - Linha 3 Trader (Radar StatsFut)
+        tl.to("#gline3", { className: "stat-line active-line", duration: 0.3, ease: "power2.out" }, 52.3);
+
+        // 56.5s - Linha 4 Trader (@1.65 a @1.85) + Contador dispara!
+        tl.to("#gline4", { className: "stat-line active-line", duration: 0.3, ease: "power2.out" }, 56.5);
+
+        const counter = { val: 1.25 };
+        tl.to(counter, {
+            val: 1.75, duration: 2.2, ease: "power2.out",
+            onUpdate: function() {
+                document.getElementById("oddTrader").innerText = "@" + counter.val.toFixed(2);
+            }
+        }, 56.8);
+
+        tl.to("#meterGood", { width: "100%", duration: 1.8, ease: "power2.out" }, 57.0);
+    </script>
+</body>
+</html>

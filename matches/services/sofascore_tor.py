@@ -426,7 +426,6 @@ class SofaScoreTorService:
             "home_big_chances": _int((stats.get("Big chances") or {}).get("home")),
             "away_big_chances": _int((stats.get("Big chances") or {}).get("away")),
             "graph_points": (graph_data or {}).get("graphPoints", []),
-            "odds": self.get_event_odds(event_id),
         }
         return rich
 
