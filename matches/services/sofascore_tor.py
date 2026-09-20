@@ -475,7 +475,7 @@ class SofaScoreTorService:
                     odds_res["dnb_home"] = choices.get("1")
                     odds_res["dnb_away"] = choices.get("2")
 
-                # Match Goals (Over / Under)
+                # Match Goals (Over / Under) - todas as linhas
                 elif name == "Match goals":
                     line = str(m.get("choiceGroup") or group).replace("Match goals", "").strip()
                     if line == "0.5":
@@ -490,6 +490,21 @@ class SofaScoreTorService:
                     elif line == "3.5":
                         odds_res["over_35"] = choices.get("Over")
                         odds_res["under_35"] = choices.get("Under")
+                    elif line == "4.5":
+                        odds_res["over_45"] = choices.get("Over")
+                        odds_res["under_45"] = choices.get("Under")
+
+                # Corners 2-Way (Escanteios Over / Under)
+                elif "Corners" in name or "corners" in name.lower():
+                    line = str(m.get("choiceGroup") or group).replace("Corners 2-Way", "").replace("Corners", "").strip()
+                    if line == "7.5":
+                        odds_res["corners_over_75"] = choices.get("Over")
+                    elif line == "8.5":
+                        odds_res["corners_over_85"] = choices.get("Over")
+                    elif line == "9.5":
+                        odds_res["corners_over_95"] = choices.get("Over")
+                    elif line == "10.5":
+                        odds_res["corners_over_105"] = choices.get("Over")
 
             return odds_res
         except Exception:

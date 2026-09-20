@@ -86,6 +86,24 @@ class Command(BaseCommand):
                     if odds.get('under_35'):
                         match.under_35_odds = odds['under_35']
                         changed = True
+                    if odds.get('over_45'):
+                        match.over_45_odds = odds['over_45']
+                        changed = True
+                    if odds.get('under_45'):
+                        match.under_45_odds = odds['under_45']
+                        changed = True
+                    if odds.get('corners_over_75'):
+                        match.corners_over_75_odds = odds['corners_over_75']
+                        changed = True
+                    if odds.get('corners_over_85'):
+                        match.corners_over_85_odds = odds['corners_over_85']
+                        changed = True
+                    if odds.get('corners_over_95'):
+                        match.corners_over_95_odds = odds['corners_over_95']
+                        changed = True
+                    if odds.get('corners_over_105'):
+                        match.corners_over_105_odds = odds['corners_over_105']
+                        changed = True
                     if odds.get('btts_yes'):
                         match.btts_yes_odds = odds['btts_yes']
                         changed = True
