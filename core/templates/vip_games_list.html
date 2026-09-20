@@ -502,49 +502,55 @@
                   {% if m.real_odd_o15 %}
                     <span class="text-cyan-400 font-bold">@{{ m.real_odd_o15 }}</span>
                     <span class="text-gray-600 mx-1">/</span>
-                    <span class="text-gray-500 text-[11px]">@{{ m.fair_o15 }}</span>
+                    <span class="text-gray-400 text-[11px]">@{{ m.fair_o15 }}</span>
                   {% else %}
-                    <span class="text-gray-400">@{{ m.fair_o15 }}</span>
+                    <span class="text-gray-500 text-[10px]" title="Odd da casa ainda não aberta pelo mercado">Aguardando /</span>
+                    <span class="text-gray-400 text-[11px] font-semibold">@{{ m.fair_o15 }}</span>
                   {% endif %}
                 {% elif sec.id == 'gols_o25' %}
                   {% if m.real_odd_o25 %}
                     <span class="text-cyan-400 font-bold">@{{ m.real_odd_o25 }}</span>
                     <span class="text-gray-600 mx-1">/</span>
-                    <span class="text-gray-500 text-[11px]">@{{ m.fair_o25 }}</span>
+                    <span class="text-gray-400 text-[11px]">@{{ m.fair_o25 }}</span>
                   {% else %}
-                    <span class="text-gray-400">@{{ m.fair_o25 }}</span>
+                    <span class="text-gray-500 text-[10px]" title="Odd da casa ainda não aberta pelo mercado">Aguardando /</span>
+                    <span class="text-gray-400 text-[11px] font-semibold">@{{ m.fair_o25 }}</span>
                   {% endif %}
                 {% elif sec.id == 'gols_btts' %}
                   {% if m.real_odd_btts %}
                     <span class="text-cyan-400 font-bold">@{{ m.real_odd_btts }}</span>
                     <span class="text-gray-600 mx-1">/</span>
-                    <span class="text-gray-500 text-[11px]">@{{ m.fair_btts }}</span>
+                    <span class="text-gray-400 text-[11px]">@{{ m.fair_btts }}</span>
                   {% else %}
-                    <span class="text-gray-400">@{{ m.fair_btts }}</span>
+                    <span class="text-gray-500 text-[10px]" title="Odd da casa ainda não aberta pelo mercado">Aguardando /</span>
+                    <span class="text-gray-400 text-[11px] font-semibold">@{{ m.fair_btts }}</span>
                   {% endif %}
                 {% elif sec.id == 'gols_u35' %}
                   {% if m.real_odd_u35 %}
                     <span class="text-cyan-400 font-bold">@{{ m.real_odd_u35 }}</span>
                     <span class="text-gray-600 mx-1">/</span>
-                    <span class="text-gray-500 text-[11px]">@{{ m.fair_u35 }}</span>
+                    <span class="text-gray-400 text-[11px]">@{{ m.fair_u35 }}</span>
                   {% else %}
-                    <span class="text-gray-400">@{{ m.fair_u35 }}</span>
+                    <span class="text-gray-500 text-[10px]" title="Odd da casa ainda não aberta pelo mercado">Aguardando /</span>
+                    <span class="text-gray-400 text-[11px] font-semibold">@{{ m.fair_u35 }}</span>
                   {% endif %}
                 {% elif sec.id == 'cantos_o75' %}
                   {% if m.real_odd_c75 %}
                     <span class="text-cyan-400 font-bold">@{{ m.real_odd_c75 }}</span>
                     <span class="text-gray-600 mx-1">/</span>
-                    <span class="text-gray-500 text-[11px]">@{{ m.fair_c75 }}</span>
+                    <span class="text-gray-400 text-[11px]">@{{ m.fair_c75 }}</span>
                   {% else %}
-                    <span class="text-gray-400">@{{ m.fair_c75 }}</span>
+                    <span class="text-gray-500 text-[10px]" title="Odd da casa ainda não aberta pelo mercado">Aguardando /</span>
+                    <span class="text-gray-400 text-[11px] font-semibold">@{{ m.fair_c75 }}</span>
                   {% endif %}
                 {% elif sec.id == 'cantos_o85' %}
                   {% if m.real_odd_c85 %}
                     <span class="text-cyan-400 font-bold">@{{ m.real_odd_c85 }}</span>
                     <span class="text-gray-600 mx-1">/</span>
-                    <span class="text-gray-500 text-[11px]">@{{ m.fair_c85 }}</span>
+                    <span class="text-gray-400 text-[11px]">@{{ m.fair_c85 }}</span>
                   {% else %}
-                    <span class="text-gray-400">@{{ m.fair_c85 }}</span>
+                    <span class="text-gray-500 text-[10px]" title="Odd da casa ainda não aberta pelo mercado">Aguardando /</span>
+                    <span class="text-gray-400 text-[11px] font-semibold">@{{ m.fair_c85 }}</span>
                   {% endif %}
                 {% elif sec.id == 'cantos_75ft' %}
                   <span class="text-gray-400">@{{ m.fair_c75ft }}</span>
@@ -560,6 +566,10 @@
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                       +{{ m.ev_o15 }}%
                     </span>
+                  {% elif m.ev_o15 == 0 %}
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-800 text-gray-400 border border-gray-700">
+                      0.0% Neutro
+                    </span>
                   {% else %}
                     <span class="text-gray-600 text-[10px] font-medium">{{ m.ev_o15 }}%</span>
                   {% endif %}
@@ -567,6 +577,10 @@
                   {% if m.ev_o25 > 0 %}
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                       +{{ m.ev_o25 }}%
+                    </span>
+                  {% elif m.ev_o25 == 0 %}
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-800 text-gray-400 border border-gray-700">
+                      0.0% Neutro
                     </span>
                   {% else %}
                     <span class="text-gray-600 text-[10px] font-medium">{{ m.ev_o25 }}%</span>
@@ -576,6 +590,10 @@
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                       +{{ m.ev_btts }}%
                     </span>
+                  {% elif m.ev_btts == 0 %}
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-800 text-gray-400 border border-gray-700">
+                      0.0% Neutro
+                    </span>
                   {% else %}
                     <span class="text-gray-600 text-[10px] font-medium">{{ m.ev_btts }}%</span>
                   {% endif %}
@@ -583,6 +601,10 @@
                   {% if m.ev_u35 > 0 %}
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                       +{{ m.ev_u35 }}%
+                    </span>
+                  {% elif m.ev_u35 == 0 %}
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-800 text-gray-400 border border-gray-700">
+                      0.0% Neutro
                     </span>
                   {% else %}
                     <span class="text-gray-600 text-[10px] font-medium">{{ m.ev_u35 }}%</span>
@@ -592,6 +614,10 @@
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                       +{{ m.ev_c75 }}%
                     </span>
+                  {% elif m.ev_c75 == 0 %}
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-800 text-gray-400 border border-gray-700">
+                      0.0% Neutro
+                    </span>
                   {% else %}
                     <span class="text-gray-600 text-[10px] font-medium">{{ m.ev_c75 }}%</span>
                   {% endif %}
@@ -600,11 +626,17 @@
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                       +{{ m.ev_c85 }}%
                     </span>
+                  {% elif m.ev_c85 == 0 %}
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-800 text-gray-400 border border-gray-700">
+                      0.0% Neutro
+                    </span>
                   {% else %}
                     <span class="text-gray-600 text-[10px] font-medium">{{ m.ev_c85 }}%</span>
                   {% endif %}
                 {% else %}
-                  <span class="text-gray-600 text-[10px]">&mdash;</span>
+                  <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-800/40 text-gray-500 border border-gray-800" title="Aguardando abertura de odds pela casa">
+                    Aguardando
+                  </span>
                 {% endif %}
               </td>
 
