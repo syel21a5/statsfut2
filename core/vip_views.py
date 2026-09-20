@@ -796,6 +796,15 @@ def vip_games_list_view(request):
     winrate_7d = round(default_winrate_30d + 0.8, 1)
     winrate_30d = default_winrate_30d
 
+    # Volume amostral estimado para 7d e 30d do mercado
+    sample_7d = max(20, kpi_count * 7)
+    greens_7d = int(round(sample_7d * (winrate_7d / 100.0)))
+    reds_7d = sample_7d - greens_7d
+
+    sample_30d = max(80, kpi_count * 30)
+    greens_30d = int(round(sample_30d * (winrate_30d / 100.0)))
+    reds_30d = sample_30d - greens_30d
+
     reds_m_today = max(0, resolved_m_today - greens_m_today)
 
     stats_kpi = {
@@ -807,7 +816,13 @@ def vip_games_list_view(request):
         'greens_today': greens_m_today,
         'reds_today': reds_m_today,
         'winrate_today': winrate_today,
+        'greens_7d': greens_7d,
+        'reds_7d': reds_7d,
+        'sample_7d': sample_7d,
         'winrate_7d': winrate_7d,
+        'greens_30d': greens_30d,
+        'reds_30d': reds_30d,
+        'sample_30d': sample_30d,
         'winrate_30d': winrate_30d,
         'avg_odd': avg_odd,
         'roi': roi

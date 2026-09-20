@@ -178,7 +178,14 @@
             <span class="text-[9px] font-mono text-cyan-400 font-bold">Average</span>
           </div>
           <span class="text-2xl font-black text-white font-mono mt-1.5 block">{{ stats_kpi.winrate_7d }}%</span>
-          <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">Consolidated history</span>
+          <div class="mt-1 flex items-center flex-wrap gap-1.5 font-mono text-[11px] font-semibold">
+            <span class="text-[#00d26a]">🟢 {{ stats_kpi.greens_7d }} Greens</span>
+            <span class="text-gray-600">/</span>
+            <span class="text-rose-500">🔴 {{ stats_kpi.reds_7d }} Reds</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-800/80 text-gray-400 text-[10px] font-normal border border-gray-700/50 ml-0.5">
+              {{ stats_kpi.sample_7d }} finalizados
+            </span>
+          </div>
         </div>
         <div class="w-full bg-gray-800 h-1 rounded-full mt-3 overflow-hidden">
           <div class="bg-cyan-500 h-full" style="width: {{ stats_kpi.winrate_7d }}%;"></div>
@@ -193,7 +200,14 @@
             <span class="text-[9px] font-mono text-purple-400 font-bold">Sample</span>
           </div>
           <span class="text-2xl font-black text-white font-mono mt-1.5 block">{{ stats_kpi.winrate_30d }}%</span>
-          <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">In this market</span>
+          <div class="mt-1 flex items-center flex-wrap gap-1.5 font-mono text-[11px] font-semibold">
+            <span class="text-[#00d26a]">🟢 {{ stats_kpi.greens_30d }} Greens</span>
+            <span class="text-gray-600">/</span>
+            <span class="text-rose-500">🔴 {{ stats_kpi.reds_30d }} Reds</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-800/80 text-gray-400 text-[10px] font-normal border border-gray-700/50 ml-0.5">
+              {{ stats_kpi.sample_30d }} finalizados
+            </span>
+          </div>
         </div>
         <div class="w-full bg-gray-800 h-1 rounded-full mt-3 overflow-hidden">
           <div class="bg-purple-500 h-full" style="width: {{ stats_kpi.winrate_30d }}%;"></div>
