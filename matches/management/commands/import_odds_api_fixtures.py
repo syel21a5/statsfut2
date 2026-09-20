@@ -13,53 +13,34 @@ import pytz
 class Command(BaseCommand):
     help = 'Import upcoming fixtures from The Odds API (Credit safe)'
 
-    # Configuração de Ligas Suportadas
+    # Configuração de Ligas Suportadas (Expandida para todas as ligas do projeto)
     LEAGUE_CONFIG = {
-        'soccer_argentina_primera_division': {
-            'env_key': 'ODDS_API_KEY_ARGENTINA_UPCOMING',
-            'db_name': 'Liga Profesional',
-            'country': 'Argentina'
-        },
-        'soccer_brazil_campeonato': {
-            'env_key': 'ODDS_API_KEY_BRAZIL_UPCOMING',
-            'db_name': 'Brasileirão',
-            'country': 'Brasil'
-        },
-        'soccer_epl': {
-            'env_key': 'ODDS_API_KEY_ENGLAND_UPCOMING',
-            'db_name': 'Premier League',
-            'country': 'Inglaterra'
-        },
-        'soccer_austria_bundesliga': {
-            'env_key': 'ODDS_API_KEY_AUSTRIA_UPCOMING',
-            'db_name': 'Bundesliga',
-            'country': 'Austria'
-        },
-        'soccer_australia_aleague': {
-            'env_key': 'ODDS_API_KEY_AUSTRALIA_UPCOMING',
-            'db_name': 'A-League Men',
-            'country': 'Australia'
-        },
-        'soccer_belgium_first_div': {
-            'env_key': 'ODDS_API_KEY_BELGIUM_UPCOMING',
-            'db_name': 'Pro League',
-            'country': 'Belgica'
-        },
-        'soccer_switzerland_superleague': {
-            'env_key': 'ODDS_API_KEY_SWITZERLAND_UPCOMING',
-            'db_name': 'Super League',
-            'country': 'Suica'
-        },
-        'soccer_germany_bundesliga': {
-            'env_key': 'ODDS_API_KEY_GERMANY_UPCOMING',
-            'db_name': 'Bundesliga',
-            'country': 'Alemanha'
-        },
-        'soccer_france_ligue_one': {
-            'env_key': 'ODDS_API_KEY_FRANCE_UPCOMING',
-            'db_name': 'Ligue 1',
-            'country': 'Franca'
-        }
+        'soccer_brazil_campeonato': {'env_key': 'ODDS_API_KEY_BRAZIL_UPCOMING', 'db_name': 'Brasileirão', 'country': 'Brasil'},
+        'soccer_brazil_serie_b': {'env_key': 'ODDS_API_KEY_BRAZIL_UPCOMING', 'db_name': 'Série B', 'country': 'Brasil'},
+        'soccer_epl': {'env_key': 'ODDS_API_KEY_ENGLAND_UPCOMING', 'db_name': 'Premier League', 'country': 'Inglaterra'},
+        'soccer_efl_champ': {'env_key': 'ODDS_API_KEY_ENGLAND_UPCOMING', 'db_name': 'Championship', 'country': 'Inglaterra'},
+        'soccer_spain_la_liga': {'env_key': 'ODDS_API_KEY_ENGLAND_UPCOMING', 'db_name': 'La Liga', 'country': 'Espanha'},
+        'soccer_italy_serie_a': {'env_key': 'ODDS_API_KEY_ENGLAND_UPCOMING', 'db_name': 'Serie A', 'country': 'Italia'},
+        'soccer_germany_bundesliga': {'env_key': 'ODDS_API_KEY_GERMANY_UPCOMING', 'db_name': 'Bundesliga', 'country': 'Alemanha'},
+        'soccer_france_ligue_one': {'env_key': 'ODDS_API_KEY_FRANCE_UPCOMING', 'db_name': 'Ligue 1', 'country': 'Franca'},
+        'soccer_portugal_primeira_liga': {'env_key': 'ODDS_API_KEY_ENGLAND_UPCOMING', 'db_name': 'Primeira Liga', 'country': 'Portugal'},
+        'soccer_netherlands_eredivisie': {'env_key': 'ODDS_API_KEY_ENGLAND_UPCOMING', 'db_name': 'Eredivisie', 'country': 'Holanda'},
+        'soccer_turkey_super_league': {'env_key': 'ODDS_API_KEY_ENGLAND_UPCOMING', 'db_name': 'Süper Lig', 'country': 'Turquia'},
+        'soccer_argentina_primera_division': {'env_key': 'ODDS_API_KEY_ARGENTINA_UPCOMING', 'db_name': 'Liga Profesional', 'country': 'Argentina'},
+        'soccer_conmebol_copa_libertadores': {'env_key': 'ODDS_API_KEY_BRAZIL_UPCOMING', 'db_name': 'Copa Libertadores', 'country': 'America do Sul'},
+        'soccer_conmebol_copa_sudamericana': {'env_key': 'ODDS_API_KEY_BRAZIL_UPCOMING', 'db_name': 'Copa Sul-Americana', 'country': 'America do Sul'},
+        'soccer_usa_mls': {'env_key': 'ODDS_API_KEY_ENGLAND_UPCOMING', 'db_name': 'MLS', 'country': 'Estados Unidos'},
+        'soccer_mexico_ligamx': {'env_key': 'ODDS_API_KEY_ARGENTINA_UPCOMING', 'db_name': 'Liga MX', 'country': 'Mexico'},
+        'soccer_belgium_first_div': {'env_key': 'ODDS_API_KEY_BELGIUM_UPCOMING', 'db_name': 'Pro League', 'country': 'Belgica'},
+        'soccer_austria_bundesliga': {'env_key': 'ODDS_API_KEY_AUSTRIA_UPCOMING', 'db_name': 'Bundesliga', 'country': 'Austria'},
+        'soccer_switzerland_superleague': {'env_key': 'ODDS_API_KEY_SWITZERLAND_UPCOMING', 'db_name': 'Super League', 'country': 'Suica'},
+        'soccer_denmark_superliga': {'env_key': 'ODDS_API_KEY_GERMANY_UPCOMING', 'db_name': 'Superliga', 'country': 'Dinamarca'},
+        'soccer_norway_eliteserien': {'env_key': 'ODDS_API_KEY_FRANCE_UPCOMING', 'db_name': 'Eliteserien', 'country': 'Noruega'},
+        'soccer_sweden_allsvenskan': {'env_key': 'ODDS_API_KEY_AUSTRIA_UPCOMING', 'db_name': 'Allsvenskan', 'country': 'Suecia'},
+        'soccer_poland_ekstraklasa': {'env_key': 'ODDS_API_KEY_BELGIUM_UPCOMING', 'db_name': 'Ekstraklasa', 'country': 'Polonia'},
+        'soccer_scotland_premiership': {'env_key': 'ODDS_API_KEY_ENGLAND_UPCOMING', 'db_name': 'Premiership', 'country': 'Escocia'},
+        'soccer_japan_j_league': {'env_key': 'ODDS_API_KEY_AUSTRALIA_UPCOMING', 'db_name': 'J1 League', 'country': 'Japao'},
+        'soccer_australia_aleague': {'env_key': 'ODDS_API_KEY_AUSTRALIA_UPCOMING', 'db_name': 'A-League Men', 'country': 'Australia'},
     }
 
     def add_arguments(self, parser):
