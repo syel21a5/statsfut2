@@ -156,14 +156,11 @@
             <span class="text-[9px] font-mono text-gray-500">{% if is_historical_day %}History{% else %}24h{% endif %}</span>
           </div>
           <span class="text-2xl font-black text-[#00d26a] font-mono mt-1.5 block">{{ stats_kpi.winrate_today }}%</span>
-          <div class="mt-1 flex items-center flex-wrap gap-1.5 font-mono text-[11px]">
-            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-semibold border border-emerald-500/20">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>{{ stats_kpi.greens_today }} Greens
-            </span>
-            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-400 font-semibold border border-rose-500/20">
-              <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>{{ stats_kpi.reds_today }} Reds
-            </span>
-            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full bg-gray-800/80 text-gray-400 text-[10px] border border-gray-700/50">
+          <div class="mt-1 flex items-center flex-wrap gap-1.5 font-mono text-[11px] font-semibold">
+            <span class="text-[#00d26a]">🟢 {{ stats_kpi.greens_today }} Greens</span>
+            <span class="text-gray-600">/</span>
+            <span class="text-rose-500">🔴 {{ stats_kpi.reds_today }} Reds</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-800/80 text-gray-400 text-[10px] font-normal border border-gray-700/50 ml-0.5">
               {{ stats_kpi.resolved_today }} finalizados
             </span>
           </div>
