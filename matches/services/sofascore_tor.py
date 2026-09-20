@@ -426,8 +426,75 @@ class SofaScoreTorService:
             "home_big_chances": _int((stats.get("Big chances") or {}).get("home")),
             "away_big_chances": _int((stats.get("Big chances") or {}).get("away")),
             "graph_points": (graph_data or {}).get("graphPoints", []),
+            "odds": self.get_event_odds(event_id),
         }
         return rich
+
+    def get_event_odds(self, event_id):
+        """Busca odds ao vivo e pré-jogo no SofaScore e converte frações para decimal."""
+        try:
+            data = self._fetch(f"{BASE_URL}/event/{event_id}/odds/1/all")
+            if not data or "markets" not in data:
+                return {}
+
+            def _frac_to_dec(frac_str):
+                if not frac_str:
+                    return None
+                try:
+                    parts = str(frac_str).strip().split("/")
+                    if len(parts) == 2:
+                        return round((float(parts[0]) / float(parts[1])) + 1.0, 2)
+                    return round(float(frac_str), 2)
+                except Exception:
+                    return None
+
+            odds_res = {}
+            for m in data.get("markets", []):
+                name = m.get("marketName", "")
+                group = str(m.get("marketGroup", "")).strip()
+                choices = {c.get("name"): _frac_to_dec(c.get("fractionalValue")) for c in m.get("choices", [])}
+
+                # 1X2 / Match Winner
+                if name == "Full time" and "1" in choices:
+                    odds_res["home_win"] = choices.get("1")
+                    odds_res["draw"] = choices.get("X")
+                    odds_res["away_win"] = choices.get("2")
+
+                # Double Chance
+                elif name == "Double chance":
+                    odds_res["dc_1x"] = choices.get("1X")
+                    odds_res["dc_x2"] = choices.get("X2")
+                    odds_res["dc_12"] = choices.get("12")
+
+                # Both Teams To Score (BTTS)
+                elif name == "Both teams to score":
+                    odds_res["btts_yes"] = choices.get("Yes")
+                    odds_res["btts_no"] = choices.get("No")
+
+                # Draw No Bet (DNB)
+                elif name == "Draw no bet":
+                    odds_res["dnb_home"] = choices.get("1")
+                    odds_res["dnb_away"] = choices.get("2")
+
+                # Match Goals (Over / Under)
+                elif name == "Match goals":
+                    line = str(m.get("choiceGroup") or group).replace("Match goals", "").strip()
+                    if line == "0.5":
+                        odds_res["over_05"] = choices.get("Over")
+                        odds_res["under_05"] = choices.get("Under")
+                    elif line == "1.5":
+                        odds_res["over_15"] = choices.get("Over")
+                        odds_res["under_15"] = choices.get("Under")
+                    elif line == "2.5":
+                        odds_res["over_25"] = choices.get("Over")
+                        odds_res["under_25"] = choices.get("Under")
+                    elif line == "3.5":
+                        odds_res["over_35"] = choices.get("Over")
+                        odds_res["under_35"] = choices.get("Under")
+
+            return odds_res
+        except Exception:
+            return {}
 
     def get_event_statistics(self, event_id):
         """Estatísticas (posse, chutes, escanteios...) de um evento."""
