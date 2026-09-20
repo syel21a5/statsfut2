@@ -30,28 +30,26 @@ class Command(BaseCommand):
             'db_name': 'Premier League',
             'country': 'Inglaterra'
         },
-        # REMOVIDO PARA SOFASCORE:
-        # 'soccer_austria_bundesliga': {
-        #     'env_key': 'ODDS_API_KEY_AUSTRIA_UPCOMING',
-        #     'db_name': 'Bundesliga',
-        #     'country': 'Austria'
-        # },
-        # 'soccer_australia_aleague': {
-        #     'env_key': 'ODDS_API_KEY_AUSTRALIA_UPCOMING',
-        #     'db_name': 'A-League Men',
-        #     'country': 'Australia'
-        # },
-        # 'soccer_belgium_first_div': {
-        #     'env_key': 'ODDS_API_KEY_BELGIUM_UPCOMING',
-        #     'db_name': 'Pro League',
-        #     'country': 'Belgica'
-        # },
-        # 'soccer_switzerland_superleague': {
-        #     'env_key': 'ODDS_API_KEY_SWITZERLAND_UPCOMING',
-        #     'db_name': 'Super League',
-        #     'country': 'Suica'
-        # }
-        # 11/08/2026: Dinamarca removida — não há ODDS_API_KEY_DENMARK_UPCOMING no .env
+        'soccer_austria_bundesliga': {
+            'env_key': 'ODDS_API_KEY_AUSTRIA_UPCOMING',
+            'db_name': 'Bundesliga',
+            'country': 'Austria'
+        },
+        'soccer_australia_aleague': {
+            'env_key': 'ODDS_API_KEY_AUSTRALIA_UPCOMING',
+            'db_name': 'A-League Men',
+            'country': 'Australia'
+        },
+        'soccer_belgium_first_div': {
+            'env_key': 'ODDS_API_KEY_BELGIUM_UPCOMING',
+            'db_name': 'Pro League',
+            'country': 'Belgica'
+        },
+        'soccer_switzerland_superleague': {
+            'env_key': 'ODDS_API_KEY_SWITZERLAND_UPCOMING',
+            'db_name': 'Super League',
+            'country': 'Suica'
+        },
         'soccer_germany_bundesliga': {
             'env_key': 'ODDS_API_KEY_GERMANY_UPCOMING',
             'db_name': 'Bundesliga',
