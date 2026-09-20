@@ -104,15 +104,15 @@
             <i class="fa-solid fa-circle-dot live-pulse"></i> {% translate "Live" %}
         </a>
         {% if user.is_authenticated and user.profile.is_premium_active %}
-        <a href="{% url 'members:premium_dashboard' %}" class="nav-link premium-nav-link d-flex align-items-center">
+        <a href="https://vip.statsfut.com" target="_blank" rel="noopener" class="nav-link premium-nav-link d-flex align-items-center">
             <i class="fa-solid fa-crown" style="color: #f59e0b;"></i>
-            <span class="ms-1">{% translate "Premium" %}</span>
+            <span class="ms-1 font-bold">VIP Terminal</span>
             <span class="badge ms-auto px-2 py-1 rounded-pill" style="background: linear-gradient(135deg, #f59e0b, #f97316); font-size: 0.6rem; color: #fff;">VIP</span>
         </a>
         {% else %}
         <a href="{% url 'members:paywall' %}" class="nav-link premium-nav-link d-flex align-items-center">
             <i class="fa-solid fa-crown" style="color: #f59e0b;"></i>
-            <span class="ms-1">{% translate "Upgrade to Premium" %}</span>
+            <span class="ms-1">{% translate "Upgrade to VIP" %}</span>
             <span class="badge ms-auto px-2 py-1 rounded-pill" style="background: linear-gradient(135deg, #f59e0b, #f97316); font-size: 0.6rem; color: #fff;">PRO</span>
         </a>
         {% endif %}
@@ -235,7 +235,7 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="background: var(--bg-panel); border: 1px solid var(--border) !important; min-width: 200px;">
                         <li><a class="dropdown-item text-white d-flex align-items-center gap-2 py-2" href="{% url 'members:profile' %}"><i class="fa-solid fa-user text-secondary"></i> {% translate "My Profile" %}</a></li>
-                        <li><a class="dropdown-item text-white d-flex align-items-center gap-2 py-2" href="{% url 'members:premium_dashboard' %}"><i class="fa-solid fa-crown" style="color: #f59e0b;"></i> {% translate "Premium" %}</a></li>
+                        <li><a class="dropdown-item text-white d-flex align-items-center gap-2 py-2" href="https://vip.statsfut.com" target="_blank" rel="noopener"><i class="fa-solid fa-crown" style="color: #f59e0b;"></i> VIP Terminal</a></li>
                         <li><hr class="dropdown-divider border-secondary border-opacity-25"></li>
                         <li>
                             <form method="post" action="{% url 'members:logout' %}">

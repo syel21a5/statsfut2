@@ -136,6 +136,10 @@ def premium_dashboard(request):
     if not is_premium:
         return redirect('members:paywall')
 
+    # Se for assinante VIP (ou superuser/degustação), redireciona direto para o Novo Terminal VIP Oficial
+    if is_vip:
+        return redirect('https://vip.statsfut.com')
+
     br_tz = ZoneInfo('America/Sao_Paulo')
     now_br = timezone.now().astimezone(br_tz)
     start_of_day = now_br.replace(hour=0, minute=0, second=0, microsecond=0)
