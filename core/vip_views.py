@@ -796,6 +796,8 @@ def vip_games_list_view(request):
     winrate_7d = round(default_winrate_30d + 0.8, 1)
     winrate_30d = default_winrate_30d
 
+    reds_m_today = max(0, resolved_m_today - greens_m_today)
+
     stats_kpi = {
         'market_label': market_label,
         'day_period_label': day_period_label,
@@ -803,6 +805,7 @@ def vip_games_list_view(request):
         'kpi_count': kpi_count,
         'resolved_today': resolved_m_today,
         'greens_today': greens_m_today,
+        'reds_today': reds_m_today,
         'winrate_today': winrate_today,
         'winrate_7d': winrate_7d,
         'winrate_30d': winrate_30d,

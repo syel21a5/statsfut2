@@ -156,7 +156,12 @@
             <span class="text-[9px] font-mono text-gray-500">{% if is_historical_day %}History{% else %}24h{% endif %}</span>
           </div>
           <span class="text-2xl font-black text-[#00d26a] font-mono mt-1.5 block">{{ stats_kpi.winrate_today }}%</span>
-          <span class="text-[10px] text-gray-500 font-mono mt-0.5 block">{{ stats_kpi.greens_today }} / {{ stats_kpi.resolved_today }} settled</span>
+          <span class="text-[11px] font-mono mt-1 flex items-center gap-1.5 font-semibold">
+            <span class="text-[#00d26a]">🟢 {{ stats_kpi.greens_today }} Greens</span>
+            <span class="text-gray-600">/</span>
+            <span class="text-rose-500">🔴 {{ stats_kpi.reds_today }} Reds</span>
+            <span class="text-gray-500 text-[10px] font-normal">({{ stats_kpi.resolved_today }} finalizados)</span>
+          </span>
         </div>
         <div class="w-full bg-gray-800 h-1 rounded-full mt-3 overflow-hidden">
           <div class="bg-[#00d26a] h-full" style="width: {{ stats_kpi.winrate_today }}%;"></div>
