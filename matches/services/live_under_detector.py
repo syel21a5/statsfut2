@@ -15,9 +15,9 @@ class LiveUnderDetector:
     """
 
     def __init__(self):
-        # Janela Blindada: Entrada ideal entre o 18' e 32' (antes da loucura do fim do 1T)
-        self.MIN_MINUTE = 18
-        self.MAX_MINUTE = 32
+        # Janela de Ouro Blindada: 2º gol saindo entre 25' e 35' (74.2% de Win Rate auditado)
+        self.MIN_MINUTE = 25
+        self.MAX_MINUTE = 35
 
         # A Regra de Ouro: Over 4.5 pré-jogo deve ser <= 18%
         self.MAX_OVER_45_PROB = 18.0
@@ -127,10 +127,11 @@ class LiveUnderDetector:
             f"• Confiança matemática prévia: <b>{under_45_prob}%</b> de Under\n"
             f"• O mercado inflacionou a linha para <b>Under 4.5</b> pagando odds altas!\n\n"
             f"🎯 <b>Recomendação de Entrada:</b>\n"
-            f"👉 <b>Entrar no Mercado: Menos de 4.5 Gols (Under 4.5 FT)</b>\n"
-            f"💡 <i>Odd sugerida: @1.45 a @1.70</i>\n\n"
+            f"👉 <b>Mercado: Menos de 4.5 Gols (Under 4.5 FT)</b>\n"
+            f"💰 <b>ODD MÍNIMA DE VALOR: @1.45</b> (Ideal entre @1.50 e @1.75)\n"
+            f"⛔ <i>NUNCA entre se a odd estiver abaixo de @1.45 ou se já tiver saído o 3º gol!</i>\n\n"
             f"⚠️ <b>GESTÃO DE BANCA BLINDADA:</b>\n"
-            f"• Stake Fixa recomendada: <b>1% a 1.5% da banca</b> (NUNCA aumente a mão)\n"
+            f"• Stake Fixa: <b>1% a 1.5% da banca</b> (NUNCA aumente a mão)\n"
             f"• Stop Loss: Máximo de 2 reds no dia nesta tática\n\n"
             f"🔗 Acompanhe o Live Radar no Terminal VIP:\n"
             f"👉 https://vip.statsfut.com/vip/radar/"

@@ -992,7 +992,7 @@ def vip_live_radar_view(request):
         tot_goals = (m.home_score or 0) + (m.away_score or 0)
         league_name = (m.league.name if m.league else '').lower()
         is_blacklisted = any(bad in league_name for bad in ['u20', 'u21', 'u19', 'super league', 'besta deild', 'ykkosliiga', '1st division'])
-        if (18 <= elapsed <= 32) and tot_goals == 2 and tot_shots <= 9 and not is_blacklisted:
+        if (25 <= elapsed <= 35) and tot_goals == 2 and tot_shots <= 9 and not is_blacklisted:
             is_sniper_under45 = True
 
         radar_list.append({
