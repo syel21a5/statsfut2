@@ -1015,9 +1015,15 @@ def vip_live_radar_view(request):
     priority_map = {'extreme': 0, 'high': 1, 'normal': 2}
     radar_list.sort(key=lambda x: (priority_map.get(x['intensity_level'], 3), -(x['match'].elapsed_time or 0)))
 
+    # Contadores para os filtros rápidos do cabeçalho
+    high_pressure_count = sum(1 for item in radar_list if item['intensity_level'] in ['extreme', 'high'])
+    sniper_count = sum(1 for item in radar_list if item['is_sniper_under45'])
+
     return render(request, 'vip_live_radar.html', {
         'radar_list': radar_list,
         'live_count': len(radar_list),
+        'high_pressure_count': high_pressure_count,
+        'sniper_count': sniper_count,
         'lang_prefix': get_lang_prefix(request),
     })
 

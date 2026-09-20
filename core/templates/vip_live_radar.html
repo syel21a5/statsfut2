@@ -25,6 +25,38 @@
         <span class="text-cyan-400 text-base font-mono font-normal">({{ live_count }} matches active)</span>
       </h1>
     </div>
+
+    <!-- ── BARRA DE CONTROLE INTELIGENTE: BUSCA E FILTROS RÁPIDOS ── -->
+    <div class="flex flex-wrap items-center gap-2 font-mono text-xs">
+      <!-- Busca Instantânea de Time/Liga -->
+      <div class="relative">
+        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+        <input type="text" id="liveRadarSearch" placeholder="Search team or league..." 
+               class="bg-[#12161f] border border-gray-800 focus:border-cyan-500/50 rounded-xl pl-8 pr-3 py-1.5 text-gray-200 placeholder-gray-500 text-xs w-44 sm:w-56 transition outline-none"
+               onkeyup="filterRadarCards()">
+      </div>
+
+      <!-- Filtro: Todos -->
+      <button onclick="setRadarFilter('all')" id="btnFilterAll" 
+              class="radar-filter-btn px-3 py-1.5 rounded-xl border border-cyan-500/40 bg-cyan-500/20 text-cyan-300 font-bold transition flex items-center gap-1.5">
+        <span>All</span>
+        <span class="px-1.5 py-0.2 rounded-full bg-cyan-950 text-cyan-300 text-[10px]">{{ live_count }}</span>
+      </button>
+
+      <!-- Filtro: Alta Pressão -->
+      <button onclick="setRadarFilter('pressure')" id="btnFilterPressure" 
+              class="radar-filter-btn px-3 py-1.5 rounded-xl border border-gray-800 bg-[#12161f] hover:border-amber-500/40 text-gray-400 hover:text-amber-300 font-medium transition flex items-center gap-1.5">
+        <span class="text-amber-400">🔥 High Pressure</span>
+        <span class="px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold">{{ high_pressure_count }}</span>
+      </button>
+
+      <!-- Filtro: Sniper Under 4.5 -->
+      <button onclick="setRadarFilter('sniper')" id="btnFilterSniper" 
+              class="radar-filter-btn px-3 py-1.5 rounded-xl border border-gray-800 bg-[#12161f] hover:border-indigo-500/40 text-gray-400 hover:text-indigo-300 font-medium transition flex items-center gap-1.5">
+        <span class="text-indigo-400">🛡️ Sniper Under</span>
+        <span class="px-1.5 py-0.2 rounded-full {% if sniper_count > 0 %}bg-indigo-500/30 text-indigo-300 animate-pulse{% else %}bg-gray-800 text-gray-500{% endif %} text-[10px] font-bold">{{ sniper_count }}</span>
+      </button>
+    </div>
   </div>
 
   <!-- ═════════════════════════════════════════════════════════════════
@@ -34,7 +66,10 @@
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
       {% for item in radar_list %}
         {% with m=item.match p5=item.p5 p15=item.p15 p_ft=item.p_ft %}
-        <div class="bg-[#12161f] border {% if item.intensity_level == 'extreme' %}border-rose-500/50 shadow-rose-950/20{% elif item.intensity_level == 'high' %}border-amber-500/40 shadow-amber-950/10{% else %}border-gray-800/90 hover:border-cyan-500/40{% endif %} rounded-2xl p-5 shadow-xl transition-all duration-200 flex flex-col justify-between relative overflow-hidden group">
+        <div class="radar-card bg-[#12161f] border {% if item.intensity_level == 'extreme' %}border-rose-500/50 shadow-rose-950/20{% elif item.intensity_level == 'high' %}border-amber-500/40 shadow-amber-950/10{% else %}border-gray-800/90 hover:border-cyan-500/40{% endif %} rounded-2xl p-5 shadow-xl transition-all duration-200 flex flex-col justify-between relative overflow-hidden group"
+             data-teams="{{ m.home_team.name|lower }} {{ m.away_team.name|lower }} {{ m.league.name|lower }}"
+             data-intensity="{{ item.intensity_level }}"
+             data-sniper="{% if item.is_sniper_under45 %}1{% else %}0{% endif %}">
           
           <!-- Faixa Neon de Status no Topo do Card -->
           <div class="absolute top-0 left-0 right-0 h-1 {% if item.intensity_level == 'extreme' %}bg-gradient-to-r from-rose-500 via-orange-500 to-amber-400{% elif item.intensity_level == 'high' %}bg-gradient-to-r from-amber-500 to-yellow-400{% else %}bg-gradient-to-r from-cyan-500 to-blue-500 opacity-60{% endif %}"></div>
@@ -349,9 +384,60 @@
     }
   });
 
-  // Auto-refresh a cada 30 segundos
+  // Estado do filtro ativo
+  let currentFilter = 'all';
+
+  function setRadarFilter(filterType) {
+    currentFilter = filterType;
+    
+    // Atualiza botões
+    document.querySelectorAll('.radar-filter-btn').forEach(btn => {
+      btn.classList.remove('border-cyan-500/40', 'bg-cyan-500/20', 'text-cyan-300', 'font-bold');
+      btn.classList.add('border-gray-800', 'bg-[#12161f]', 'text-gray-400', 'font-medium');
+    });
+
+    const activeBtn = filterType === 'all' ? document.getElementById('btnFilterAll') :
+                      (filterType === 'pressure' ? document.getElementById('btnFilterPressure') : document.getElementById('btnFilterSniper'));
+    if (activeBtn) {
+      activeBtn.classList.remove('border-gray-800', 'bg-[#12161f]', 'text-gray-400', 'font-medium');
+      activeBtn.classList.add('border-cyan-500/40', 'bg-cyan-500/20', 'text-cyan-300', 'font-bold');
+    }
+
+    filterRadarCards();
+  }
+
+  function filterRadarCards() {
+    const query = (document.getElementById('liveRadarSearch').value || '').toLowerCase().trim();
+    const cards = document.querySelectorAll('.radar-card');
+
+    cards.forEach(card => {
+      const teams = (card.getAttribute('data-teams') || '').toLowerCase();
+      const intensity = card.getAttribute('data-intensity') || 'normal';
+      const isSniper = card.getAttribute('data-sniper') === '1';
+
+      // Checa filtro de texto
+      const matchesSearch = !query || teams.includes(query);
+
+      // Checa filtro de categoria
+      let matchesCategory = true;
+      if (currentFilter === 'pressure') {
+        matchesCategory = (intensity === 'extreme' || intensity === 'high');
+      } else if (currentFilter === 'sniper') {
+        matchesCategory = isSniper;
+      }
+
+      if (matchesSearch && matchesCategory) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+  }
+
+  // Auto-refresh a cada 30 segundos (somente se o usuário não estiver digitando na busca)
   setTimeout(function() {
-    if (document.getElementById('vipRadarModal').classList.contains('hidden')) {
+    const searchVal = document.getElementById('liveRadarSearch').value.trim();
+    if (document.getElementById('vipRadarModal').classList.contains('hidden') && !searchVal) {
       window.location.reload();
     }
   }, 30000);
