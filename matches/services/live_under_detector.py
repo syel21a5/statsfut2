@@ -138,4 +138,4 @@ class LiveUnderDetector:
         )
 
         logger.info(f"Disparando Under 4.5 Sniper Alert para {home_name} x {away_name} ({h_score}x{a_score} aos {elapsed}')")
-        TelegramBotService.send_message(msg)
+        TelegramBotService.send_deduped_tip("UNDER_45_SNIPER", match, msg)

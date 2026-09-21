@@ -29,9 +29,9 @@ class LiveOverDetector:
         # Envia para o chat principal configurado (ou customizado)
         self.target_chat_id = target_chat_id or getattr(settings, 'TELEGRAM_CHAT_ID', None)
 
-    def _send(self, msg):
-        """Envia mensagem para o Telegram usando o chat unificado."""
-        return TelegramBotService.send_message(msg, chat_id=self.target_chat_id)
+    def _send(self, msg, strategy_key, match):
+        """Envia mensagem para o Telegram usando dedup canônico."""
+        return TelegramBotService.send_deduped_tip(strategy_key, match, msg, chat_id=self.target_chat_id)
 
     def process_live_matches(self):
         """Busca jogos ao vivo e analisa oportunidades de Over 1.5 VIP."""
@@ -155,7 +155,7 @@ class LiveOverDetector:
         )
 
         logger.info(f"⚡ Over 1.5 VIP Entry {entry_minute}' disparada para {home_name} x {away_name}")
-        self._send(msg)
+        self._send(msg, f"OVER_15_ENTRY_{entry_step}", match)
 
     def _check_free_bet_layer(self, match, h_score, a_score, elapsed):
         """Verifica se saiu o 1º gol durante a fase de entradas e orienta proteção/Free Bet."""
@@ -208,7 +208,7 @@ class LiveOverDetector:
         )
 
         logger.info(f"⚽ Alerta de 1º Gol Over 1.5 VIP: {home_name} x {away_name}")
-        self._send(msg)
+        self._send(msg, "OVER_15_GOAL", match)
 
     def _ht_hold_phase(self, match, over_15):
         """Fase de intervalo: se seguiu 0x0, mensagem de controle emocional e gestão."""
@@ -251,4 +251,4 @@ class LiveOverDetector:
         )
 
         logger.info(f"🧘 HT Hold Over 1.5 VIP: {home_name} x {away_name}")
-        self._send(msg)
+        self._send(msg, "OVER_15_HT_HOLD", match)

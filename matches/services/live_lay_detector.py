@@ -125,4 +125,4 @@ class LiveLayDetector:
         )
 
         logger.info(f"Disparando Alerta Lay 0-2 Zebra para {home_name} x {away_name} ({h_score}x{a_score})")
-        self._send(msg)
+        TelegramBotService.send_deduped_tip("LAY_02_ZEBRA", match, msg, chat_id=self.target_chat_id)
