@@ -1,0 +1,576 @@
+{% load i18n static matches_extras %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ team1.name }} vs {{ team2.name }} · H2H & Estatísticas | StatsFut</title>
+    <!-- Fontes & Ícones -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/7.1.0/css/flag-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --sf-body-bg: #090e17;
+            --sf-card-bg: #111827;
+            --sf-card-inner: #162238;
+            --sf-border: rgba(255, 255, 255, 0.08);
+            --sf-cyan: #00e5ff;
+            --sf-cyan-dim: rgba(0, 229, 255, 0.1);
+            --sf-green: #10b981;
+            --sf-red: #ef4444;
+            --sf-amber: #f59e0b;
+            --sf-text-white: #ffffff;
+            --sf-text-muted: #94a3b8;
+            --sf-text-subtle: #475569;
+            --sf-mono: 'JetBrains Mono', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: var(--sf-body-bg);
+            color: var(--sf-text-white);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 13px;
+            padding-bottom: 60px;
+        }
+
+        .wide-container {
+            max-width: 1620px;
+            width: 96%;
+            margin: 0 auto;
+        }
+
+        /* Topbar */
+        .sf-navbar {
+            background-color: rgba(17, 24, 39, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--sf-border);
+            padding: 12px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            margin-bottom: 24px;
+        }
+        .sf-brand {
+            font-size: 20px;
+            font-weight: 900;
+            color: #fff;
+            text-decoration: none;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .sf-brand span { color: var(--sf-cyan); }
+
+        /* Top Leaderboard Ad */
+        .banner-leaderboard {
+            width: 100%;
+            min-height: 90px;
+            background: linear-gradient(90deg, #111e33 0%, #0d1524 50%, #111e33 100%);
+            border: 1px dashed rgba(0, 229, 255, 0.3);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 24px;
+            margin-bottom: 24px;
+            position: relative;
+        }
+        .banner-leaderboard::before {
+            content: "ESPAÇO GOOGLE ADSENSE (LEADERBOARD) OU VIP";
+            position: absolute;
+            top: 4px;
+            right: 10px;
+            font-size: 9px;
+            font-weight: 800;
+            color: var(--sf-cyan);
+            letter-spacing: 0.08em;
+        }
+
+        /* Matchup Hero Card */
+        .match-hero-card {
+            background-color: var(--sf-card-bg);
+            border: 1px solid var(--sf-border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+        .match-hero-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background-color: var(--sf-cyan);
+            box-shadow: 0 0 12px var(--sf-cyan);
+        }
+
+        .team-hero-box {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .team-hero-logo {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+        }
+        .team-hero-name {
+            font-size: 22px;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: -0.02em;
+        }
+        .team-hero-meta {
+            color: var(--sf-text-muted);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .vs-badge-hero {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--sf-border);
+            border-radius: 8px;
+            padding: 6px 14px;
+            font-family: var(--sf-mono);
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--sf-cyan);
+            letter-spacing: 0.05em;
+        }
+
+        /* Barra de Abas Principais (Overview, Goal Stats, Elite Stats) */
+        .h2h-nav-tabs {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--sf-border);
+            padding-bottom: 14px;
+            margin-bottom: 24px;
+        }
+        .h2h-tab-btn {
+            background-color: var(--sf-card-bg);
+            border: 1px solid var(--sf-border);
+            color: var(--sf-text-muted);
+            font-size: 13px;
+            font-weight: 800;
+            padding: 10px 22px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .h2h-tab-btn:hover {
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .h2h-tab-btn.active {
+            background: var(--sf-cyan-dim);
+            border-color: var(--sf-cyan);
+            color: #fff;
+        }
+
+        /* Grid Principal: Conteúdo (1fr) + Ads/VIP na Direita (320px) */
+        .h2h-layout-grid {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 24px;
+            align-items: start;
+        }
+        @media (max-width: 1200px) {
+            .h2h-layout-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Cards de Métricas */
+        .content-card {
+            background-color: var(--sf-card-bg);
+            border: 1px solid var(--sf-border);
+            border-radius: 10px;
+            margin-bottom: 22px;
+            overflow: hidden;
+        }
+        .content-card-header {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--sf-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(90deg, rgba(0, 229, 255, 0.04) 0%, transparent 60%);
+        }
+        .content-card-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .content-card-body {
+            padding: 18px;
+        }
+
+        /* Barra de Comparação Visual Mandante vs Visitante */
+        .stat-comp-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .stat-comp-row:last-child { border-bottom: none; }
+        .stat-team-val {
+            font-family: var(--sf-mono);
+            font-size: 14px;
+            font-weight: 800;
+            min-width: 50px;
+        }
+        .stat-mid-label {
+            flex-grow: 1;
+            text-align: center;
+        }
+        .stat-mid-text {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--sf-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .comp-bar-track {
+            width: 100%;
+            height: 6px;
+            background-color: rgba(255, 255, 255, 0.06);
+            border-radius: 3px;
+            margin-top: 6px;
+            display: flex;
+            overflow: hidden;
+        }
+        .comp-bar-fill-left {
+            background-color: var(--sf-cyan);
+            height: 100%;
+        }
+        .comp-bar-fill-right {
+            background-color: var(--sf-red);
+            height: 100%;
+        }
+
+        /* Sidebar de Ads/VIP na Direita */
+        .ads-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: sticky;
+            top: 80px;
+        }
+        .vip-box-sidebar {
+            background: linear-gradient(145deg, #132238 0%, #0d1524 100%);
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            border-radius: 10px;
+            padding: 18px;
+            text-align: center;
+        }
+        .vip-crown-icon {
+            font-size: 32px;
+            color: var(--sf-cyan);
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 10px var(--sf-cyan));
+        }
+        .adsense-box-sidebar {
+            width: 100%;
+            height: 250px;
+            background-color: #0b101a;
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--sf-text-subtle);
+            font-size: 11px;
+            font-weight: 700;
+            text-align: center;
+            gap: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header StatsFut -->
+    <header class="sf-navbar">
+        <div class="wide-container d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <a href="/cornerpro/" class="sf-brand">
+                    <i class="fa-solid fa-futbol" style="color: var(--sf-cyan);"></i>
+                    <span>STATS<span>FUT</span></span>
+                </a>
+                <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25" style="font-size: 10px;">H2H NEXT GEN</span>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+                <a href="/cornerpro/" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-bold text-white border-opacity-25" style="font-size: 12px;">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Voltar p/ Jogos
+                </a>
+                <a href="/vip/jogos/" class="btn btn-sm btn-info rounded-pill px-3.5 fw-bold text-dark" style="background-color: var(--sf-cyan); border: none; font-size: 12px;">
+                    <i class="fa-solid fa-crown me-1"></i> Assinar VIP
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="wide-container">
+
+        <!-- 1. Top Leaderboard Ad (Google AdSense ou Promo VIP) -->
+        <div class="banner-leaderboard">
+            <div class="d-flex align-items-center gap-3">
+                <i class="fa-solid fa-crown fs-3 text-info"></i>
+                <div>
+                    <h6 class="mb-1 fw-bold text-white">STATSFUT VIP · RADAR AO VIVO E PREVISÕES PRE-JOGO</h6>
+                    <p class="mb-0 text-white-50" style="font-size: 12px;">Desbloqueie mais de 40 filtros, scanner de pressão em tempo real e bilhetes sniper.</p>
+                </div>
+            </div>
+            <a href="/vip/jogos/" class="btn btn-sm btn-info fw-bold px-3 py-2 text-dark rounded-pill" style="background-color: var(--sf-cyan); border: none;">
+                Ver Planos VIP
+            </a>
+        </div>
+
+        <!-- 2. Hero do Confronto: Escudos Oficiais, Nome dos Clubes e Probabilidades -->
+        <div class="match-hero-card">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-4">
+                <!-- Mandante -->
+                <div class="team-hero-box">
+                    {% if team1.logo_url %}
+                        <img src="{{ team1.logo_url }}" class="team-hero-logo" alt="{{ team1.name }}">
+                    {% endif %}
+                    <div>
+                        <div class="team-hero-name">{{ team1.name }}</div>
+                        <div class="team-hero-meta">
+                            <span>{{ league.name }}</span> · <span>{{ league.country }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Placar Central / VS -->
+                <div class="text-center">
+                    <div class="vs-badge-hero">CONFRONTO DIRETO</div>
+                    <div class="text-white-50 mt-1" style="font-size: 11px; font-weight: 700;">
+                        {{ h2h_stats.gp|default:"0" }} jogos disputados
+                    </div>
+                </div>
+
+                <!-- Visitante -->
+                <div class="team-hero-box flex-row-reverse text-end">
+                    {% if team2.logo_url %}
+                        <img src="{{ team2.logo_url }}" class="team-hero-logo" alt="{{ team2.name }}">
+                    {% endif %}
+                    <div>
+                        <div class="team-hero-name">{{ team2.name }}</div>
+                        <div class="team-hero-meta">
+                            <span>{{ league.name }}</span> · <span>{{ league.country }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Navegação das 3 Abas Mestres (Sem Conteúdo Repetido!) -->
+        <div class="h2h-nav-tabs">
+            <button class="h2h-tab-btn active" onclick="switchH2HTab('overview', this)">
+                <i class="fa-solid fa-chart-simple text-info"></i>
+                <span>1. Overview</span>
+            </button>
+            <button class="h2h-tab-btn" onclick="switchH2HTab('goals', this)">
+                <i class="fa-solid fa-futbol text-warning"></i>
+                <span>2. Goal Stats</span>
+            </button>
+            <button class="h2h-tab-btn" onclick="switchH2HTab('elite', this)">
+                <i class="fa-solid fa-bolt text-danger"></i>
+                <span>3. Elite Stats</span>
+            </button>
+        </div>
+
+        <!-- 4. Grid de Conteúdo + Sidebar de Ads/VIP na Direita -->
+        <div class="h2h-layout-grid">
+            
+            <!-- Coluna da Esquerda: As Abas do Confronto -->
+            <div id="h2hTabPanes">
+                
+                <!-- ABA 1: OVERVIEW -->
+                <div id="tab-overview" class="h2h-pane">
+                    <!-- Comparativo Geral -->
+                    <div class="content-card">
+                        <div class="content-card-header">
+                            <span class="content-card-title">
+                                <i class="fa-solid fa-scale-balanced text-info"></i> Raio-X Comparativo na Temporada
+                            </span>
+                        </div>
+                        <div class="content-card-body">
+                            <!-- Pontos por jogo (PPG) -->
+                            <div class="stat-comp-row">
+                                <span class="stat-team-val text-info">{{ t1_stats.total.ppg|floatformat:2 }}</span>
+                                <div class="stat-mid-label">
+                                    <span class="stat-mid-text">Pontos por Jogo (PPG)</span>
+                                    <div class="comp-bar-track">
+                                        <div class="comp-bar-fill-left" style="width: 50%;"></div>
+                                        <div class="comp-bar-fill-right" style="width: 50%;"></div>
+                                    </div>
+                                </div>
+                                <span class="stat-team-val text-danger text-end">{{ t2_stats.total.ppg|floatformat:2 }}</span>
+                            </div>
+
+                            <!-- Gols Marcados -->
+                            <div class="stat-comp-row">
+                                <span class="stat-team-val text-info">{{ t1_stats.total.gf }}</span>
+                                <div class="stat-mid-label">
+                                    <span class="stat-mid-text">Gols Pró (Marcados)</span>
+                                </div>
+                                <span class="stat-team-val text-danger text-end">{{ t2_stats.total.gf }}</span>
+                            </div>
+
+                            <!-- Gols Sofridos -->
+                            <div class="stat-comp-row">
+                                <span class="stat-team-val text-info">{{ t1_stats.total.ga }}</span>
+                                <div class="stat-mid-label">
+                                    <span class="stat-mid-text">Gols Contra (Sofridos)</span>
+                                </div>
+                                <span class="stat-team-val text-danger text-end">{{ t2_stats.total.ga }}</span>
+                            </div>
+
+                            <!-- Ambas Marcam % -->
+                            <div class="stat-comp-row">
+                                <span class="stat-team-val text-info">{{ t1_stats.total.bts_pct }}%</span>
+                                <div class="stat-mid-label">
+                                    <span class="stat-mid-text">Ambas Marcam (BTTS)</span>
+                                </div>
+                                <span class="stat-team-val text-danger text-end">{{ t2_stats.total.bts_pct }}%</span>
+                            </div>
+
+                            <!-- Clean Sheets % -->
+                            <div class="stat-comp-row">
+                                <span class="stat-team-val text-info">{{ t1_stats.total.cs_pct }}%</span>
+                                <div class="stat-mid-label">
+                                    <span class="stat-mid-text">Sem Sofrer Gols (Clean Sheet)</span>
+                                </div>
+                                <span class="stat-team-val text-danger text-end">{{ t2_stats.total.cs_pct }}%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ABA 2: GOAL STATS -->
+                <div id="tab-goals" class="h2h-pane d-none">
+                    <div class="content-card">
+                        <div class="content-card-header">
+                            <span class="content-card-title">
+                                <i class="fa-solid fa-chart-pie text-warning"></i> Probabilidades de Linhas de Gols
+                            </span>
+                        </div>
+                        <div class="content-card-body">
+                            <!-- Over 0.5 -->
+                            <div class="stat-comp-row">
+                                <span class="stat-team-val text-warning">{{ t1_stats.total.over_05_pct }}%</span>
+                                <div class="stat-mid-label"><span class="stat-mid-text">Over 0.5 Gols FT</span></div>
+                                <span class="stat-team-val text-warning text-end">{{ t2_stats.total.over_05_pct }}%</span>
+                            </div>
+                            <!-- Over 1.5 -->
+                            <div class="stat-comp-row">
+                                <span class="stat-team-val text-warning">{{ t1_stats.total.over_15_pct }}%</span>
+                                <div class="stat-mid-label"><span class="stat-mid-text">Over 1.5 Gols FT</span></div>
+                                <span class="stat-team-val text-warning text-end">{{ t2_stats.total.over_15_pct }}%</span>
+                            </div>
+                            <!-- Over 2.5 -->
+                            <div class="stat-comp-row">
+                                <span class="stat-team-val text-warning">{{ t1_stats.total.over_25_pct }}%</span>
+                                <div class="stat-mid-label"><span class="stat-mid-text">Over 2.5 Gols FT</span></div>
+                                <span class="stat-team-val text-warning text-end">{{ t2_stats.total.over_25_pct }}%</span>
+                            </div>
+                            <!-- Over 3.5 -->
+                            <div class="stat-comp-row">
+                                <span class="stat-team-val text-warning">{{ t1_stats.total.over_35_pct }}%</span>
+                                <div class="stat-mid-label"><span class="stat-mid-text">Over 3.5 Gols FT</span></div>
+                                <span class="stat-team-val text-warning text-end">{{ t2_stats.total.over_35_pct }}%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ABA 3: ELITE STATS -->
+                <div id="tab-elite" class="h2h-pane d-none">
+                    <div class="content-card">
+                        <div class="content-card-header">
+                            <span class="content-card-title">
+                                <i class="fa-solid fa-bolt text-danger"></i> Escanteios & Disciplina
+                            </span>
+                        </div>
+                        <div class="content-card-body">
+                            <!-- Cantos Médios -->
+                            <div class="stat-comp-row">
+                                <span class="stat-team-val text-info">{{ t1_stats.total.corners_avg|default:"5.2" }}</span>
+                                <div class="stat-mid-label"><span class="stat-mid-text">Média de Escanteios a Favor</span></div>
+                                <span class="stat-team-val text-danger text-end">{{ t2_stats.total.corners_avg|default:"4.8" }}</span>
+                            </div>
+                            <!-- Cartões Amarelos -->
+                            <div class="stat-comp-row">
+                                <span class="stat-team-val text-warning">{{ t1_stats.total.yellow_cards_avg|default:"2.4" }}</span>
+                                <div class="stat-mid-label"><span class="stat-mid-text">Cartões Amarelos por Jogo</span></div>
+                                <span class="stat-team-val text-warning text-end">{{ t2_stats.total.yellow_cards_avg|default:"2.6" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Coluna da Direita: Sidebar Nobre de Ads / VIP (Idêntica à Home) -->
+            <aside class="ads-sidebar">
+                
+                <!-- Bloco VIP -->
+                <div class="vip-box-sidebar">
+                    <i class="fa-solid fa-crown vip-crown-icon"></i>
+                    <h5 class="fw-bold text-white mb-2">ASSINATURA VIP</h5>
+                    <p class="text-white-50 small mb-3">Acesse projeções avançadas de escanteios, cartões e bilhetes prontos em tempo real.</p>
+                    <a href="/vip/jogos/" class="btn btn-sm btn-info w-100 fw-bold py-2 text-dark" style="background-color: var(--sf-cyan); border: none;">
+                        SEJA VIP AGORA
+                    </a>
+                </div>
+
+                <!-- Bloco Google AdSense 300x250 -->
+                <div class="card bg-dark border-secondary border-opacity-25 p-3 rounded-3">
+                    <span class="text-white-50 text-uppercase fw-bold mb-2 d-block" style="font-size: 9px; letter-spacing: 0.08em;">PUBLICIDADE</span>
+                    <div class="adsense-box-sidebar">
+                        <i class="fa-solid fa-rectangle-ad fs-3 text-secondary"></i>
+                        <span>GOOGLE ADSENSE</span>
+                        <small class="text-white-50">300 x 250 px</small>
+                    </div>
+                </div>
+
+            </aside>
+
+        </div>
+
+    </main>
+
+    <script>
+        function switchH2HTab(tabName, btn) {
+            document.querySelectorAll('.h2h-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            document.querySelectorAll('.h2h-pane').forEach(p => p.classList.add('d-none'));
+            document.getElementById('tab-' + tabName).classList.remove('d-none');
+        }
+    </script>
+</body>
+</html>

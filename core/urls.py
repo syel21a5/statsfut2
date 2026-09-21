@@ -29,8 +29,12 @@ urlpatterns = [
 from django.conf import settings
 
 from core import vip_views
+from core import cornerpro_views
+from core import h2h_views
 
 urlpatterns += [
+    path('cornerpro/', cornerpro_views.cornerpro_home_view, name='cornerpro_home'),
+    path('h2h-novo/<str:country_name>/<str:league_name>/<str:team1_name>/<str:team2_name>/', h2h_views.h2h_novo_view, name='h2h_novo'),
     path('vip/', vip_views.vip_games_list_view, name='vip_hub'),
     path('vip/jogos/', vip_views.vip_games_list_view, name='vip_games_list'),
     path('vip/analise/<int:match_id>/', vip_views.vip_match_analysis_view, name='vip_match_analysis'),

@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StatsFut · Terminal de Análise & Jogos</title>
+    <!-- Fontes & Ícones -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/7.1.0/css/flag-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --sf-body-bg: #090e17;
+            --sf-card-bg: #111827;
+            --sf-card-inner: #162238;
+            --sf-border: rgba(255, 255, 255, 0.08);
+            --sf-border-hover: rgba(0, 229, 255, 0.3);
+            
+            --sf-cyan: #00e5ff;
+            --sf-cyan-dim: rgba(0, 229, 255, 0.1);
+            --sf-green: #10b981;
+            --sf-red: #ef4444;
+            --sf-amber: #f59e0b;
+            
+            --sf-text-white: #ffffff;
+            --sf-text-muted: #94a3b8;
+            --sf-text-subtle: #475569;
+            --sf-mono: 'JetBrains Mono', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: var(--sf-body-bg);
+            color: var(--sf-text-white);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 13px;
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 60px;
+        }
+
+        /* Container Central Amplo (96% de largura, max 1620px) */
+        .wide-container {
+            max-width: 1620px;
+            width: 96%;
+            margin: 0 auto;
+        }
+
+        /* Navbar Global */
+        .sf-navbar {
+            background-color: rgba(17, 24, 39, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--sf-border);
+            padding: 12px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            margin-bottom: 20px;
+        }
+        .sf-brand {
+            font-size: 20px;
+            font-weight: 900;
+            color: #fff;
+            text-decoration: none;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .sf-brand span { color: var(--sf-cyan); }
+        .badge-terminal {
+            font-size: 10px;
+            font-weight: 800;
+            background: var(--sf-cyan-dim);
+            color: var(--sf-cyan);
+            border: 1px solid rgba(0, 229, 255, 0.25);
+            padding: 2px 7px;
+            border-radius: 6px;
+        }
+
+        /* Fileira de KPIs do Topo */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .kpi-card {
+            background-color: var(--sf-card-bg);
+            border: 1px solid var(--sf-border);
+            border-radius: 10px;
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .kpi-label {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--sf-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .kpi-value {
+            font-family: var(--sf-mono);
+            font-size: 19px;
+            font-weight: 800;
+            color: #fff;
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+        .kpi-value small {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--sf-cyan);
+        }
+
+        /* BANNER TOP 1: Banner Leaderboard (AdSense ou Banner VIP) */
+        .banner-leaderboard-wrap {
+            margin-bottom: 20px;
+        }
+        .ad-banner-top {
+            width: 100%;
+            min-height: 90px;
+            background: linear-gradient(90deg, #111e33 0%, #0d1524 50%, #111e33 100%);
+            border: 1px dashed rgba(0, 229, 255, 0.3);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .ad-banner-top::before {
+            content: "ESPAÇO DE ANÚNCIO / VIP BANNER (LEADERBOARD)";
+            position: absolute;
+            top: 4px;
+            right: 10px;
+            font-size: 9px;
+            font-weight: 800;
+            color: var(--sf-cyan);
+            letter-spacing: 0.08em;
+            opacity: 0.8;
+        }
+        .banner-cta-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .banner-icon-badge {
+            width: 46px;
+            height: 46px;
+            border-radius: 10px;
+            background: var(--sf-cyan-dim);
+            color: var(--sf-cyan);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            border: 1px solid rgba(0, 229, 255, 0.3);
+        }
+
+        /* Toolbar: Filtros e Busca */
+        .toolbar-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .filter-pills {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .pill-btn {
+            background-color: var(--sf-card-bg);
+            border: 1px solid var(--sf-border);
+            color: var(--sf-text-muted);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 7px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .pill-btn:hover {
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .pill-btn.active {
+            background: var(--sf-cyan-dim);
+            border-color: var(--sf-cyan);
+            color: #fff;
+        }
+        .live-dot {
+            width: 7px;
+            height: 7px;
+            background-color: var(--sf-red);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px var(--sf-red);
+        }
+        .search-box {
+            position: relative;
+            min-width: 320px;
+        }
+        .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--sf-text-subtle);
+        }
+        .search-input {
+            width: 100%;
+            background-color: var(--sf-card-bg);
+            border: 1px solid var(--sf-border);
+            border-radius: 8px;
+            color: #fff;
+            padding: 8px 14px 8px 40px;
+            font-size: 13px;
+            outline: none;
+        }
+        .search-input:focus { border-color: var(--sf-cyan); }
+
+        /* Chips Rápidos de Ligas Horizontais (Em vez da sidebar feia espremida) */
+        .league-chips-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .league-chip {
+            background-color: var(--sf-card-bg);
+            border: 1px solid var(--sf-border);
+            color: var(--sf-text-muted);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 20px;
+            text-decoration: none;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .league-chip:hover {
+            color: #fff;
+            border-color: var(--sf-cyan);
+            background: var(--sf-cyan-dim);
+        }
+
+        /* GRID DO CONTEÚDO: Tabela Larga na Esquerda + Ads/VIP na Direita (320px) */
+        .main-layout-grid {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 24px;
+            align-items: start;
+        }
+        @media (max-width: 1200px) {
+            .main-layout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cabeçalho das Ligas */
+        .league-card-header {
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--sf-border);
+            background: linear-gradient(90deg, rgba(0, 229, 255, 0.04) 0%, transparent 60%);
+        }
+        .league-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .cyan-accent-bar {
+            width: 3px;
+            height: 20px;
+            background-color: var(--sf-cyan);
+            border-radius: 2px;
+            box-shadow: 0 0 10px var(--sf-cyan);
+        }
+        .country-flag-badge {
+            font-size: 16px;
+            width: 20px;
+            height: 15px;
+            display: inline-block;
+            vertical-align: middle;
+            border-radius: 2px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .league-name-text {
+            font-size: 14px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.01em;
+        }
+        .btn-view-toggle {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--sf-border);
+            color: var(--sf-text-muted);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Tabela Ampla e Confortável */
+        .vip-table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+        .vip-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        .vip-table th {
+            padding: 10px 18px;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--sf-text-subtle);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            white-space: nowrap;
+        }
+        .vip-table td {
+            padding: 12px 18px;
+            vertical-align: middle;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        .vip-table tr:hover {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+        .vip-table tr:last-child td { border-bottom: none; }
+
+        .col-time-txt {
+            font-family: var(--sf-mono);
+            font-size: 12px;
+            font-weight: 700;
+            color: #cbd5e1;
+        }
+        .badge-live-table {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--sf-red);
+            background: rgba(239, 68, 68, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .team-pair-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .team-inline {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .team-logo-img {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+        }
+        .vs-sep {
+            color: var(--sf-text-subtle);
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .pct-cyan {
+            font-family: var(--sf-mono);
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--sf-cyan);
+        }
+        .odd-pill-terminal {
+            font-family: var(--sf-mono);
+            font-size: 11px;
+            font-weight: 700;
+            color: #cbd5e1;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .btn-analyze-arrow {
+            background: transparent;
+            border: 1px solid var(--sf-border);
+            color: #e2e8f0;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .btn-analyze-arrow:hover {
+            border-color: var(--sf-cyan);
+            color: var(--sf-cyan);
+            background: var(--sf-cyan-dim);
+        }
+
+        /* Botão Explorar Países & Modal Elegante */
+        .btn-explore-countries {
+            background-color: var(--sf-card-bg);
+            border: 1px solid var(--sf-border);
+            color: #cbd5e1;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 8px 16px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn-explore-countries:hover {
+            border-color: var(--sf-cyan);
+            color: #fff;
+            background: var(--sf-cyan-dim);
+        }
+
+        /* Modal Dark Elegante dos Países */
+        .modal-country-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 10px;
+            max-height: 480px;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
+        .country-card-item {
+            background-color: #0f1624;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #f1f5f9;
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+        .country-card-item:hover {
+            background-color: #16243b;
+            border-color: var(--sf-cyan);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+        .country-card-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 13px;
+        }
+        .country-flag-icon {
+            font-size: 18px;
+            width: 22px;
+            height: 16px;
+            border-radius: 2px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* COLUNA DA DIREITA: SIDEBAR DE ADS & VIP */
+        .ads-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: sticky;
+            top: 80px;
+        }
+        .ad-widget-card {
+            background-color: var(--sf-card-bg);
+            border: 1px solid var(--sf-border);
+            border-radius: 10px;
+            padding: 16px;
+            position: relative;
+        }
+        .ad-badge-top {
+            font-size: 9px;
+            font-weight: 800;
+            color: var(--sf-text-subtle);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        /* Card VIP StatsFut */
+        .vip-promo-box {
+            background: linear-gradient(145deg, #132238 0%, #0d1524 100%);
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            border-radius: 10px;
+            padding: 18px;
+            text-align: center;
+        }
+        .vip-crown-icon {
+            font-size: 32px;
+            color: var(--sf-cyan);
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 10px var(--sf-cyan));
+        }
+        .vip-promo-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+        .vip-promo-text {
+            font-size: 12px;
+            color: var(--sf-text-muted);
+            line-height: 1.5;
+            margin-bottom: 14px;
+        }
+        .btn-vip-checkout {
+            display: block;
+            width: 100%;
+            background-color: var(--sf-cyan);
+            color: #0b0f15;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .btn-vip-checkout:hover {
+            background-color: #38bdf8;
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
+        }
+
+        /* Espaço AdSense 300x250 */
+        .adsense-box-300 {
+            width: 100%;
+            height: 250px;
+            background-color: #0b101a;
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--sf-text-subtle);
+            font-size: 11px;
+            font-weight: 700;
+            text-align: center;
+            gap: 6px;
+        }
+
+        /* Anúncio Nativo In-Feed entre as ligas */
+        .infeed-ad-row {
+            background: linear-gradient(90deg, #101a2d 0%, #0f1624 100%);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            border-radius: 10px;
+            padding: 14px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header StatsFut -->
+    <header class="sf-navbar">
+        <div class="wide-container d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <a href="/cornerpro/" class="sf-brand">
+                    <i class="fa-solid fa-futbol" style="color: var(--sf-cyan);"></i>
+                    <span>STATS<span>FUT</span></span>
+                </a>
+                <span class="badge-terminal">TERMINAL V2</span>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+                <a href="/" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-bold text-white border-opacity-25" style="font-size: 12px;">
+                    <i class="fa-solid fa-arrow-rotate-left me-1"></i> Home Oficial
+                </a>
+                <a href="/vip/jogos/" class="btn btn-sm btn-info rounded-pill px-3.5 fw-bold text-dark" style="background-color: var(--sf-cyan); border: none; font-size: 12px;">
+                    <i class="fa-solid fa-crown me-1"></i> Área VIP
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="wide-container">
+
+        <!-- Fileira Superior de KPIs do Topo -->
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <span class="kpi-label">Jogos Hoje</span>
+                <span class="kpi-value">{{ status_counts.total }} <small>partidas</small></span>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">Ao Vivo</span>
+                <span class="kpi-value" style="color: var(--sf-red);">{{ status_counts.live }} <small style="color: var(--sf-red);">em campo</small></span>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">Agendados</span>
+                <span class="kpi-value">{{ status_counts.scheduled }} <small>a disputar</small></span>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">Finalizados</span>
+                <span class="kpi-value">{{ status_counts.finished }} <small>concluídos</small></span>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">Competições</span>
+                <span class="kpi-value">{{ grouped_matches|length }} <small>ligas ativas</small></span>
+            </div>
+        </div>
+
+        <!-- 1. BANNER NOBRE SUPERIOR (AdSense Leaderboard ou Banner VIP Patrocinador) -->
+        <div class="banner-leaderboard-wrap">
+            <div class="ad-banner-top">
+                <div class="banner-cta-content">
+                    <div class="banner-icon-badge">
+                        <i class="fa-solid fa-crown"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1 fw-bold text-white">SEJA VIP STATSFUT · RADAR AO VIVO + PROJEÇÕES MATEMÁTICAS</h6>
+                        <p class="mb-0 text-white-50" style="font-size: 12px;">Tenha acesso liberado aos 40+ filtros, radar de pressão em tempo real e bilhetes prontos com alta taxa de acerto.</p>
+                    </div>
+                </div>
+                <div>
+                    <a href="/vip/jogos/" class="btn btn-sm btn-info fw-bold px-3 py-2 text-dark rounded-pill" style="background-color: var(--sf-cyan); border: none; font-size: 12px;">
+                        Assinar VIP Agora <i class="fa-solid fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toolbar: Filtros Rápidos, Busca e Botão de Explorar Países -->
+        <div class="toolbar-row">
+            <div class="filter-pills">
+                <a href="/cornerpro/?status=all" class="pill-btn {% if status_filter == 'all' %}active{% endif %}">
+                    Todos os Jogos ({{ status_counts.total }})
+                </a>
+                <a href="/cornerpro/?status=live" class="pill-btn {% if status_filter == 'live' %}active{% endif %}">
+                    <span class="live-dot"></span> Ao Vivo ({{ status_counts.live }})
+                </a>
+                <a href="/cornerpro/?status=scheduled" class="pill-btn {% if status_filter == 'scheduled' %}active{% endif %}">
+                    Agendados ({{ status_counts.scheduled }})
+                </a>
+                <a href="/cornerpro/?status=finished" class="pill-btn {% if status_filter == 'finished' %}active{% endif %}">
+                    Finalizados ({{ status_counts.finished }})
+                </a>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+                <!-- Botão Explorar Países (Abre Modal Limpo) -->
+                <button type="button" class="btn-explore-countries" data-bs-toggle="modal" data-bs-target="#countriesModal">
+                    <i class="fa-solid fa-earth-americas text-info"></i>
+                    <span>Explorar Países & Ligas</span>
+                    <i class="fa-solid fa-chevron-down ms-1" style="font-size: 10px;"></i>
+                </button>
+
+                <!-- Busca Rápida -->
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="filterInput" class="search-input" placeholder="Buscar por clube ou campeonato..." onkeyup="filterTerminal()">
+                </div>
+            </div>
+        </div>
+
+        <!-- GRID PRINCIPAL: Jogos Largos e Respirando (1fr) + Sidebar de Ads/VIP na Direita (320px) -->
+        <div class="main-layout-grid">
+            
+            <!-- Coluna da Esquerda: Jogos das Ligas com Espaço de Sobra -->
+            <div id="leagueCardsWrap">
+                {% for country in grouped_matches %}
+                    {% for league in country.leagues %}
+                        
+                        <!-- A cada 3 ligas, insere um banner in-feed sutil -->
+                        {% if forloop.parentloop.counter == 3 and forloop.first %}
+                            <div class="infeed-ad-row">
+                                <div class="d-flex align-items-center gap-3">
+                                    <i class="fa-solid fa-bolt text-warning fs-4"></i>
+                                    <div>
+                                        <div class="fw-bold text-white">Espaço Nativo In-Feed (Google AdSense ou Casa Parceira)</div>
+                                        <small class="text-white-50">Anúncio contextual que converte muito alto entre as ligas sem atrapalhar a visualização dos jogos.</small>
+                                    </div>
+                                </div>
+                                <span class="badge bg-dark text-white-50 border border-secondary border-opacity-25">PATROCINADO</span>
+                            </div>
+                        {% endif %}
+
+                        <div class="league-card league-block" data-league="{{ league.name|lower }} {{ country.country|lower }}">
+                            
+                            <!-- Cabeçalho do Card com Barra Ciano e Escudo/Bandeira em Destaque -->
+                            <div class="league-card-header">
+                                <div class="league-header-left">
+                                    <div class="cyan-accent-bar"></div>
+                                    <span class="fi fi-{{ country.flag_code }} country-flag-badge"></span>
+                                    <span class="league-name-text">{{ country.country }} · {{ league.name }}</span>
+                                </div>
+
+                                <button class="btn-view-toggle" onclick="toggleLeagueCard(this)">
+                                    <span>Ver todos ({{ league.matches|length }})</span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </button>
+                            </div>
+
+                            <!-- Tabela de Jogos Ampla -->
+                            <div class="vip-table-responsive">
+                                <table class="vip-table">
+                                    <thead>
+                                        <tr>
+                                            <th>TIME</th>
+                                            <th>MATCH</th>
+                                            <th>GOLS MÉDIA</th>
+                                            <th>AMBAS MARCAM</th>
+                                            <th>ODDS (1 · X · 2)</th>
+                                            <th class="text-end">ACTION</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for match in league.matches %}
+                                            <tr class="match-row" data-match="{{ match.home_team.name|lower }} {{ match.away_team.name|lower }} {{ match.date|date:"H:i" }}">
+                                                <!-- TIME / STATUS -->
+                                                <td class="col-time-txt">
+                                                    {% if match.status in 'Live,LIVE,1H,2H,HT,IN_PLAY,In Play' %}
+                                                        <span class="badge-live-table"><i class="fa-solid fa-circle me-1" style="font-size: 6px;"></i>{{ match.minute|default:"LIVE" }}'</span>
+                                                    {% elif match.status in 'Finished,FT,AET,PEN,FINISHED' %}
+                                                        <span class="text-white-50 fw-bold">FT</span>
+                                                    {% else %}
+                                                        {{ match.date|date:"H:i" }}
+                                                    {% endif %}
+                                                </td>
+
+                                                <!-- MATCH -->
+                                                <td>
+                                                    <div class="team-pair-cell">
+                                                        <span class="team-inline">
+                                                            {% if match.home_team.logo_url %}
+                                                                <img src="{{ match.home_team.logo_url }}" class="team-logo-img" alt="" onerror="this.style.display='none'">
+                                                            {% endif %}
+                                                            {{ match.home_team.name }}
+                                                        </span>
+                                                        <span class="vs-sep">vs</span>
+                                                        <span class="team-inline">
+                                                            {% if match.away_team.logo_url %}
+                                                                <img src="{{ match.away_team.logo_url }}" class="team-logo-img" alt="" onerror="this.style.display='none'">
+                                                            {% endif %}
+                                                            {{ match.away_team.name }}
+                                                        </span>
+                                                    </div>
+                                                </td>
+
+                                                <!-- GOLS MÉDIA -->
+                                                <td>
+                                                    <span class="pct-cyan">{{ match.home_stats.over15 }}% · {{ match.away_stats.over15 }}%</span>
+                                                </td>
+
+                                                <!-- AMBAS MARCAM -->
+                                                <td>
+                                                    <span class="pct-cyan">{{ match.home_stats.btts }}% · {{ match.away_stats.btts }}%</span>
+                                                </td>
+
+                                                <!-- ODDS 1X2 -->
+                                                <td>
+                                                    {% if match.home_team_win_odds %}
+                                                        <span class="odd-pill-terminal">@{{ match.home_team_win_odds|floatformat:2 }}</span>
+                                                        <span class="odd-pill-terminal">@{{ match.draw_odds|default:"-"|floatformat:2 }}</span>
+                                                        <span class="odd-pill-terminal">@{{ match.away_team_win_odds|floatformat:2 }}</span>
+                                                    {% else %}
+                                                        <span class="text-white-50" style="font-size: 11px;">-</span>
+                                                    {% endif %}
+                                                </td>
+
+                                                <!-- ACTION (Leva para a nova página limpa de H2H) -->
+                                                <td class="text-end">
+                                                    <a href="/h2h-novo/{{ match.league.country|slugify }}/{{ match.league.name|slugify }}/{{ match.home_team.name|slugify }}/{{ match.away_team.name|slugify }}/" class="btn-analyze-arrow">
+                                                        <span>Analyze</span>
+                                                        <i class="fa-solid fa-arrow-right"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    {% endfor %}
+                {% empty %}
+                    <div class="text-center py-5 text-white-50">
+                        <i class="fa-solid fa-futbol fa-3x mb-3 opacity-25"></i>
+                        <p>Nenhum jogo encontrado para hoje.</p>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Coluna da Direita (Sidebar Nobre de Publicidade & Conversão VIP) -->
+            <aside class="ads-sidebar">
+                
+                <!-- Bloco 1: Card de Assinatura VIP StatsFut -->
+                <div class="vip-promo-box">
+                    <i class="fa-solid fa-crown vip-crown-icon"></i>
+                    <h5 class="vip-promo-title">ÁREA VIP STATSFUT</h5>
+                    <p class="vip-promo-text">
+                        Acesse as projeções de cantos, radar de pressão ao vivo e bilhetes prontos com alta probabilidade.
+                    </p>
+                    <a href="/vip/jogos/" class="btn-vip-checkout">
+                        CONHECER PLANOS VIP
+                    </a>
+                </div>
+
+                <!-- Bloco 2: Google AdSense (Retângulo Médio 300x250) -->
+                <div class="ad-widget-card">
+                    <span class="ad-badge-top">PUBLICIDADE</span>
+                    <div class="adsense-box-300">
+                        <i class="fa-solid fa-rectangle-ad fs-3 text-secondary"></i>
+                        <span>ESPAÇO GOOGLE ADSENSE</span>
+                        <small class="text-white-50">300 x 250 px</small>
+                    </div>
+                </div>
+
+                <!-- Bloco 3: Parceiro / Casa de Apostas / Telegram -->
+                <div class="ad-widget-card" style="background: linear-gradient(135deg, #182338 0%, #111827 100%);">
+                    <span class="ad-badge-top text-info">GRUPO EXCLUSIVO</span>
+                    <h6 class="fw-bold text-white mb-2"><i class="fa-brands fa-telegram text-info me-1"></i> Canal Telegram Free</h6>
+                    <p class="text-white-50 mb-3" style="font-size: 11px;">Receba alertas diários e as melhores oportunidades direto no seu celular.</p>
+                    <a href="https://t.me/statsfut_free" target="_blank" class="btn btn-sm btn-outline-info w-100 fw-bold" style="font-size: 11px;">
+                        Entrar no Canal Grátis
+                    </a>
+                </div>
+
+            </aside>
+
+        </div>
+
+    </main>
+
+    <!-- Modal Dark Exclusivo para Explorar Países & Ligas -->
+    <div class="modal fade" id="countriesModal" tabindex="-1" aria-labelledby="countriesModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content" style="background-color: #0b111c; border: 1px solid var(--sf-border); border-radius: 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.8);">
+                <div class="modal-header" style="border-bottom: 1px solid var(--sf-border); padding: 16px 20px;">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-earth-americas text-info fs-5"></i>
+                        <h6 class="modal-title fw-bold text-white mb-0" id="countriesModalLabel">Explorar Competições por País</h6>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-3">
+                    <div class="mb-3">
+                        <input type="text" id="modalSearchCountry" class="form-control bg-dark text-white border-secondary border-opacity-25" placeholder="Filtrar país..." onkeyup="filterCountryList()" style="font-size: 13px; border-radius: 8px;">
+                    </div>
+                    <div class="modal-country-grid" id="modalCountryGrid">
+                        {% for country in sidebar_countries %}
+                            <a href="/stats/{{ country.slug }}/" class="country-card-item country-filter-target" data-name="{{ country.name|lower }}">
+                                <div class="country-card-left">
+                                    <span class="fi fi-{{ country.flag_code }} country-flag-icon"></span>
+                                    <span>{{ country.name }}</span>
+                                </div>
+                                <span class="badge bg-dark text-white-50 border border-secondary border-opacity-25" style="font-size: 10px;">{{ country.leagues|length }} ligas</span>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle para funcionar Modais e Tooltips -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function filterCountryList() {
+            const val = document.getElementById('modalSearchCountry').value.toLowerCase();
+            const items = document.querySelectorAll('.country-filter-target');
+            items.forEach(item => {
+                const name = item.getAttribute('data-name') || '';
+                item.style.display = name.includes(val) ? 'flex' : 'none';
+            });
+        }
+        function filterTerminal() {
+            const query = document.getElementById('filterInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.league-block');
+
+            cards.forEach(card => {
+                const rows = card.querySelectorAll('.match-row');
+                let matchesFound = 0;
+
+                rows.forEach(row => {
+                    const matchText = row.getAttribute('data-match') || '';
+                    const leagueText = card.getAttribute('data-league') || '';
+
+                    if (matchText.includes(query) || leagueText.includes(query)) {
+                        row.style.display = '';
+                        matchesFound++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                card.style.display = matchesFound > 0 ? 'block' : 'none';
+            });
+        }
+
+        function filterByLeague(name) {
+            document.getElementById('filterInput').value = name;
+            filterTerminal();
+        }
+
+        function toggleLeagueCard(btn) {
+            const card = btn.closest('.league-card');
+            const tableWrap = card.querySelector('.vip-table-responsive');
+            const icon = btn.querySelector('i');
+
+            if (tableWrap.style.display === 'none') {
+                tableWrap.style.display = 'block';
+                icon.className = 'fa-solid fa-chevron-down';
+            } else {
+                tableWrap.style.display = 'none';
+                icon.className = 'fa-solid fa-chevron-right';
+            }
+        }
+    </script>
+</body>
+</html>
