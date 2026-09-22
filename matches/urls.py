@@ -13,7 +13,7 @@ urlpatterns = [
     # ===== CornerPro (adicionado 2026-09-22) =====
     path('cornerpro/', views.cornerpro_home, name='cornerpro_home'),
     path('stats/<str:country_name>/<str:league_name>/cornerpro/', views.cornerpro_league_stats, name='cornerpro_league_stats'),
-    path('stats/cornerpro/<str:country_name>/<str:league_name>/', views.cornerpro_league_stats, name='cornerpro_league_stats_full'),
+    path('stats/cornerpro/<str:country_name>/<str:league_name>/', views.LeagueDetailView.as_view(), name='cornerpro_league_stats_full'),
     # ===== Fim CornerPro =====
 
     path('privacy-policy/', TemplateView.as_view(template_name='matches/privacy_policy.html'), name='privacy_policy'),
