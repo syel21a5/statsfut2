@@ -1,0 +1,191 @@
+
+{% extends "matches/base.html" %}
+
+{% block content %}
+    <!-- Cabeçalho Fixo (Título + Anúncio + Abas) Restrito à Coluna Esquerda -->
+    <div class="sticky-league-header-suite mb-2">
+        <!-- Título da Liga + Anúncio Horizontal (Alinhamento Compacto Padrão) -->
+        <div class="d-flex flex-column flex-xl-row align-items-start align-items-xl-center justify-content-between gap-3 mb-2">
+            <!-- Identidade da Liga -->
+            <div class="flex-shrink-0">
+                <h2 class="text-white fw-bold mb-0" style="font-size: 1.5rem;">
+                    <img src="{{ league.country|country_en|get_flag_url }}" alt="{{ league.country|country_en }}"
+                        style="height: 28px; margin-right: 8px;" loading="lazy" decoding="async" height="28">
+                    {{ league.name }}
+                </h2>
+                <p class="text-secondary mb-0 mt-0.5" style="font-size: 0.8rem;">
+                    <span class="text-info">{{ league.country|country_en }}</span> <i
+                        class="fa-solid fa-chevron-right mx-1 small" style="font-size: 0.65rem;"></i> {% translate "League Stats" %}
+                </p>
+            </div>
+
+            <!-- Banner Nobre Leaderboard / Anúncio Real AdSense statsfut.com -->
+            <div class="flex-grow-1 d-none d-lg-flex align-items-center justify-content-center px-2" style="min-width: 728px; height: 90px;">
+                <div class="ad-placeholder" data-ad-slot="1511520655" data-ad-format="horizontal" data-ad-position="top-league"></div>
+            </div>
+        </div>
+
+        <!-- Sub-Abas (Visão Geral / Goals / Elite) -->
+        {% include 'matches/includes/league_tabs.html' with active_tab='overview' %}
+    </div>
+
+    <!-- Painel de Métricas (Cards com Escudos, Barras e Visual Premium) -->
+    <div class="sf-metrics-panel mb-4">
+        <!-- Fileira 1: Destaques da Competição (Com Escudos e Badges) -->
+        <div class="row g-2 mb-2">
+            {% if standings %}
+            <div class="col-6 col-md-3">
+                <div class="sf-metric-card h-100">
+                    <div class="d-flex align-items-center justify-content-between mb-1">
+                        <span class="sf-metric-title"><i class="fa-solid fa-trophy text-warning me-1"></i> Líder</span>
+                        <span class="sf-metric-badge sf-badge-gold">1º LUGAR</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 mt-1">
+                        {% if standings.0.team.logo_url %}
+                        <img src="{{ standings.0.team.logo_url }}" alt="{{ standings.0.team.name }}" width="28" height="28" class="sf-team-logo" loading="lazy" decoding="async">
+                        {% else %}
+                        <i class="fa-solid fa-shield text-warning fs-5"></i>
+                        {% endif %}
+                        <div class="overflow-hidden">
+                            <span class="sf-metric-val-main text-truncate d-block" title="{{ standings.0.team.name }}">{{ standings.0.team.name }}</span>
+                            <span class="sf-metric-sub text-info">{{ standings.0.points }} pts</span>
+                        </div>
+                    </div>
+                    <div class="sf-metric-bar bg-warning mt-2" style="width: 100%;"></div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if season_best_attack %}
+            <div class="col-6 col-md-3">
+                <div class="sf-metric-card h-100">
+                    <div class="d-flex align-items-center justify-content-between mb-1">
+                        <span class="sf-metric-title"><i class="fa-solid fa-arrow-trend-up text-success me-1"></i> Melhor Ataque</span>
+                        <span class="sf-metric-badge sf-badge-green">ATAQUE</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 mt-1">
+                        {% if season_best_attack.team.logo_url %}
+                        <img src="{{ season_best_attack.team.logo_url }}" alt="{{ season_best_attack.team.name }}" width="28" height="28" class="sf-team-logo" loading="lazy" decoding="async">
+                        {% else %}
+                        <i class="fa-solid fa-futbol text-success fs-5"></i>
+                        {% endif %}
+                        <div class="overflow-hidden">
+                            <span class="sf-metric-val-main text-truncate d-block" title="{{ season_best_attack.team.name }}">{{ season_best_attack.team.name }}</span>
+                            <span class="sf-metric-sub text-success">{{ season_best_attack.goals_for }} gols</span>
+                        </div>
+                    </div>
+                    <div class="sf-metric-bar bg-success mt-2" style="width: 100%;"></div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if season_best_defense %}
+            <div class="col-6 col-md-3">
+                <div class="sf-metric-card h-100">
+                    <div class="d-flex align-items-center justify-content-between mb-1">
+                        <span class="sf-metric-title"><i class="fa-solid fa-shield-halved text-info me-1"></i> Melhor Defesa</span>
+                        <span class="sf-metric-badge sf-badge-cyan">DEFESA</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 mt-1">
+                        {% if season_best_defense.team.logo_url %}
+                        <img src="{{ season_best_defense.team.logo_url }}" alt="{{ season_best_defense.team.name }}" width="28" height="28" class="sf-team-logo" loading="lazy" decoding="async">
+                        {% else %}
+                        <i class="fa-solid fa-shield-halved text-info fs-5"></i>
+                        {% endif %}
+                        <div class="overflow-hidden">
+                            <span class="sf-metric-val-main text-truncate d-block" title="{{ season_best_defense.team.name }}">{{ season_best_defense.team.name }}</span>
+                            <span class="sf-metric-sub text-info">{{ season_best_defense.goals_against }} sofridos</span>
+                        </div>
+                    </div>
+                    <div class="sf-metric-bar bg-info mt-2" style="width: 100%;"></div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if common_scores %}
+            <div class="col-6 col-md-3">
+                <div class="sf-metric-card h-100">
+                    <div class="d-flex align-items-center justify-content-between mb-1">
+                        <span class="sf-metric-title"><i class="fa-solid fa-bullseye text-warning me-1"></i> Placar Comum</span>
+                        <span class="sf-metric-badge sf-badge-slate">PADRÃO</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 mt-1">
+                        <div class="d-flex align-items-center justify-content-center rounded-circle" style="width: 28px; height: 28px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);">
+                            <i class="fa-solid fa-hashtag text-info small"></i>
+                        </div>
+                        <div>
+                            <span class="sf-metric-val-main d-block" style="font-family: 'JetBrains Mono', monospace;">{{ common_scores.0.score }}</span>
+                            <span class="sf-metric-sub text-white-50">em {{ common_scores.0.pct }}% dos jogos</span>
+                        </div>
+                    </div>
+                    <div class="sf-metric-bar bg-warning mt-2" style="width: {{ common_scores.0.pct }}%;"></div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Fileira 2: Estatísticas Médias & Mercados de Gols -->
+        <div class="row g-2">
+            <div class="col-6 col-md-4 col-xl-2">
+                <div class="sf-metric-card h-100">
+                    <span class="sf-metric-title"><i class="fa-solid fa-futbol text-warning me-1"></i> Média Gols</span>
+                    <div class="d-flex align-items-baseline gap-1 mt-1 mb-1">
+                        <span class="sf-metric-val-num text-white">{{ league_stats.avg_goals_match }}</span>
+                        <span class="sf-metric-sub text-white-50">/ jogo</span>
+                    </div>
+                    <div class="sf-metric-bar bg-warning" style="width: {% widthratio league_stats.avg_goals_match 4 100 %}%;"></div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-xl-2">
+                <div class="sf-metric-card h-100">
+                    <span class="sf-metric-title"><i class="fa-solid fa-chart-simple text-info me-1"></i> +1.5 Gols</span>
+                    <div class="d-flex align-items-baseline gap-1 mt-1 mb-1">
+                        <span class="sf-metric-val-num text-info">{{ league_stats.over15_pct }}%</span>
+                        <span class="sf-metric-sub text-white-50">freq.</span>
+                    </div>
+                    <div class="sf-metric-bar bg-info" style="width: {{ league_stats.over15_pct }}%;"></div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-xl-2">
+                <div class="sf-metric-card h-100">
+                    <span class="sf-metric-title"><i class="fa-solid fa-fire text-danger me-1"></i> +2.5 Gols</span>
+                    <div class="d-flex align-items-baseline gap-1 mt-1 mb-1">
+                        <span class="sf-metric-val-num text-danger">{{ league_stats.over25_pct }}%</span>
+                        <span class="sf-metric-sub text-white-50">freq.</span>
+                    </div>
+                    <div class="sf-metric-bar bg-danger" style="width: {{ league_stats.over25_pct }}%;"></div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-xl-2">
+                <div class="sf-metric-card h-100">
+                    <span class="sf-metric-title"><i class="fa-solid fa-handshake text-warning me-1"></i> Ambas (BTTS)</span>
+                    <div class="d-flex align-items-baseline gap-1 mt-1 mb-1">
+                        <span class="sf-metric-val-num text-warning">{{ league_stats.btts_pct }}%</span>
+                        <span class="sf-metric-sub text-white-50">jogos</span>
+                    </div>
+                    <div class="sf-metric-bar bg-warning" style="width: {{ league_stats.btts_pct }}%;"></div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-xl-2">
+                <div class="sf-metric-card h-100">
+                    <span class="sf-metric-title"><i class="fa-solid fa-shield-halved text-success me-1"></i> Clean Sheets</span>
+                    <div class="d-flex align-items-baseline gap-1 mt-1 mb-1">
+                        <span class="sf-metric-val-num text-success">{{ avg_cs|floatformat:1 }}%</span>
+                        <span class="sf-metric-sub text-white-50">sem sofrer</span>
+                    </div>
+                    <div class="sf-metric-bar bg-success" style="width: {{ avg_cs|floatformat:0 }}%;"></div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-xl-2">
+                <div class="sf-metric-card h-100">
+                    <span class="sf-metric-title"><i class="fa-solid fa-gauge-high text-info me-1"></i> Média PPG</span>
+                    <div class="d-flex align-items-baseline gap-1 mt-1 mb-1">
+                        <span class="sf-metric-val-num text-info">{{ avg_ppg|floatformat:2 }}</span>
+                        <span class="sf-metric-sub text-white-50">pts</span>
+                    </div>
+                    <div class="sf-metric-bar bg-info" style="width: {% widthratio avg_ppg 3 100 %}%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
